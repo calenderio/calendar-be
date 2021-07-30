@@ -68,5 +68,4 @@ public class MailServiceImpl implements MailService {
         helper.setText(html, true);
         emailSender.send(message);
     }
-
 }

@@ -6,5 +6,7 @@
  **/
 package com.io.calendar.repositories;
 
-public interface ExampleRepository {
+import org.springframework.data.repository.CrudRepository;
+
+public interface UserRepository extends CrudRepository {
 }
