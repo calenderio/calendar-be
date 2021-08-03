@@ -43,6 +43,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/error.html",
                         "/document.html",
                         "/document",
+                        "/foo",
+                        "/oauth2/**",
                         "/login"
                 )
                 .pathMatcher(new AntPathMatcher());
