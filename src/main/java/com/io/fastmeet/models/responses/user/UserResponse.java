@@ -8,11 +8,14 @@ package com.io.fastmeet.models.responses.user;
 
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
 public class UserResponse {
 
     private String email;
     private String name;
+    private Set<String> roles;
     private String token;
 
 
