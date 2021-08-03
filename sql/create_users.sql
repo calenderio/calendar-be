@@ -11,17 +11,15 @@ create table users
     password   varchar(512)          not null
 );
 
-alter table users owner to fmuser;
-
 create
 index users_company_id_index
-	on users using ??? (company_id);
+	on users (company_id);
 
 create
 unique index users_email_uindex
-	on users using ??? (email);
+	on users (email);
 
 create
 unique index users_licence_id_uindex
-	on users using ??? (licence_id);
+	on users (licence_id);
 
