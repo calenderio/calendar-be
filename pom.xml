@@ -175,7 +175,9 @@
                             <autocommit>true</autocommit>
                             <srcFiles>
                                 <srcFile>sql/drop.sql</srcFile>
-
+                                <srcFile>sql/create_companies.sql</srcFile>
+                                <srcFile>sql/create_licences.sql</srcFile>
+                                <srcFile>sql/create_users.sql</srcFile>
                             </srcFiles>
                         </configuration>
                     </execution>
