@@ -7,7 +7,6 @@
 package com.io.fastmeet.core.security.config;
 
 import com.io.fastmeet.core.security.handler.LoginHandler;
-import com.io.fastmeet.core.security.jwt.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +17,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -31,14 +29,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private OAuth2AuthorizedClientService clientService;
+    private LoginHandler loginHandler;
 
     private final ClientRegistrationRepository clientRegistrationRepository;
-
-
-    @Autowired
-    private JWTService jwtService;
-
 
     public SecurityConfig(ClientRegistrationRepository clientRegistrationRepository) {
         this.clientRegistrationRepository = clientRegistrationRepository;
@@ -51,18 +44,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
-                .successHandler(loginHandler())
+                .successHandler(loginHandler)
                 .authorizationEndpoint()
                 .authorizationRequestResolver(new FastMeetAuthResolver(
                         this.clientRegistrationRepository));
 
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    }
-
-    @Bean
-    public LoginHandler loginHandler() {
-        return new LoginHandler(clientService, jwtService);
     }
 
     @Bean

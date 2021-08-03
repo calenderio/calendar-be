@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserResponse createIndividualUser(UserCreateRequest request) {
+        ifUserExistWithError(request.getEmail());
         User user = new User();
         user.setEmail(request.getEmail());
         user.setName(request.getName());
@@ -89,16 +90,28 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Checks if user exist or not
+     * This method gets user information
      *
-     * @param id user id
+     * @param email mail of user
      */
     @Override
-    public void ifUserExist(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.USER_NOT_FOUND),
-                    GeneralMessageUtil.USR_NOT_FOUND);
-        }
+    public UserResponse findByMail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.USER_NOT_FOUND),
+                        GeneralMessageUtil.USR_NOT_FOUND));
+        UserResponse userResponse = userMapper.mapToModel(user);
+        userResponse.setToken(jwtService.createToken(email, user.getId()));
+        return userResponse;
+    }
+
+    /**
+     * Checks if user exist or not
+     *
+     * @param mail user
+     */
+    @Override
+    public boolean ifUserExist(String mail) {
+        return userRepository.existsByEmail(mail);
     }
 
     /**
@@ -121,4 +134,10 @@ public class UserServiceImpl implements UserService {
         return sb.toString();
     }
 
+    private void ifUserExistWithError(String mail) {
+        if (userRepository.existsByEmail(mail)) {
+            throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.USER_FOUND),
+                    GeneralMessageUtil.USR_FOUND);
+        }
+    }
 }

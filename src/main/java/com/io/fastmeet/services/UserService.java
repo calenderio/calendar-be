@@ -18,5 +18,7 @@ public interface UserService {
 
     User findById(Long id);
 
-    void ifUserExist(Long id);
+    UserResponse findByMail(String email);
+
+    boolean ifUserExist(String mail);
 }
