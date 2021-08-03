@@ -34,6 +34,6 @@ build/
 mvnw
 mvnw.cmd
 .mvn
-src/main/java/com/io/calendar/Example.java
-src/main/java/com/io/calendar/Graph.java
+src/main/java/com/io/fastmeet/Example.java
+src/main/java/com/io/fastmeet/Graph.java
 pom.xml.versionsBackup
