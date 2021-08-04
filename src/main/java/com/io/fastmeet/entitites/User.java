@@ -15,6 +15,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.Set;
 
@@ -31,7 +32,8 @@ public class User extends BaseEntity {
     private Boolean isCompany;
     private Boolean verified = Boolean.FALSE;
     private Long companyId;
-    private Long licenceId;
+    @OneToOne
+    private Licence licenceId;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<LinkedCalendar> calendars;
