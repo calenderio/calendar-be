@@ -1,5 +1,6 @@
 drop table IF EXISTS
     users,
     licences,
-    companies
+    companies,
+    linked_calendars
 ;

@@ -171,6 +171,7 @@
                                 <srcFile>sql/create_companies.sql</srcFile>
                                 <srcFile>sql/create_licences.sql</srcFile>
                                 <srcFile>sql/create_users.sql</srcFile>
+                                <srcFile>sql/craete_linked_calendars.sql</srcFile>
                             </srcFiles>
                         </configuration>
                     </execution>

@@ -9,11 +9,14 @@ package com.io.fastmeet.services.impl;
 import com.io.fastmeet.core.exception.CalendarAppException;
 import com.io.fastmeet.core.i18n.Translator;
 import com.io.fastmeet.core.security.jwt.JWTService;
+import com.io.fastmeet.entitites.LinkedCalendar;
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.mappers.UserMapper;
+import com.io.fastmeet.models.internals.SocialUserCreateRequest;
 import com.io.fastmeet.models.requests.user.AuthRequest;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
+import com.io.fastmeet.repositories.LinkedCalendarRepository;
 import com.io.fastmeet.repositories.UserRepository;
 import com.io.fastmeet.services.UserService;
 import com.io.fastmeet.utils.GeneralMessageUtil;
@@ -24,12 +27,17 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private LinkedCalendarRepository calendarRepository;
 
     @Autowired
     private JWTService jwtService;
@@ -51,6 +59,26 @@ public class UserServiceImpl implements UserService {
         user.setIsCompany(false);
         user.setPassword(encodePassword(request.getPassword(), request.getEmail()));
         user = userRepository.save(user);
+        UserResponse response = userMapper.mapToModel(user);
+        response.setToken(jwtService.createToken(user.getEmail(), user.getId()));
+        return response;
+    }
+
+    /**
+     * This method creates new individual user
+     *
+     * @param request user details
+     */
+    @Override
+    public UserResponse socialSignUp(SocialUserCreateRequest request) {
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setName(request.getName());
+        user.setIsCompany(false);
+        user.setPassword(encodePassword(request.getPassword(), request.getEmail()));
+        user.setVerified(true);
+        userRepository.save(user);
+        saveCalendars(request, user);
         UserResponse response = userMapper.mapToModel(user);
         response.setToken(jwtService.createToken(user.getEmail(), user.getId()));
         return response;
@@ -139,5 +167,17 @@ public class UserServiceImpl implements UserService {
             throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.USER_FOUND),
                     GeneralMessageUtil.USR_FOUND);
         }
+    }
+
+    private void saveCalendars(SocialUserCreateRequest request, User user) {
+        Set<LinkedCalendar> calendars = new HashSet<>();
+        LinkedCalendar calendar = new LinkedCalendar();
+        calendar.setToken(request.getToken());
+        calendar.setRefreshToken(request.getRefreshToken());
+        calendar.setType(request.getType());
+        calendar.setUser(user);
+        calendars.add(calendar);
+        user.setCalendars(calendars);
+        calendarRepository.save(calendar);
     }
 }

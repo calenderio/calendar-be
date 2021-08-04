@@ -8,6 +8,7 @@ create table users
     licence_id bigint,
     company_id bigint,
     is_company boolean default false not null,
+    verified   boolean default false not null,
     password   varchar(512)          not null
 );
 
