@@ -24,4 +24,8 @@ public interface UserService {
     UserResponse findByMail(String email);
 
     boolean ifUserExist(String mail);
+
+    User saveUser(User user);
+
+    void addNewLinkToUser(User user, SocialUserCreateRequest request);
 }

@@ -27,8 +27,8 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -143,6 +143,33 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * Checks if user exist or not
+     *
+     * @param user user object
+     */
+    @Override
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    /**
+     * Checks if user has link if no add to user
+     *
+     * @param request create object
+     * @param user    user object
+     */
+    @Override
+    public void addNewLinkToUser(User user, SocialUserCreateRequest request) {
+        List<LinkedCalendar> userLink = user.getCalendars().stream().filter(item -> request.getSocialMediaMail().equals(item.getSocialMail()))
+                .collect(Collectors.toList());
+        if (!userLink.isEmpty()) {
+            throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage("error.linked"),
+                    GeneralMessageUtil.LINKED);
+        }
+        saveCalendars(request, user);
+    }
+
+    /**
      * Encode user password for security
      * Combine username, usernameid and security
      *
@@ -170,14 +197,14 @@ public class UserServiceImpl implements UserService {
     }
 
     private void saveCalendars(SocialUserCreateRequest request, User user) {
-        Set<LinkedCalendar> calendars = new HashSet<>();
         LinkedCalendar calendar = new LinkedCalendar();
-        calendar.setToken(request.getToken());
+        calendar.setAccessToken(request.getToken());
         calendar.setRefreshToken(request.getRefreshToken());
         calendar.setType(request.getType());
         calendar.setUser(user);
-        calendars.add(calendar);
-        user.setCalendars(calendars);
+        calendar.setSocialMail(request.getSocialMediaMail());
+        calendar.setExpireDate(request.getExpireDate());
+        user.getCalendars().add(calendar);
         calendarRepository.save(calendar);
     }
 }

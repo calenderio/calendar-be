@@ -1,12 +1,14 @@
 create table linked_calendars
 (
-    id            bigserial   not null
+    id            bigserial    not null
         constraint linked_calendars_pk
             primary key,
-    type          varchar(25) not null,
-    token         text        not null,
+    social_mail   varchar(255) not null,
+    type          varchar(25)  not null,
+    token         text         not null,
     refresh_token text,
-    user_id       bigint      not null
+    expire_date   timestamp    not null,
+    user_id       bigint       not null
 );
 
 create

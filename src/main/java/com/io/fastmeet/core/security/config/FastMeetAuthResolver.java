@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequest
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -26,18 +27,32 @@ public class FastMeetAuthResolver implements OAuth2AuthorizationRequestResolver 
     @Override
     public OAuth2AuthorizationRequest resolve(HttpServletRequest request) {
         final OAuth2AuthorizationRequest authorizationRequest = this.defaultAuthorizationRequestResolver.resolve(request);
-        return authorizationRequest != null ? customAuthorizationRequest(authorizationRequest) : null;
+        String token = request.getParameter("apptoken") != null ? request.getParameter("apptoken") : "";
+        if (authorizationRequest != null && authorizationRequest.getState() != null) {
+            HttpSession httpSession = request.getSession();
+            httpSession.setAttribute(authorizationRequest.getState(), token);
+        }
+        return authorizationRequest != null ? customAuthorizationRequest(token, authorizationRequest) : null;
     }
 
     @Override
     public OAuth2AuthorizationRequest resolve(HttpServletRequest request, String clientRegistrationId) {
         final OAuth2AuthorizationRequest authorizationRequest = this.defaultAuthorizationRequestResolver.resolve(request, clientRegistrationId);
-        return authorizationRequest != null ? customAuthorizationRequest(authorizationRequest) : null;
+        String token = request.getParameter("apptoken") != null ? request.getParameter("apptoken") : "";
+        if (authorizationRequest != null && authorizationRequest.getState() != null) {
+            HttpSession httpSession = request.getSession();
+            httpSession.setAttribute(authorizationRequest.getState(), token);
+        }
+        return authorizationRequest != null ? customAuthorizationRequest(token, authorizationRequest) : null;
     }
 
-    private OAuth2AuthorizationRequest customAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest) {
+    private OAuth2AuthorizationRequest customAuthorizationRequest(String userToken, OAuth2AuthorizationRequest authorizationRequest) {
         Map<String, Object> additionalParameters = new LinkedHashMap<>(authorizationRequest.getAdditionalParameters());
         additionalParameters.put("access_type", "offline");
+        additionalParameters.put("userToken", userToken);
+        if ("microsoft".equals(authorizationRequest.getAttribute("registration_id"))) {
+            additionalParameters.put("grant_type", "authorization_code");
+        }
         return OAuth2AuthorizationRequest.from(authorizationRequest)
                 .additionalParameters(additionalParameters)
                 .build();

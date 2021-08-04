@@ -10,13 +10,14 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.util.HashSet;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -32,10 +33,10 @@ public class User extends BaseEntity {
     private Boolean isCompany;
     private Boolean verified = Boolean.FALSE;
     private Long companyId;
-    @OneToOne
-    private Licence licenceId;
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private Set<LinkedCalendar> calendars;
+    private Set<LinkedCalendar> calendars = new HashSet<>();
 
 }

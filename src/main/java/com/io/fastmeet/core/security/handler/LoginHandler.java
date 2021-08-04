@@ -7,6 +7,9 @@
 package com.io.fastmeet.core.security.handler;
 
 import com.google.gson.Gson;
+import com.io.fastmeet.core.security.jwt.JWTService;
+import com.io.fastmeet.core.security.jwt.JWTUtil;
+import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.enums.CalendarProviderType;
 import com.io.fastmeet.models.internals.SocialUserCreateRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
@@ -25,7 +28,10 @@ import org.springframework.stereotype.Component;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 @Component
@@ -37,6 +43,12 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private JWTService jwtService;
+
+    @Autowired
+    private JWTUtil jwtUtil;
+
     public LoginHandler() {
         setUseReferer(true);
     }
@@ -44,42 +56,73 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         String userName;
-        UserResponse userResponse = new UserResponse();
+        HttpSession session = request.getSession(false);
         String authorizer = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
         if (authentication.isAuthenticated()) {
+            UserResponse userResponse;
             DefaultOAuth2User oicdUser = (DefaultOAuth2User) authentication.getPrincipal();
             if (authorizer.equals("google")) {
-                userName = oicdUser.getAttribute("email");
-                OAuth2AuthorizedClient user = clientService.loadAuthorizedClient("google", oicdUser.getName());
-                if (userService.ifUserExist(userName)) {
-                    userResponse = userService.findByMail(userName);
-                } else {
-                    userResponse = createSocialSignup(userName, oicdUser, user, CalendarProviderType.GOOGLE);
-                }
+                OAuth2AuthorizedClient oauth2User = clientService.loadAuthorizedClient("google", oicdUser.getName());
+                userName = checkAndLinkAccount(request, session, oicdUser, CalendarProviderType.GOOGLE, oauth2User, "email");
+                userResponse = createOrSaveUser(userName, oicdUser, oauth2User, CalendarProviderType.GOOGLE);
             } else if (authorizer.equals("microsoft")) {
-                userName = oicdUser.getAttribute("preferred_username");
-                OAuth2AuthorizedClient user = clientService.loadAuthorizedClient("microsoft", oicdUser.getName());
-                if (userService.ifUserExist(userName)) {
-                    userResponse = userService.findByMail(userName);
-                } else {
-                    userResponse = createSocialSignup(userName, oicdUser, user, CalendarProviderType.MICROSOFT);
-                }
+                OAuth2AuthorizedClient oauth2User = clientService.loadAuthorizedClient("microsoft", oicdUser.getName());
+                userName = checkAndLinkAccount(request, session, oicdUser, CalendarProviderType.MICROSOFT, oauth2User, "preferred_username");
+                userResponse = createOrSaveUser(userName, oicdUser, oauth2User, CalendarProviderType.MICROSOFT);
+            } else {
+                userResponse = new UserResponse();
             }
             response.getWriter().write(new Gson().toJson(userResponse));
         }
     }
 
+    private String checkAndLinkAccount(HttpServletRequest request, HttpSession session, DefaultOAuth2User oicdUser, CalendarProviderType type,
+                                       OAuth2AuthorizedClient oauth2User, String preferred_username) {
+        String userName;
+        if (session.getAttribute(request.getParameter("state")) != null) {
+            try {
+                User user = jwtService.getUserFromToken(jwtUtil.getTokenPrefix() + session.getAttribute(request.getParameter("state")));
+                SocialUserCreateRequest createRequest = createSocialRequest(user.getName(), oicdUser, oauth2User, type);
+                createRequest.setSocialMediaMail(oicdUser.getAttribute(preferred_username));
+                userService.addNewLinkToUser(user, createRequest);
+                userName = user.getEmail();
+            } catch (Exception e) {
+                userName = oicdUser.getAttribute(preferred_username);
+            }
+        } else {
+            userName = oicdUser.getAttribute(preferred_username);
+        }
+        return userName;
+    }
+
+    private UserResponse createOrSaveUser(String userName, DefaultOAuth2User oicdUser, OAuth2AuthorizedClient oauth2User, CalendarProviderType google) {
+        UserResponse userResponse;
+        if (userService.ifUserExist(userName)) {
+            userResponse = userService.findByMail(userName);
+        } else {
+            userResponse = createSocialSignup(userName, oicdUser, oauth2User, google);
+        }
+        return userResponse;
+    }
+
     private UserResponse createSocialSignup(String userName, DefaultOAuth2User oicdUser, OAuth2AuthorizedClient user, CalendarProviderType providerType) {
         UserResponse userResponse;
+        SocialUserCreateRequest createRequest = createSocialRequest(userName, oicdUser, user, providerType);
+        createRequest.setSocialMediaMail(userName);
+        userResponse = userService.socialSignUp(createRequest);
+        return userResponse;
+    }
+
+    private SocialUserCreateRequest createSocialRequest(String userName, DefaultOAuth2User oicdUser, OAuth2AuthorizedClient user, CalendarProviderType providerType) {
         SocialUserCreateRequest createRequest = new SocialUserCreateRequest();
         createRequest.setEmail(userName);
         createRequest.setName(oicdUser.getAttributes().get("name").toString());
         createRequest.setPassword(UUID.randomUUID().toString());
         createRequest.setToken(user.getAccessToken().getTokenValue());
-        createRequest.setRefreshToken(user.getAccessToken().getTokenValue());
+        createRequest.setRefreshToken(user.getRefreshToken().getTokenValue());
+        createRequest.setExpireDate(LocalDateTime.ofInstant(user.getAccessToken().getExpiresAt(), ZoneId.of("UTC")));
         createRequest.setType(providerType);
-        userResponse = userService.socialSignUp(createRequest);
-        return userResponse;
+        return createRequest;
     }
 
     @Override

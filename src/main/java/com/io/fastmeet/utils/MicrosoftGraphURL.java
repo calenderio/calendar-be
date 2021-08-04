@@ -4,7 +4,7 @@
  *
  * Copyright - Calendar App Java API
  **/
-package com.io.fastmeet.core.utils;
+package com.io.fastmeet.utils;
 
 public class MicrosoftGraphURL {
 
