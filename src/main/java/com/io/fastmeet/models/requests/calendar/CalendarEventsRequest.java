@@ -11,18 +11,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Data
 @EventDate
 public class CalendarEventsRequest {
 
-    @Schema(description = "Max Event Time", implementation = ZonedDateTime.class)
+    @Schema(description = "Max Event Time", implementation = LocalDateTime.class)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private ZonedDateTime timeMax;
-    @Schema(description = "Max Event Time", implementation = ZonedDateTime.class)
+    private LocalDateTime timeMax;
+    @Schema(description = "Max Event Time", implementation = LocalDateTime.class)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private ZonedDateTime timeMin;
+    private LocalDateTime timeMin;
     @Schema(description = "Max Event Time", example = "Europe/Istanbul")
     private String timeZone;
 }

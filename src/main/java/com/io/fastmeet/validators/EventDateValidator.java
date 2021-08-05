@@ -17,6 +17,11 @@ public class EventDateValidator implements ConstraintValidator<EventDate, Calend
     public boolean isValid(CalendarEventsRequest field, ConstraintValidatorContext context) {
         if (field.getTimeMin() != null && field.getTimeMax() != null) {
             return field.getTimeMin().isBefore(field.getTimeMax()) || field.getTimeMax().equals(field.getTimeMin());
+        } else if (field.getTimeMin() != null || field.getTimeMax() != null) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate("{event.null.value}")
+                    .addPropertyNode("TIME_NULL").addConstraintViolation();
+            return false;
         }
         return true;
     }

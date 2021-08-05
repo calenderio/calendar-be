@@ -7,13 +7,17 @@
 package com.io.fastmeet.core.security.handler;
 
 import com.google.gson.Gson;
+import com.io.fastmeet.core.security.encrypt.TokenEncryptor;
 import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.core.security.jwt.JWTUtil;
+import com.io.fastmeet.core.services.RevokeTokenService;
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.enums.CalendarProviderType;
 import com.io.fastmeet.models.internals.SocialUserCreateRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
 import com.io.fastmeet.services.UserService;
+import io.jsonwebtoken.ExpiredJwtException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -49,6 +53,12 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
     @Autowired
     private JWTUtil jwtUtil;
 
+    @Autowired
+    private TokenEncryptor tokenEncryptor;
+
+    @Autowired
+    private RevokeTokenService revokeTokenService;
+
     public LoginHandler() {
         setUseReferer(true);
     }
@@ -79,15 +89,17 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
     private String checkAndLinkAccount(HttpServletRequest request, HttpSession session, DefaultOAuth2User oicdUser, CalendarProviderType type,
                                        OAuth2AuthorizedClient oauth2User, String preferred_username) {
         String userName;
-        if (session.getAttribute(request.getParameter("state")) != null) {
+        Object sessionObject = session.getAttribute(request.getParameter("state"));
+        if (sessionObject != null && !StringUtils.isBlank(sessionObject.toString())) {
             try {
-                User user = jwtService.getUserFromToken(jwtUtil.getTokenPrefix() + session.getAttribute(request.getParameter("state")));
+                User user = jwtService.getUserFromToken(jwtUtil.getTokenPrefix() + sessionObject);
                 SocialUserCreateRequest createRequest = createSocialRequest(user.getName(), oicdUser, oauth2User, type);
                 createRequest.setSocialMediaMail(oicdUser.getAttribute(preferred_username));
                 userService.addNewLinkToUser(user, createRequest);
                 userName = user.getEmail();
-            } catch (Exception e) {
-                userName = oicdUser.getAttribute(preferred_username);
+            } catch (ExpiredJwtException e) {
+                revokeTokenService.revoke(oauth2User.getRefreshToken().getTokenValue(), type);
+                throw new RuntimeException("");
             }
         } else {
             userName = oicdUser.getAttribute(preferred_username);
@@ -118,8 +130,8 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
         createRequest.setEmail(userName);
         createRequest.setName(oicdUser.getAttributes().get("name").toString());
         createRequest.setPassword(UUID.randomUUID().toString());
-        createRequest.setToken(user.getAccessToken().getTokenValue());
-        createRequest.setRefreshToken(user.getRefreshToken().getTokenValue());
+        createRequest.setToken(tokenEncryptor.getEncryptedString(user.getAccessToken().getTokenValue()));
+        createRequest.setRefreshToken(tokenEncryptor.getEncryptedString(user.getRefreshToken().getTokenValue()));
         createRequest.setExpireDate(LocalDateTime.ofInstant(user.getAccessToken().getExpiresAt(), ZoneId.of("UTC")));
         createRequest.setType(providerType);
         return createRequest;

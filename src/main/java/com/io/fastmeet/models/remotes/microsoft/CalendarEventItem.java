@@ -12,12 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class CalendarEventRequest {
+public class CalendarEventItem {
 
+    private String id;
     private String subject;
     private Boolean isReminderOn = true;
     private Integer reminderMinutesBeforeStart = 10;
     private DateType start;
     private DateType end;
+    private CalendarBody body;
     private List<EmailAddressItem> attendees = new ArrayList<>();
 }

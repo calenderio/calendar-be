@@ -16,4 +16,7 @@ public class LinkedCalendarResponse {
     @Schema(description = "Calendar Provider", example = "MICROSOFT")
     private CalendarProviderType type;
 
+    @Schema(description = "Calendar E-Mail", example = "test@test.com")
+    private String socialMail;
+
 }

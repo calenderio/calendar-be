@@ -11,6 +11,7 @@ import com.io.fastmeet.core.i18n.Translator;
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.services.UserService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -69,7 +70,7 @@ public class JWTService {
                 .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
                 .setSubject(userName)
                 .setAudience("FastMeet")
-                .setExpiration(Timestamp.valueOf(LocalDateTime.now().plusMonths(6)))
+                .setExpiration(Timestamp.valueOf(LocalDateTime.now().plusHours(1)))
                 .claim("username", userName.toLowerCase())
                 .claim("id", id)
                 .claim("roles", id)
@@ -122,7 +123,7 @@ public class JWTService {
             return parser.parseClaimsJws(reToken).getBody();
         } catch (SignatureException e) {
             throw new CalendarAppException(HttpStatus.UNAUTHORIZED, Translator.getMessage("error.signature"), "SIGNATURE_ERR");
-        } catch (MalformedJwtException e) {
+        } catch (MalformedJwtException | ExpiredJwtException e) {
             throw new CalendarAppException(HttpStatus.UNAUTHORIZED, "JWT token is invalid", "JWT_TOKEN_INVALID");
         }
 

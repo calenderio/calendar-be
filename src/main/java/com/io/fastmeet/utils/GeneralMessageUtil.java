@@ -13,6 +13,8 @@ public class GeneralMessageUtil {
     public static final String USR_NOT_FOUND = "USR_NOT_FOUND";
     public static final String USR_FOUND = "USER_FOUND";
     public static final String LINKED = "LINKED";
+    public static final String EXTERNAL_APP = "EXTERNAL_APP";
+    public static final String EXTERNAL_APP_MSG = "error.external.app";
 
 
 }

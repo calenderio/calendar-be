@@ -7,6 +7,7 @@
 package com.io.fastmeet.mappers;
 
 import com.io.fastmeet.models.remotes.google.GoogleCalendarEventsRequest;
+import com.io.fastmeet.models.remotes.microsoft.MicrosoftCalendarEventsRequest;
 import com.io.fastmeet.models.requests.calendar.CalendarEventsRequest;
 import org.mapstruct.Mapper;
 
@@ -14,5 +15,7 @@ import org.mapstruct.Mapper;
 public interface CalendarMapper {
 
     GoogleCalendarEventsRequest mapToGoogle(CalendarEventsRequest request);
+
+    MicrosoftCalendarEventsRequest mapToMicrosoft(CalendarEventsRequest request);
 
 }

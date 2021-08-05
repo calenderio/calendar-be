@@ -10,5 +10,6 @@ public class GoogleApiURL {
 
     public static final String REFRESH_TOKEN = "https://oauth2.googleapis.com/token";
     public static final String GET_CALENDAR_EVENTS = "https://www.googleapis.com/calendar/v3/calendars/%s/events";
+    public static final String REVOKE_TOKEN = "https://oauth2.googleapis.com/revoke?token=%s";
 
 }

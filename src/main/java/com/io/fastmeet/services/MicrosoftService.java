@@ -1,18 +1,16 @@
 /*
  * @author : Oguz Kahraman
- * @since : 4.08.2021
+ * @since : 5.08.2021
  *
  * Copyright - Calendar App Java API
  **/
 package com.io.fastmeet.services;
 
-import com.io.fastmeet.models.remotes.google.GoogleCalendarEventsRequest;
 import com.io.fastmeet.models.remotes.google.TokenRefreshResponse;
+import com.io.fastmeet.models.remotes.microsoft.MicrosoftCalendarEventsRequest;
 
-public interface GoogleService {
-    void getCalendarEvents(GoogleCalendarEventsRequest request);
+public interface MicrosoftService {
+    void getCalendarEvents(MicrosoftCalendarEventsRequest request);
 
     TokenRefreshResponse getNewAccessToken(String refreshToken);
-
-    void revokeToken(String refreshToken);
 }
