@@ -43,7 +43,7 @@ public class CalendarAppExceptionHandler extends ResponseEntityExceptionHandler 
 
     private static final String EXCEPTION = "EXCEPTION";
     private static final String UNEXPECTED_ERROR = "Unexpected IS error: {} and user token {}";
-    private static final String UNEXPECTED_TRACE = "Unexpected IS trace: {} {}";
+    private static final String UNEXPECTED_TRACE = "Unexpected IS trace: {}";
     private static final String UNEXPECTED = "UNEXPECTED";
     private static final String NOT_VALID = "NOT_VALID";
     private static final String UNKNOWN_ERR = "UNKNOWN_ERR";
@@ -54,7 +54,7 @@ public class CalendarAppExceptionHandler extends ResponseEntityExceptionHandler 
     protected ResponseEntity<Object> handleResponseStatus(ResponseStatusException ex, WebRequest request) {
         String authKey = request.getHeader(AUTHORIZATION);
         log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_ERROR, ex.getMessage(), authKey);
-        log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex), ((ServletWebRequest) request).getRequest().getRequestURI());
+        log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex));
         return ResponseEntity.badRequest().body(new ErrorData(LocalDateTime.now().toString(), ex.getStatus().value(),
                 ex.getMessage(), ex.getReason(), ((ServletWebRequest) request).getRequest().getRequestURI()));
     }
@@ -63,7 +63,7 @@ public class CalendarAppExceptionHandler extends ResponseEntityExceptionHandler 
     protected ResponseEntity<Object> handleAccessDenied(WebRequest request, AccessDeniedException ex) {
         String authKey = request.getHeader(AUTHORIZATION);
         log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_ERROR, ex.getMessage(), authKey);
-        log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex), ((ServletWebRequest) request).getRequest().getRequestURI());
+        log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex));
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorData(LocalDateTime.now().toString(), HttpStatus.FORBIDDEN.value(),
                 Translator.getMessage("error.not.has.permission"),
                 "AUTH_ERR", ((ServletWebRequest) request).getRequest().getRequestURI()));
@@ -73,7 +73,7 @@ public class CalendarAppExceptionHandler extends ResponseEntityExceptionHandler 
     protected ResponseEntity<Object> handleASMException(CalendarAppException ex, WebRequest request) {
         String authKey = request.getHeader(AUTHORIZATION);
         log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_ERROR, ex.getMessage(), authKey);
-        log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex), ((ServletWebRequest) request).getRequest().getRequestURI());
+        log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex));
         return ResponseEntity.status(ex.getStatus()).body(new ErrorData(LocalDateTime.now().toString(), ex.getStatus().value(),
                 ex.getReason(), ex.getCause().getMessage(), ((ServletWebRequest) request).getRequest().getRequestURI()));
     }
@@ -82,7 +82,7 @@ public class CalendarAppExceptionHandler extends ResponseEntityExceptionHandler 
     protected ResponseEntity<Object> handleBadCredential(BadCredentialsException ex, WebRequest request) {
         String authKey = request.getHeader(AUTHORIZATION);
         log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_ERROR, ex.getMessage(), authKey);
-        log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex), ((ServletWebRequest) request).getRequest().getRequestURI());
+        log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex));
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorData(LocalDateTime.now().toString(), HttpStatus.UNAUTHORIZED.value(),
                 ex.getMessage(), "BAD_CREDENTIAL", ((ServletWebRequest) request).getRequest().getRequestURI()));
     }
@@ -99,7 +99,7 @@ public class CalendarAppExceptionHandler extends ResponseEntityExceptionHandler 
                                                                   HttpStatus status, WebRequest request) {
         String authKey = request.getHeader(AUTHORIZATION);
         log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_ERROR, ex.getMessage(), authKey);
-        log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex), ((ServletWebRequest) request).getRequest().getRequestURI());
+        log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex));
         return validationExceptionMessageCreator((ServletWebRequest) request, ex.getBindingResult());
     }
 
@@ -108,7 +108,7 @@ public class CalendarAppExceptionHandler extends ResponseEntityExceptionHandler 
                                                          HttpStatus status, WebRequest request) {
         String authKey = request.getHeader(AUTHORIZATION);
         log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_ERROR, ex.getMessage(), authKey);
-        log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex), ((ServletWebRequest) request).getRequest().getRequestURI());
+        log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex));
         return validationExceptionMessageCreator((ServletWebRequest) request, ex.getBindingResult());
     }
 
@@ -117,7 +117,7 @@ public class CalendarAppExceptionHandler extends ResponseEntityExceptionHandler 
             MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String authKey = request.getHeader(AUTHORIZATION);
         log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_ERROR, ex.getMessage(), authKey);
-        log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex), ((ServletWebRequest) request).getRequest().getRequestURI());
+        log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex));
         return ResponseEntity.status(status).body(new ErrorData(LocalDateTime.now().toString(), status.value(),
                 ex.getMessage(), NOT_VALID, ((ServletWebRequest) request).getRequest().getRequestURI()));
     }
@@ -126,13 +126,13 @@ public class CalendarAppExceptionHandler extends ResponseEntityExceptionHandler 
     protected ResponseEntity<Object> handle(Exception ex, WebRequest request) {
         String authKey = request.getHeader(AUTHORIZATION);
         if (ex.getCause() instanceof ConstraintViolationException) {
-            log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex), ((ServletWebRequest) request).getRequest().getRequestURI());
+            log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex));
             log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_ERROR, Translator.getMessage("error.already.in"), authKey);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorData(LocalDateTime.now().toString(), HttpStatus.BAD_REQUEST.value(),
                     Translator.getMessage("error.already.in"), "ALREADY_ADDED", ((ServletWebRequest) request).getRequest().getRequestURI()));
         }
         log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_ERROR, ex.getMessage(), authKey);
-        log.error(MarkerFactory.getMarker(UNEXPECTED), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex), ((ServletWebRequest) request).getRequest().getRequestURI());
+        log.error(MarkerFactory.getMarker(UNEXPECTED), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex));
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorData(LocalDateTime.now().toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 Translator.getMessage(UNKNOWN_EXCEPTION),
                 UNKNOWN_ERR, ((ServletWebRequest) request).getRequest().getRequestURI()));
@@ -142,7 +142,7 @@ public class CalendarAppExceptionHandler extends ResponseEntityExceptionHandler 
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, @Nullable Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String authKey = request.getHeader(AUTHORIZATION);
         log.error(MarkerFactory.getMarker(EXCEPTION), UNEXPECTED_ERROR, ex.getMessage(), authKey);
-        log.error(MarkerFactory.getMarker(UNEXPECTED), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex), ((ServletWebRequest) request).getRequest().getRequestURI());
+        log.error(MarkerFactory.getMarker(UNEXPECTED), UNEXPECTED_TRACE, ExceptionUtils.getStackTrace(ex));
         if (!HttpStatus.INTERNAL_SERVER_ERROR.equals(status)) {
             return new ResponseEntity<>(body, headers, status);
         }
