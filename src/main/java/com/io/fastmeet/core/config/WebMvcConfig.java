@@ -43,7 +43,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/error.html",
                         "/document.html",
                         "/document",
-                        "/foo",
+                        "/meet/schedule",
                         "/oauth2/**",
                         "/login"
                 )

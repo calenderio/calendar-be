@@ -15,8 +15,4 @@ create
 index linked_calendars_user_id_index
 	on linked_calendars (user_id);
 
-create
-unique index linked_calendars_social_mail_uindex
-	on linked_calendars (social_mail);
-
 
