@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,7 +81,7 @@ public class UserServiceImpl implements UserService {
         user.setIsCompany(false);
         user.setPassword(encodePassword(request.getPassword(), request.getEmail()));
         user.setVerified(true);
-        saveCalendars(request, user);
+        addCalendar(request, user);
         userRepository.save(user);
         UserResponse response = userMapper.mapToModel(user);
         response.setToken(jwtService.createToken(user.getEmail(), user.getId()));
@@ -169,7 +170,8 @@ public class UserServiceImpl implements UserService {
             throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage("error.linked"),
                     GeneralMessageUtil.LINKED);
         }
-        saveCalendars(request, user);
+        addCalendar(request, user);
+        userRepository.save(user);
     }
 
     /**
@@ -198,7 +200,7 @@ public class UserServiceImpl implements UserService {
      * @param request social login request
      * @param user    details of user
      */
-    private void saveCalendars(SocialUserCreateRequest request, User user) {
+    private void addCalendar(SocialUserCreateRequest request, User user) {
         LinkedCalendar calendar = getCalendar(request.getSocialMediaMail());
         if (calendar.getId() == null) {
             calendar.setAccessToken(request.getToken());
@@ -206,8 +208,12 @@ public class UserServiceImpl implements UserService {
             calendar.setType(request.getType());
             calendar.setSocialMail(request.getSocialMediaMail());
             calendar.setExpireDate(request.getExpireDate());
+            calendar.setUsers(Collections.singleton(user));
+        } else {
+            calendar.setUsers(new HashSet<>(calendar.getUsers()));
+            calendar.getUsers().add(user);
         }
-        calendar.setUsers(Collections.singleton(user));
+        user.setCalendars(new HashSet<>(user.getCalendars()));
         user.getCalendars().add(calendar);
     }
 
