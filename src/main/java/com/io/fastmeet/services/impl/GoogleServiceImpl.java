@@ -15,7 +15,7 @@ import com.io.fastmeet.models.remotes.google.GoogleCalendarEventsRequest;
 import com.io.fastmeet.models.remotes.google.TokenRefreshResponse;
 import com.io.fastmeet.services.GoogleService;
 import com.io.fastmeet.utils.GeneralMessageUtil;
-import com.io.fastmeet.utils.GenericPrvoviderUtil;
+import com.io.fastmeet.utils.GenericProviderUtil;
 import com.io.fastmeet.utils.GoogleApiURL;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,7 +66,7 @@ public class GoogleServiceImpl implements GoogleService {
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(builder.build().toString()))
                 .header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .header(GenericPrvoviderUtil.AUTHORIZATION,
+                .header(GenericProviderUtil.AUTHORIZATION,
                         "Bearer " + request.getAccessToken()
                 )
                 .GET()

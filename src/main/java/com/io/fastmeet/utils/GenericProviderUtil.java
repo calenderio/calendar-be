@@ -6,7 +6,8 @@
  **/
 package com.io.fastmeet.utils;
 
-public class GenericPrvoviderUtil {
+public class GenericProviderUtil {
 
     public static final String AUTHORIZATION = "Authorization";
+    public static final String APP_TOKEN = "apptoken";
 }

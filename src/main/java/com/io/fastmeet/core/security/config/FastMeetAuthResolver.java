@@ -6,6 +6,7 @@
  **/
 package com.io.fastmeet.core.security.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
@@ -17,6 +18,8 @@ import javax.servlet.http.HttpSession;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static com.io.fastmeet.utils.GenericProviderUtil.APP_TOKEN;
+
 public class FastMeetAuthResolver implements OAuth2AuthorizationRequestResolver {
     private final OAuth2AuthorizationRequestResolver defaultAuthorizationRequestResolver;
 
@@ -27,18 +30,17 @@ public class FastMeetAuthResolver implements OAuth2AuthorizationRequestResolver 
     @Override
     public OAuth2AuthorizationRequest resolve(HttpServletRequest request) {
         final OAuth2AuthorizationRequest authorizationRequest = this.defaultAuthorizationRequestResolver.resolve(request);
-        String token = request.getParameter("apptoken") != null ? request.getParameter("apptoken") : "";
-        if (authorizationRequest != null && authorizationRequest.getState() != null) {
-            HttpSession httpSession = request.getSession();
-            httpSession.setAttribute(authorizationRequest.getState(), token);
-        }
-        return authorizationRequest != null ? customAuthorizationRequest(token, authorizationRequest) : null;
+        return getAuth2AuthorizationRequest(request, authorizationRequest);
     }
 
     @Override
     public OAuth2AuthorizationRequest resolve(HttpServletRequest request, String clientRegistrationId) {
         final OAuth2AuthorizationRequest authorizationRequest = this.defaultAuthorizationRequestResolver.resolve(request, clientRegistrationId);
-        String token = request.getParameter("apptoken") != null ? request.getParameter("apptoken") : "";
+        return getAuth2AuthorizationRequest(request, authorizationRequest);
+    }
+
+    private OAuth2AuthorizationRequest getAuth2AuthorizationRequest(HttpServletRequest request, OAuth2AuthorizationRequest authorizationRequest) {
+        String token = request.getParameter(APP_TOKEN) != null ? request.getParameter(APP_TOKEN) : StringUtils.EMPTY;
         if (authorizationRequest != null && authorizationRequest.getState() != null) {
             HttpSession httpSession = request.getSession();
             httpSession.setAttribute(authorizationRequest.getState(), token);
