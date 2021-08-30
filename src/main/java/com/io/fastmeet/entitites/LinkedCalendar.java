@@ -17,10 +17,11 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -37,7 +38,6 @@ public class LinkedCalendar extends BaseEntity {
     private String accessToken;
     private LocalDateTime expireDate;
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @ManyToMany(mappedBy = "calendars", fetch = FetchType.EAGER)
+    private Set<User> users = new HashSet<>();
 }

@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,8 +78,8 @@ public class UserServiceImpl implements UserService {
         user.setIsCompany(false);
         user.setPassword(encodePassword(request.getPassword(), request.getEmail()));
         user.setVerified(true);
-        userRepository.save(user);
         saveCalendars(request, user);
+        userRepository.save(user);
         UserResponse response = userMapper.mapToModel(user);
         response.setToken(jwtService.createToken(user.getEmail(), user.getId()));
         return response;
@@ -201,10 +202,9 @@ public class UserServiceImpl implements UserService {
         calendar.setAccessToken(request.getToken());
         calendar.setRefreshToken(request.getRefreshToken());
         calendar.setType(request.getType());
-        calendar.setUser(user);
+        calendar.setUsers(Collections.singleton(user));
         calendar.setSocialMail(request.getSocialMediaMail());
         calendar.setExpireDate(request.getExpireDate());
         user.getCalendars().add(calendar);
-        calendarRepository.save(calendar);
     }
 }

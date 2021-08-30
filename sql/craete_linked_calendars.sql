@@ -7,12 +7,7 @@ create table linked_calendars
     type          varchar(25)  not null,
     token         text         not null,
     refresh_token text,
-    expire_date   timestamp    not null,
-    user_id       bigint       not null
+    expire_date   timestamp    not null
 );
-
-create
-index linked_calendars_user_id_index
-	on linked_calendars (user_id);
 
 
