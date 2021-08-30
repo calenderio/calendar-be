@@ -24,6 +24,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -190,6 +192,25 @@ public class UserServiceImpl implements UserService {
         return sb.toString();
     }
 
+    /**
+     * Add calendar to user
+     *
+     * @param request social login request
+     * @param user    details of user
+     */
+    private void saveCalendars(SocialUserCreateRequest request, User user) {
+        LinkedCalendar calendar = getCalendar(request.getSocialMediaMail());
+        if (calendar.getId() == null) {
+            calendar.setAccessToken(request.getToken());
+            calendar.setRefreshToken(request.getRefreshToken());
+            calendar.setType(request.getType());
+            calendar.setSocialMail(request.getSocialMediaMail());
+            calendar.setExpireDate(request.getExpireDate());
+        }
+        calendar.setUsers(Collections.singleton(user));
+        user.getCalendars().add(calendar);
+    }
+
     private void ifUserExistWithError(String mail) {
         if (userRepository.existsByEmail(mail)) {
             throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.USER_FOUND),
@@ -197,14 +218,8 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void saveCalendars(SocialUserCreateRequest request, User user) {
-        LinkedCalendar calendar = new LinkedCalendar();
-        calendar.setAccessToken(request.getToken());
-        calendar.setRefreshToken(request.getRefreshToken());
-        calendar.setType(request.getType());
-        calendar.setUsers(Collections.singleton(user));
-        calendar.setSocialMail(request.getSocialMediaMail());
-        calendar.setExpireDate(request.getExpireDate());
-        user.getCalendars().add(calendar);
+    private LinkedCalendar getCalendar(String mail) {
+        return calendarRepository.findBySocialMail(mail).orElse(new LinkedCalendar());
     }
+
 }

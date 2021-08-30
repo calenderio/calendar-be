@@ -45,6 +45,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/document",
                         "/meet/schedule",
                         "/oauth2/**",
+                        "/favicon.ico",
                         "/login"
                 )
                 .pathMatcher(new AntPathMatcher());

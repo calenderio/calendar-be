@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -38,6 +39,6 @@ public class LinkedCalendar extends BaseEntity {
     private String accessToken;
     private LocalDateTime expireDate;
     @JsonBackReference
-    @ManyToMany(mappedBy = "calendars", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "calendars", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<User> users = new HashSet<>();
 }
