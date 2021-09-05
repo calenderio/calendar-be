@@ -6,7 +6,6 @@
  **/
 package com.io.fastmeet.core.security.handler;
 
-import com.google.gson.Gson;
 import com.io.fastmeet.core.security.encrypt.TokenEncryptor;
 import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.core.security.jwt.JWTUtil;
@@ -19,6 +18,7 @@ import com.io.fastmeet.services.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -59,6 +59,9 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
     @Autowired
     private RevokeTokenService revokeTokenService;
 
+    @Value("${system.redirect.url}")
+    private String redirectUri;
+
     public LoginHandler() {
         setUseReferer(true);
     }
@@ -82,7 +85,8 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
             } else {
                 userResponse = new UserResponse();
             }
-            response.getWriter().write(new Gson().toJson(userResponse));
+            getRedirectStrategy().sendRedirect(request, response,
+                    String.format(redirectUri, userResponse.getToken().replace(jwtUtil.getTokenPrefix(), StringUtils.EMPTY)));
         }
     }
 
