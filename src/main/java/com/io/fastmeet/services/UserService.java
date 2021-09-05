@@ -30,4 +30,6 @@ public interface UserService {
 
     @Async
     void createValidationInfo(User user, String language);
+
+    UserResponse getUserDetailsFromToken(String token);
 }

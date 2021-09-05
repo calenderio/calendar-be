@@ -39,6 +39,11 @@ public class UserControllerImpl implements UserController {
         return ResponseEntity.ok(userService.loginUser(request));
     }
 
+    @Override
+    public ResponseEntity<UserResponse> getDetailsByToken(String token) {
+        return ResponseEntity.ok(userService.getUserDetailsFromToken(token));
+    }
+
     @PreAuthorize("hasRole('USER')")
     @RequestMapping(value = "/userping", method = RequestMethod.GET)
     public String userPing() {

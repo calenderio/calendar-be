@@ -8,11 +8,21 @@ package com.io.fastmeet.mappers;
 
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.models.responses.user.UserResponse;
+import com.io.fastmeet.utils.RoleUtil;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+
+import java.util.Collections;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
     UserResponse mapToModel(User entity);
+
+    @AfterMapping
+    default void mapRole(@MappingTarget UserResponse response, User entity) {
+        response.setRoles(Collections.singleton(RoleUtil.userRole(entity.getIsCompany())));
+    }
 
 }

@@ -5,6 +5,7 @@ create table users
             primary key,
     name       varchar(255)          not null,
     email      varchar(255)          not null,
+    picture    text,
     licence_id bigint,
     company_id bigint,
     is_company boolean default false not null,

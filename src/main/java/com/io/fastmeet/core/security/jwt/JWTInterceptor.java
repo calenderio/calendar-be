@@ -35,10 +35,12 @@ public class JWTInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
-        HandlerMethod hm = (HandlerMethod) handler;
-        if (hm.getMethod().getDeclaredAnnotation(SkipSecurity.class) != null ||
-                hm.getBeanType().getDeclaredAnnotation(SkipSecurity.class) != null) {
-            return true;
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod hm = (HandlerMethod) handler;
+            if (hm.getMethod().getDeclaredAnnotation(SkipSecurity.class) != null ||
+                    hm.getBeanType().getDeclaredAnnotation(SkipSecurity.class) != null) {
+                return true;
+            }
         }
         String token = request.getHeader(util.getHeaderString());
         if (token == null || !token.contains(util.getTokenPrefix()) || !jwtService.chechkIsValid(token)) {

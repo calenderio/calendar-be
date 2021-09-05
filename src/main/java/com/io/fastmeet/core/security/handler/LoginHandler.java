@@ -132,6 +132,9 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
     private SocialUserCreateRequest createSocialRequest(String userName, DefaultOAuth2User oicdUser, OAuth2AuthorizedClient user, CalendarProviderType providerType) {
         SocialUserCreateRequest createRequest = new SocialUserCreateRequest();
         createRequest.setEmail(userName);
+        if (oicdUser.getAttributes().get("picture") != null) {
+            createRequest.setPictureUrl(oicdUser.getAttributes().get("picture").toString());
+        }
         createRequest.setName(oicdUser.getAttributes().get("name").toString());
         createRequest.setPassword(UUID.randomUUID().toString());
         createRequest.setToken(tokenEncryptor.getEncryptedString(user.getAccessToken().getTokenValue()));

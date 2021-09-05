@@ -22,6 +22,7 @@ import com.io.fastmeet.models.responses.user.UserResponse;
 import com.io.fastmeet.repositories.LinkedCalendarRepository;
 import com.io.fastmeet.repositories.UserRepository;
 import com.io.fastmeet.repositories.ValidationRepository;
+import com.io.fastmeet.services.CloudinaryService;
 import com.io.fastmeet.services.MailService;
 import com.io.fastmeet.services.UserService;
 import com.io.fastmeet.utils.GeneralMessageUtil;
@@ -63,6 +64,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private MailService mailService;
 
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
     /**
      * This method creates new individual user
      *
@@ -96,6 +100,7 @@ public class UserServiceImpl implements UserService {
         user.setIsCompany(false);
         user.setPassword(encodePassword(request.getPassword(), request.getEmail()));
         user.setVerified(true);
+        user.setPicture(cloudinaryService.uploadPhoto(request.getPictureUrl(), request.getEmail()));
         addCalendar(request, user);
         userRepository.save(user);
         UserResponse response = userMapper.mapToModel(user);
@@ -199,6 +204,21 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * Get details by user token
+     *
+     * @param token user jwt
+     * @return User detail object
+     * @throws CalendarAppException if user not exist
+     * @see com.io.fastmeet.models.responses.user.UserResponse for return object details
+     */
+    @Override
+    public UserResponse getUserDetailsFromToken(String token) {
+        UserResponse response = userMapper.mapToModel(jwtService.getUserFromToken(token));
+        response.setToken(token);
+        return response;
+    }
+
+    /**
      * Encode user password for security
      * Combine username, usernameid and security
      *
@@ -241,6 +261,12 @@ public class UserServiceImpl implements UserService {
         user.getCalendars().add(calendar);
     }
 
+    /**
+     * Checks if user already added to db by user mail
+     *
+     * @param mail given mail address
+     * @throws CalendarAppException if user not exist
+     */
     private void ifUserExistWithError(String mail) {
         if (userRepository.existsByEmail(mail)) {
             throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.USER_FOUND),
@@ -248,6 +274,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Returns user calendar detail by mail
+     *
+     * @param mail user mail address
+     * @return calendar detail
+     */
     private LinkedCalendar getCalendar(String mail) {
         return calendarRepository.findBySocialMail(mail).orElse(new LinkedCalendar());
     }

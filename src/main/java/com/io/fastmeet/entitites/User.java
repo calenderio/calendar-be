@@ -31,6 +31,7 @@ public class User extends BaseEntity {
 
     private String name;
     private String email;
+    private String picture;
     private String password;
     private Boolean isCompany;
     private Boolean verified = Boolean.FALSE;

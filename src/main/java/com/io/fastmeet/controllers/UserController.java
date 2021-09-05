@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -45,5 +46,15 @@ public interface UserController {
                     schema = @Schema(implementation = ErrorData.class))})})
     @PostMapping(value = "/login")
     ResponseEntity<UserResponse> loginUser(@RequestBody AuthRequest request);
+
+    @Operation(summary = "Returns User Detail")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returns user details from user token",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponse.class))}),
+            @ApiResponse(responseCode = "400", description = "Creating user error", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorData.class))})})
+    @GetMapping(value = "/users")
+    ResponseEntity<UserResponse> getDetailsByToken(@RequestHeader(name = "Authorization") String token);
 
 }

@@ -28,5 +28,7 @@ public class UserResponse {
     private String token;
     @Schema(description = "If user verified", example = "true")
     private Boolean verified;
+    @Schema(description = "User picture url", example = "https://example.com/default.jpg")
+    private String picture;
 
 }

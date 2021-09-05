@@ -19,6 +19,7 @@ public class SocialUserCreateRequest extends UserCreateRequest {
 
     private String token;
     private String refreshToken;
+    private String pictureUrl;
     private CalendarProviderType type;
     private LocalDateTime expireDate;
     private String socialMediaMail;

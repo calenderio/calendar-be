@@ -10,6 +10,7 @@ import com.io.fastmeet.core.exception.CalendarAppException;
 import com.io.fastmeet.core.i18n.Translator;
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.services.UserService;
+import com.io.fastmeet.utils.RoleUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
@@ -72,7 +73,7 @@ public class JWTService {
                 .setExpiration(Timestamp.valueOf(LocalDateTime.now().plusHours(1)))
                 .claim("username", user.getEmail().toLowerCase())
                 .claim("id", user.getId())
-                .claim("roles", userRole(user.getIsCompany()))
+                .claim("roles", RoleUtil.userRole(user.getIsCompany()))
                 .signWith(signingKey)
                 .compact();
     }
@@ -159,10 +160,6 @@ public class JWTService {
                         .collect(Collectors.toList());
 
         return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
-    }
-
-    private String userRole(Boolean isCompany) {
-        return isCompany ? "ROLE_COMMERCIAL" : "ROLE_INDIVIDUAL";
     }
 
 }
