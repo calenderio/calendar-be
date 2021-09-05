@@ -8,6 +8,7 @@ package com.io.fastmeet.services.impl;
 
 import com.cloudinary.Cloudinary;
 import com.io.fastmeet.services.CloudinaryService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class CloudinaryServiceImpl implements CloudinaryService {
 
     @Value("${cloudinary.api_key}")
@@ -41,24 +43,30 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         cloudinary = new Cloudinary(cloudinaryMap);
     }
 
+    /**
+     * Uploads photo to cloudinary service by mail
+     *
+     * @param photoUrl url of photo for social logins
+     * @param userMail mail address
+     * @return null url
+     */
     @Override
     public String uploadPhoto(String photoUrl, String userMail) {
+        Map<String, Object> cloudinaryMap = new HashMap<>();
+        cloudinaryMap.put("folder", "fastmeet/profile");
+        cloudinaryMap.put("public_id", userMail);
+        cloudinaryMap.put("overwrite", true);
+        cloudinaryMap.put("use_filename", true);
         try {
-            Map<String, Object> cloudinaryMap = new HashMap<>();
-            cloudinaryMap.put("folder", "fastmeet/profile");
-            cloudinaryMap.put("public_id", userMail);
-            cloudinaryMap.put("overwrite", true);
-            cloudinaryMap.put("use_filename", true);
-            if (photoUrl == null) {
-                Map response = cloudinary.uploader().upload(blankUrl, cloudinaryMap);
-                return response.get("url").toString();
-            } else {
+            if (photoUrl != null) {
                 Map response = cloudinary.uploader().upload(photoUrl, cloudinaryMap);
                 return response.get("url").toString();
             }
+            Map response = cloudinary.uploader().upload(blankUrl, cloudinaryMap);
+            return response.get("url").toString();
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            log.error("User photo upload error", e.getMessage());
+            return blankUrl;
         }
     }
 }
