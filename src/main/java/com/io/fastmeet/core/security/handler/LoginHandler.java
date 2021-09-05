@@ -6,6 +6,7 @@
  **/
 package com.io.fastmeet.core.security.handler;
 
+import com.io.fastmeet.core.exception.UnknownException;
 import com.io.fastmeet.core.security.encrypt.TokenEncryptor;
 import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.core.security.jwt.JWTUtil;
@@ -16,6 +17,7 @@ import com.io.fastmeet.models.internals.SocialUserCreateRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
 import com.io.fastmeet.services.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,16 +31,17 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Objects;
 import java.util.UUID;
 
 @Component
+@Slf4j
 public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler, LogoutSuccessHandler {
 
     @Autowired
@@ -91,22 +94,22 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
     }
 
     private String checkAndLinkAccount(HttpServletRequest request, HttpSession session, DefaultOAuth2User oicdUser, CalendarProviderType type,
-                                       OAuth2AuthorizedClient oauth2User, String preferred_username) {
+                                       OAuth2AuthorizedClient oauth2User, String preferredUsername) {
         String userName;
         Object sessionObject = session.getAttribute(request.getParameter("state"));
         if (sessionObject != null && !StringUtils.isBlank(sessionObject.toString())) {
             try {
                 User user = jwtService.getUserFromToken(jwtUtil.getTokenPrefix() + sessionObject);
                 SocialUserCreateRequest createRequest = createSocialRequest(user.getName(), oicdUser, oauth2User, type);
-                createRequest.setSocialMediaMail(oicdUser.getAttribute(preferred_username));
+                createRequest.setSocialMediaMail(oicdUser.getAttribute(preferredUsername));
                 userService.addNewLinkToUser(user, createRequest);
                 userName = user.getEmail();
             } catch (ExpiredJwtException e) {
-                revokeTokenService.revoke(oauth2User.getRefreshToken().getTokenValue(), type);
-                throw new RuntimeException("");
+                revokeTokenService.revoke(Objects.requireNonNull(oauth2User.getRefreshToken()).getTokenValue(), type);
+                throw new UnknownException(StringUtils.EMPTY);
             }
         } else {
-            userName = oicdUser.getAttribute(preferred_username);
+            userName = oicdUser.getAttribute(preferredUsername);
         }
         return userName;
     }
@@ -138,14 +141,14 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
         createRequest.setName(oicdUser.getAttributes().get("name").toString());
         createRequest.setPassword(UUID.randomUUID().toString());
         createRequest.setToken(tokenEncryptor.getEncryptedString(user.getAccessToken().getTokenValue()));
-        createRequest.setRefreshToken(tokenEncryptor.getEncryptedString(user.getRefreshToken().getTokenValue()));
-        createRequest.setExpireDate(LocalDateTime.ofInstant(user.getAccessToken().getExpiresAt(), ZoneId.of("UTC")));
+        createRequest.setRefreshToken(tokenEncryptor.getEncryptedString(Objects.requireNonNull(user.getRefreshToken()).getTokenValue()));
+        createRequest.setExpireDate(LocalDateTime.ofInstant(Objects.requireNonNull(user.getAccessToken().getExpiresAt()), ZoneId.of("UTC")));
         createRequest.setType(providerType);
         return createRequest;
     }
 
     @Override
-    public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
-
+    public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) {
+        log.info("Logout Success");
     }
 }

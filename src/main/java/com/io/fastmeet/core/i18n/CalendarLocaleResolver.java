@@ -23,7 +23,6 @@ public class CalendarLocaleResolver extends AcceptHeaderLocaleResolver {
             return Locale.getDefault();
         }
         List<Locale.LanguageRange> list = Locale.LanguageRange.parse(request.getHeader("Accept-Language"));
-        Locale locale = Locale.lookup(list, locales);
-        return locale;
+        return Locale.lookup(list, locales);
     }
 }
