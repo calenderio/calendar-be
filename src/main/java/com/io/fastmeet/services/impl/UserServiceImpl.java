@@ -11,23 +11,31 @@ import com.io.fastmeet.core.i18n.Translator;
 import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.entitites.LinkedCalendar;
 import com.io.fastmeet.entitites.User;
+import com.io.fastmeet.entitites.Validation;
+import com.io.fastmeet.enums.ValidationType;
 import com.io.fastmeet.mappers.UserMapper;
+import com.io.fastmeet.models.internals.GenericMailRequest;
 import com.io.fastmeet.models.internals.SocialUserCreateRequest;
 import com.io.fastmeet.models.requests.user.AuthRequest;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
 import com.io.fastmeet.repositories.LinkedCalendarRepository;
 import com.io.fastmeet.repositories.UserRepository;
+import com.io.fastmeet.repositories.ValidationRepository;
+import com.io.fastmeet.services.MailService;
 import com.io.fastmeet.services.UserService;
 import com.io.fastmeet.utils.GeneralMessageUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -41,6 +49,9 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private ValidationRepository validationRepository;
+
+    @Autowired
     private LinkedCalendarRepository calendarRepository;
 
     @Autowired
@@ -48,6 +59,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private MailService mailService;
 
     /**
      * This method creates new individual user
@@ -62,9 +76,10 @@ public class UserServiceImpl implements UserService {
         user.setName(request.getName());
         user.setIsCompany(false);
         user.setPassword(encodePassword(request.getPassword(), request.getEmail()));
-        user = userRepository.save(user);
+        userRepository.save(user);
+        createValidationInfo(user, "tr_TR");
         UserResponse response = userMapper.mapToModel(user);
-        response.setToken(jwtService.createToken(user.getEmail(), user.getId()));
+        response.setToken(jwtService.createToken(user));
         return response;
     }
 
@@ -84,7 +99,7 @@ public class UserServiceImpl implements UserService {
         addCalendar(request, user);
         userRepository.save(user);
         UserResponse response = userMapper.mapToModel(user);
-        response.setToken(jwtService.createToken(user.getEmail(), user.getId()));
+        response.setToken(jwtService.createToken(user));
         return response;
     }
 
@@ -103,7 +118,7 @@ public class UserServiceImpl implements UserService {
                         GeneralMessageUtil.USR_NOT_FOUND));
         if (encodePassword(authRequest.getPassword(), user.getEmail().toLowerCase()).equals(user.getPassword())) {
             UserResponse userResponse = userMapper.mapToModel(user);
-            userResponse.setToken(jwtService.createToken(authRequest.getUsername(), user.getId()));
+            userResponse.setToken(jwtService.createToken(user));
             return userResponse;
         }
         throw new CalendarAppException(HttpStatus.FORBIDDEN, Translator.getMessage("error.user.password"), "PWD_ERR");
@@ -132,7 +147,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.USER_NOT_FOUND),
                         GeneralMessageUtil.USR_NOT_FOUND));
         UserResponse userResponse = userMapper.mapToModel(user);
-        userResponse.setToken(jwtService.createToken(email, user.getId()));
+        userResponse.setToken(jwtService.createToken(user));
         return userResponse;
     }
 
@@ -144,16 +159,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean ifUserExist(String mail) {
         return userRepository.existsByEmail(mail);
-    }
-
-    /**
-     * Checks if user exist or not
-     *
-     * @param user user object
-     */
-    @Override
-    public User saveUser(User user) {
-        return userRepository.save(user);
     }
 
     /**
@@ -172,6 +177,25 @@ public class UserServiceImpl implements UserService {
         }
         addCalendar(request, user);
         userRepository.save(user);
+    }
+
+    /**
+     * Create new validation information for user
+     *
+     * @param user
+     * @param language validation mail langugage
+     */
+    @Override
+    @Async
+    public void createValidationInfo(User user, String language) {
+        Validation validation = validationRepository.findByMailAndType(user.getEmail(), ValidationType.EMAIL).orElse(new Validation());
+        validation.setUserId(user.getId());
+        validation.setCode(gen());
+        validation.setMail(user.getEmail());
+        validation.setDate(LocalDateTime.now());
+        validation.setType(ValidationType.EMAIL);
+        validationRepository.save(validation);
+        mailService.sendMailValidation(new GenericMailRequest(user.getEmail(), user.getName(), gen(), language));
     }
 
     /**
@@ -226,6 +250,17 @@ public class UserServiceImpl implements UserService {
 
     private LinkedCalendar getCalendar(String mail) {
         return calendarRepository.findBySocialMail(mail).orElse(new LinkedCalendar());
+    }
+
+    /**
+     * Generates code
+     *
+     * @return code
+     */
+    public String gen() {
+        SecureRandom random = new SecureRandom();
+        int num = random.nextInt(1000000);
+        return String.format("%06d", num);
     }
 
 }

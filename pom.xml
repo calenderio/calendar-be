@@ -183,6 +183,7 @@
                                 <srcFile>sql/create_users.sql</srcFile>
                                 <srcFile>sql/craete_linked_calendars.sql</srcFile>
                                 <srcFile>sql/create_user_calendars.sql</srcFile>
+                                <srcFile>sql/create_validations.sql</srcFile>
                             </srcFiles>
                         </configuration>
                     </execution>

@@ -3,5 +3,6 @@ drop table IF EXISTS
     licences,
     companies,
     linked_calendars,
+    validations,
     user_calendars
 ;

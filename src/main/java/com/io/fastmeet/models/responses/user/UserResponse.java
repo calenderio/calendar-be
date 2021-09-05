@@ -26,5 +26,7 @@ public class UserResponse {
     private Set<LinkedCalendarResponse> calendars;
     @Schema(description = "JWT token of user", example = "Bearer aksdkasjdjalkdjklajldkjaldjasd")
     private String token;
+    @Schema(description = "If user verified", example = "true")
+    private Boolean verified;
 
 }

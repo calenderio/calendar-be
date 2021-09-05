@@ -60,20 +60,19 @@ public class JWTService {
     /**
      * Creates token for logged in user
      *
-     * @param userName user Name
-     * @param id       user id
+     * @param user user details
      * @return user token
      */
-    public String createToken(String userName, Long id) {
+    public String createToken(User user) {
         return util.getTokenPrefix() + Jwts.builder()
                 .setIssuer("FastMeet API")
                 .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
-                .setSubject(userName)
+                .setSubject(user.getEmail())
                 .setAudience("FastMeet")
                 .setExpiration(Timestamp.valueOf(LocalDateTime.now().plusHours(1)))
-                .claim("username", userName.toLowerCase())
-                .claim("id", id)
-                .claim("roles", id)
+                .claim("username", user.getEmail().toLowerCase())
+                .claim("id", user.getId())
+                .claim("roles", userRole(user.getIsCompany()))
                 .signWith(signingKey)
                 .compact();
     }
@@ -148,18 +147,22 @@ public class JWTService {
      * @param userDetails details
      * @return spring object
      */
-    UsernamePasswordAuthenticationToken getAuthenticationToken(final String token, final User userDetails) {
+    public UsernamePasswordAuthenticationToken getAuthenticationToken(final String token, final User userDetails) {
 
         final Claims claims = getJwtToken(token);
 
         final Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(new String[]{
-                        "ROLE_USER"
+                        claims.get("roles").toString()
                 })
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
         return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
+    }
+
+    private String userRole(Boolean isCompany) {
+        return isCompany ? "ROLE_COMMERCIAL" : "ROLE_INDIVIDUAL";
     }
 
 }
