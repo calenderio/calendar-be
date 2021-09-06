@@ -9,7 +9,8 @@ package com.io.fastmeet.core.security.jwt;
 import com.io.fastmeet.core.exception.CalendarAppException;
 import com.io.fastmeet.core.i18n.Translator;
 import com.io.fastmeet.entitites.User;
-import com.io.fastmeet.services.UserService;
+import com.io.fastmeet.repositories.UserRepository;
+import com.io.fastmeet.utils.GeneralMessageUtil;
 import com.io.fastmeet.utils.RoleUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -43,7 +44,7 @@ public class JWTService {
     private JWTUtil util;
 
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
 
     private Key signingKey;
 
@@ -96,7 +97,7 @@ public class JWTService {
      * @return user data
      */
     public User getUserFromToken(String token) {
-        return userService.findById(getIdFromToken(token));
+        return findById(getIdFromToken(token));
     }
 
     /**
@@ -105,8 +106,8 @@ public class JWTService {
      * @param token user token
      * @return valid or not
      */
-    public boolean chechkIsValid(String token) {
-        User user = userService.findById(getIdFromToken(token));
+    public boolean checkIsValid(String token) {
+        User user = findById(getIdFromToken(token));
         Claims claims = getJwtToken(token);
         return user != null && user.getEmail().equals(claims.get("username"));
     }
@@ -160,6 +161,17 @@ public class JWTService {
                         .collect(Collectors.toList());
 
         return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
+    }
+
+    /**
+     * This method creates new individual user
+     *
+     * @param id id of user
+     */
+    private User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.USER_NOT_FOUND),
+                        GeneralMessageUtil.USR_NOT_FOUND));
     }
 
 }
