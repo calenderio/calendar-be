@@ -12,7 +12,7 @@ import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.entitites.LinkedCalendar;
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.mappers.UserMapper;
-import com.io.fastmeet.models.internals.SocialUserCreateRequest;
+import com.io.fastmeet.models.internals.requests.SocialUserCreateRequest;
 import com.io.fastmeet.models.requests.user.AuthRequest;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;

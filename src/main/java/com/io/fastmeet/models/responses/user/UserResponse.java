@@ -6,6 +6,7 @@
  **/
 package com.io.fastmeet.models.responses.user;
 
+import com.io.fastmeet.enums.LicenceTypes;
 import com.io.fastmeet.models.responses.calendar.LinkedCalendarResponse;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,5 +27,7 @@ public class UserResponse {
     private Set<LinkedCalendarResponse> calendars;
     @Schema(description = "JWT token of user", example = "Bearer aksdkasjdjalkdjklajldkjaldjasd")
     private String token;
+    @Schema (description = "LicenseType", example = "FREE_TRIAL")
+    private LicenceTypes licenceType ;
 
 }

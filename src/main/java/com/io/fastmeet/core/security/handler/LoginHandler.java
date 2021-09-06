@@ -8,7 +8,7 @@ package com.io.fastmeet.core.security.handler;
 
 import com.google.gson.Gson;
 import com.io.fastmeet.enums.CalendarProviderType;
-import com.io.fastmeet.models.internals.SocialUserCreateRequest;
+import com.io.fastmeet.models.internals.requests.SocialUserCreateRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
 import com.io.fastmeet.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

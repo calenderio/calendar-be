@@ -6,11 +6,13 @@
  **/
 package com.io.fastmeet.models.requests.user;
 
+import com.io.fastmeet.enums.LicenceTypes;
 import com.io.fastmeet.validators.Password;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
@@ -31,5 +33,6 @@ public class UserCreateRequest {
     @NotBlank
     @Email(message = "{email.not.valid}")
     private String email;
+
 
 }
