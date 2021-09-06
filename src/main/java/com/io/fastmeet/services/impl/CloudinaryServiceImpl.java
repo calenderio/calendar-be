@@ -59,10 +59,10 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         cloudinaryMap.put("use_filename", true);
         try {
             if (photoUrl != null) {
-                Map response = cloudinary.uploader().upload(photoUrl, cloudinaryMap);
+                Map<String, Object> response = cloudinary.uploader().upload(photoUrl, cloudinaryMap);
                 return response.get("url").toString();
             }
-            Map response = cloudinary.uploader().upload(blankUrl, cloudinaryMap);
+            Map<String, Object> response = cloudinary.uploader().upload(blankUrl, cloudinaryMap);
             return response.get("url").toString();
         } catch (Exception e) {
             log.error("User photo upload error {}", e.getMessage());

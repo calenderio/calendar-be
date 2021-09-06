@@ -6,6 +6,10 @@
  **/
 package com.io.fastmeet.utils;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GeneralMessageUtil {
 
     public static final String USER_NOT_FOUND = "error.username.not.found";

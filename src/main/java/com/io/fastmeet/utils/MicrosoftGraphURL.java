@@ -6,6 +6,10 @@
  **/
 package com.io.fastmeet.utils;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MicrosoftGraphURL {
 
     public static final String CREATE_CALENDAR_URL = "https://graph.microsoft.com/v1.0/me/events";

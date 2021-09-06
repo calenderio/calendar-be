@@ -6,6 +6,10 @@
  **/
 package com.io.fastmeet.utils;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RoleUtil {
 
     public static String userRole(Boolean isCompany) {

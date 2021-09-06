@@ -6,6 +6,10 @@
  **/
 package com.io.fastmeet.utils;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GoogleApiURL {
 
     public static final String REFRESH_TOKEN = "https://oauth2.googleapis.com/token";

@@ -15,6 +15,7 @@ import com.io.fastmeet.models.remotes.google.GoogleCalendarEventsRequest;
 import com.io.fastmeet.models.remotes.google.TokenRefreshResponse;
 import com.io.fastmeet.services.GoogleService;
 import com.io.fastmeet.utils.GeneralMessageUtil;
+import com.io.fastmeet.utils.GenericHttpRequestUtil;
 import com.io.fastmeet.utils.GenericProviderUtil;
 import com.io.fastmeet.utils.GoogleApiURL;
 import org.apache.commons.lang3.StringUtils;
@@ -65,7 +66,7 @@ public class GoogleServiceImpl implements GoogleService {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(builder.build().toString()))
-                .header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .header(GenericHttpRequestUtil.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .header(GenericProviderUtil.AUTHORIZATION,
                         "Bearer " + request.getAccessToken()
                 )
@@ -75,6 +76,7 @@ public class GoogleServiceImpl implements GoogleService {
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             GoogleCalendarEventResponse googleResponse = new Gson().fromJson(response.body(), GoogleCalendarEventResponse.class);
         } catch (Exception e) {
+            Thread.currentThread().interrupt();
             throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.EXTERNAL_APP_MSG, CalendarProviderType.GOOGLE.name()),
                     GeneralMessageUtil.EXTERNAL_APP);
         }
@@ -94,13 +96,14 @@ public class GoogleServiceImpl implements GoogleService {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(GoogleApiURL.REFRESH_TOKEN))
-                .header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .header(GenericHttpRequestUtil.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .POST(HttpRequest.BodyPublishers.ofString(form))
                 .build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return new Gson().fromJson(response.body(), TokenRefreshResponse.class);
         } catch (Exception e) {
+            Thread.currentThread().interrupt();
             throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.EXTERNAL_APP_MSG, CalendarProviderType.GOOGLE.name()),
                     GeneralMessageUtil.EXTERNAL_APP);
         }
@@ -111,12 +114,13 @@ public class GoogleServiceImpl implements GoogleService {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(String.format(GoogleApiURL.REVOKE_TOKEN, refreshToken)))
-                .header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .header(GenericHttpRequestUtil.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .POST(HttpRequest.BodyPublishers.noBody())
                 .build();
         try {
             client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception e) {
+            Thread.currentThread().interrupt();
             throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.EXTERNAL_APP_MSG, CalendarProviderType.GOOGLE.name()),
                     GeneralMessageUtil.EXTERNAL_APP);
         }
