@@ -5,7 +5,7 @@ create table validations
             primary key,
     user_id bigint       not null,
     mail    varchar(255) not null,
-    code    varchar(6)   not null,
+    code    varchar(50)  not null,
     type    varchar(10)  not null,
     date    timestamp    not null
 );

@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 public class ValidationRequest {
 
     @NotNull
-    @Length(min = 6, max = 6)
+    @Length(min = 50, max = 50)
     @Schema(description = "Validation code", example = "000000", required = true)
     private String code;
 

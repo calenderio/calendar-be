@@ -28,6 +28,7 @@ import com.io.fastmeet.services.MailService;
 import com.io.fastmeet.services.UserService;
 import com.io.fastmeet.utils.GeneralMessageUtil;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
@@ -36,7 +37,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
@@ -201,12 +201,12 @@ public class UserServiceImpl implements UserService {
     public void createValidationInfo(User user, String language) {
         Validation validation = validationRepository.findByMailAndType(user.getEmail(), ValidationType.EMAIL).orElse(new Validation());
         validation.setUserId(user.getId());
-        validation.setCode(gen());
+        validation.setCode(RandomStringUtils.randomAlphabetic(50));
         validation.setMail(user.getEmail());
         validation.setDate(LocalDateTime.now());
         validation.setType(ValidationType.EMAIL);
         validationRepository.save(validation);
-        mailService.sendMailValidation(new GenericMailRequest(user.getEmail(), user.getName(), gen(), language));
+        mailService.sendMailValidation(new GenericMailRequest(user.getEmail(), user.getName(), validation.getCode(), language));
     }
 
     /**
@@ -288,17 +288,6 @@ public class UserServiceImpl implements UserService {
      */
     private LinkedCalendar getCalendar(String mail) {
         return calendarRepository.findBySocialMail(mail).orElse(new LinkedCalendar());
-    }
-
-    /**
-     * Generates code
-     *
-     * @return code
-     */
-    private String gen() {
-        SecureRandom random = new SecureRandom();
-        int num = random.nextInt(1000000);
-        return String.format("%06d", num);
     }
 
 }

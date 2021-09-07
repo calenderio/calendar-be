@@ -34,6 +34,14 @@
                 <db.password>123456</db.password>
             </properties>
         </profile>
+        <profile>
+            <id>heroku</id>
+            <properties>
+                <db.url>jdbc:postgresql://ec2-54-74-14-109.eu-west-1.compute.amazonaws.com:5432/d1np0rn6s94c5r</db.url>
+                <db.username>egonruitgiffqn</db.username>
+                <db.password>0cac00a32a7b15e8f0d849edd8434428128ad9a9d0c30b1ca4d9b8b82aac292d</db.password>
+            </properties>
+        </profile>
     </profiles>
     <dependencies>
         <dependency>
