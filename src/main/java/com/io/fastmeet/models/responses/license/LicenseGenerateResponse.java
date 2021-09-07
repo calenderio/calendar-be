@@ -3,9 +3,11 @@ package com.io.fastmeet.models.responses.license;
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.enums.LicenceTypes;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@Data
 public class LicenseGenerateResponse {
 
     @Schema(description = "User of license", example = "User")
