@@ -1,7 +1,6 @@
 package com.io.fastmeet.services.impl;
 
 import com.io.fastmeet.entitites.Licence;
-import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.enums.LicenceTypes;
 import com.io.fastmeet.repositories.LicenceRepository;
 import com.io.fastmeet.services.LicenceService;
@@ -18,15 +17,14 @@ public class LicenceServiceImpl implements LicenceService {
     private LicenceRepository licenceRepository;
 
     @Override
-    public Licence generateFreeTrial(User user) {
+    public Licence generateFreeTrial() {
         UUID licenseKey = UUID.randomUUID();
         Licence licence = new Licence();
-        licence.setUser(user);
         licence.setActivationDate(LocalDateTime.now());
         licence.setEndDate(LocalDateTime.now().plusMonths(1));
         licence.setLicenceKey(licenseKey.toString());
         licence.setLicenceType(LicenceTypes.FREE_TRIAL);
-        return licence;
+        return licenceRepository.save(licence);
     }
 
     @Override

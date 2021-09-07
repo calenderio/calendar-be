@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
         user.setName(request.getName());
         user.setIsCompany(false);
         user.setPassword(encodePassword(request.getPassword(), request.getEmail()));
-        user.setLicence(licenceService.generateFreeTrial(user));
+        user.setLicence(licenceService.generateFreeTrial());
         userRepository.save(user);
         createValidationInfo(user, "tr_TR");
         UserResponse response = userMapper.mapToModel(user);
@@ -105,7 +105,7 @@ public class UserServiceImpl implements UserService {
         user.setIsCompany(false);
         user.setPassword(encodePassword(request.getPassword(), request.getEmail()));
         user.setVerified(true);
-        user.setLicence(licenceService.generateFreeTrial(user));
+        user.setLicence(licenceService.generateFreeTrial());
         user.setPicture(cloudinaryService.uploadPhoto(request.getPictureUrl(), request.getEmail()));
         addCalendar(request, user);
         userRepository.save(user);

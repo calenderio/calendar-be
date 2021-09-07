@@ -5,9 +5,9 @@ create table licences
             primary key,
     licence_key     text        not null,
     activation_date timestamp   not null,
-    end_date timestamp   not null,
+    end_date        timestamp   not null,
     type            varchar(10) not null,
-    company_id bigint
+    company_id      bigint
 );
 
 create

@@ -107,7 +107,7 @@ class UserServiceImplTest {
         userResponse.setLicence(new LicenseResponse());
         when(jwtService.createToken(any())).thenReturn("Bearer token123");
         when(userMapper.mapToModel(any())).thenReturn(userResponse);
-        when(licenceService.generateFreeTrial(any())).thenReturn(new Licence());
+        when(licenceService.generateFreeTrial()).thenReturn(new Licence());
         UserResponse userResponse1 = userService.socialSignUp(createRequest);
         assertEquals(userResponse.getName(), userResponse1.getName());
         assertEquals("Bearer token123", userResponse1.getToken());
