@@ -10,11 +10,11 @@ import com.io.fastmeet.core.exception.UnknownException;
 import com.io.fastmeet.core.security.encrypt.TokenEncryptor;
 import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.core.security.jwt.JWTUtil;
-import com.io.fastmeet.core.services.RevokeTokenService;
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.enums.CalendarProviderType;
 import com.io.fastmeet.models.internals.requests.SocialUserCreateRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
+import com.io.fastmeet.services.GoogleService;
 import com.io.fastmeet.services.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +60,7 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
     private TokenEncryptor tokenEncryptor;
 
     @Autowired
-    private RevokeTokenService revokeTokenService;
+    private GoogleService googleService;
 
     @Value("${system.redirect.url}")
     private String redirectUri;
@@ -105,7 +105,7 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
                 userService.addNewLinkToUser(user, createRequest);
                 userName = user.getEmail();
             } catch (ExpiredJwtException e) {
-                revokeTokenService.revoke(Objects.requireNonNull(oauth2User.getRefreshToken()).getTokenValue(), type);
+                googleService.revokeToken(Objects.requireNonNull(oauth2User.getRefreshToken()).getTokenValue());
                 throw new UnknownException(StringUtils.EMPTY);
             }
         } else {
