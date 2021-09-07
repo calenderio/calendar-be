@@ -14,6 +14,7 @@ import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.entitites.Validation;
 import com.io.fastmeet.enums.ValidationType;
 import com.io.fastmeet.mappers.UserMapper;
+import com.io.fastmeet.models.internals.requests.SocialUserCreateRequest;
 import com.io.fastmeet.models.internals.GenericMailRequest;
 import com.io.fastmeet.models.internals.SocialUserCreateRequest;
 import com.io.fastmeet.models.requests.user.AuthRequest;

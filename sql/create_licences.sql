@@ -6,7 +6,6 @@ create table licences
     licence_key     text        not null,
     activation_date timestamp   not null,
     end_date timestamp   not null,
-    duration        int         not null,
     type            varchar(10) not null,
     company_id      bigint,
     user_id         bigint      not null

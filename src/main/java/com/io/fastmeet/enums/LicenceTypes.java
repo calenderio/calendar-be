@@ -2,6 +2,8 @@ package com.io.fastmeet.enums;
 
 public enum LicenceTypes {
 
-    INDIVIDUAL
+    FREE_TRIAL,
+    INDIVIDUAL,
+    COMMERCIAL;
 
 }

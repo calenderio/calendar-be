@@ -13,7 +13,7 @@ import com.io.fastmeet.core.security.jwt.JWTUtil;
 import com.io.fastmeet.core.services.RevokeTokenService;
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.enums.CalendarProviderType;
-import com.io.fastmeet.models.internals.SocialUserCreateRequest;
+import com.io.fastmeet.models.internals.requests.SocialUserCreateRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
 import com.io.fastmeet.services.UserService;
 import io.jsonwebtoken.ExpiredJwtException;

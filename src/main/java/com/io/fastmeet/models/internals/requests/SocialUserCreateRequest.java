@@ -4,7 +4,7 @@
  *
  * Copyright - Calendar App Java API
  **/
-package com.io.fastmeet.models.internals;
+package com.io.fastmeet.models.internals.requests;
 
 import com.io.fastmeet.enums.CalendarProviderType;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;

@@ -1,5 +1,6 @@
 package com.io.fastmeet.entitites;
 
+import com.io.fastmeet.enums.LicenceTypes;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,8 +19,7 @@ public class Licence extends BaseEntity {
 
     @OneToOne
     private User userId;
-    private int duration;
-    private char type;
+    private LicenceTypes licenceType ;
     private LocalDateTime activationDate;
     private LocalDateTime endDate;
     private String licenseKey;
