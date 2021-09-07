@@ -13,8 +13,6 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
-import java.util.Collections;
-
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
@@ -22,7 +20,7 @@ public interface UserMapper {
 
     @AfterMapping
     default void mapRole(@MappingTarget UserResponse response, User entity) {
-        response.setRoles(Collections.singleton(RoleUtil.userRole(entity.getIsCompany())));
+        response.setRoles(RoleUtil.userRole(entity.getLicence().getLicenceType()));
     }
 
 }

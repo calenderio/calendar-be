@@ -6,7 +6,7 @@ create table users
     name       varchar(255)          not null,
     email      varchar(255)          not null,
     picture    text,
-    licence_id bigint,
+    licence_id bigint                not null,
     company_id bigint,
     is_company boolean default false not null,
     verified   boolean default false not null,

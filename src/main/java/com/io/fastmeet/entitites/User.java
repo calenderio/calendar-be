@@ -18,6 +18,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,6 +37,12 @@ public class User extends BaseEntity {
     private Boolean isCompany;
     private Boolean verified = Boolean.FALSE;
     private Long companyId;
+
+    @JsonManagedReference
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @OneToOne(cascade = CascadeType.ALL)
+    private Licence licence;
 
     @JsonManagedReference
     @EqualsAndHashCode.Exclude

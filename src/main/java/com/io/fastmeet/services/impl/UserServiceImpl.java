@@ -14,9 +14,8 @@ import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.entitites.Validation;
 import com.io.fastmeet.enums.ValidationType;
 import com.io.fastmeet.mappers.UserMapper;
-import com.io.fastmeet.models.internals.requests.SocialUserCreateRequest;
 import com.io.fastmeet.models.internals.GenericMailRequest;
-import com.io.fastmeet.models.internals.SocialUserCreateRequest;
+import com.io.fastmeet.models.internals.requests.SocialUserCreateRequest;
 import com.io.fastmeet.models.requests.user.AuthRequest;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
@@ -24,6 +23,7 @@ import com.io.fastmeet.repositories.LinkedCalendarRepository;
 import com.io.fastmeet.repositories.UserRepository;
 import com.io.fastmeet.repositories.ValidationRepository;
 import com.io.fastmeet.services.CloudinaryService;
+import com.io.fastmeet.services.LicenceService;
 import com.io.fastmeet.services.MailService;
 import com.io.fastmeet.services.UserService;
 import com.io.fastmeet.utils.GeneralMessageUtil;
@@ -66,6 +66,9 @@ public class UserServiceImpl implements UserService {
     private MailService mailService;
 
     @Autowired
+    private LicenceService licenceService;
+
+    @Autowired
     private CloudinaryService cloudinaryService;
 
     /**
@@ -81,6 +84,7 @@ public class UserServiceImpl implements UserService {
         user.setName(request.getName());
         user.setIsCompany(false);
         user.setPassword(encodePassword(request.getPassword(), request.getEmail()));
+        user.setLicence(licenceService.generateFreeTrial(user));
         userRepository.save(user);
         createValidationInfo(user, "tr_TR");
         UserResponse response = userMapper.mapToModel(user);
@@ -101,6 +105,7 @@ public class UserServiceImpl implements UserService {
         user.setIsCompany(false);
         user.setPassword(encodePassword(request.getPassword(), request.getEmail()));
         user.setVerified(true);
+        user.setLicence(licenceService.generateFreeTrial(user));
         user.setPicture(cloudinaryService.uploadPhoto(request.getPictureUrl(), request.getEmail()));
         addCalendar(request, user);
         userRepository.save(user);
@@ -290,7 +295,7 @@ public class UserServiceImpl implements UserService {
      *
      * @return code
      */
-    public String gen() {
+    private String gen() {
         SecureRandom random = new SecureRandom();
         int num = random.nextInt(1000000);
         return String.format("%06d", num);

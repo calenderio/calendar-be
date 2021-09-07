@@ -6,8 +6,8 @@
  **/
 package com.io.fastmeet.models.responses.user;
 
-import com.io.fastmeet.enums.LicenceTypes;
 import com.io.fastmeet.models.responses.calendar.LinkedCalendarResponse;
+import com.io.fastmeet.models.responses.license.LicenseResponse;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -27,11 +27,11 @@ public class UserResponse {
     private Set<LinkedCalendarResponse> calendars;
     @Schema(description = "JWT token of user", example = "Bearer aksdkasjdjalkdjklajldkjaldjasd")
     private String token;
-    @Schema (description = "LicenseType", example = "FREE_TRIAL")
-    private LicenceTypes licenceType ;
     @Schema(description = "If user verified", example = "true")
     private Boolean verified;
     @Schema(description = "User picture url", example = "https://example.com/default.jpg")
     private String picture;
+    @Schema(description = "Licence details", implementation = LicenseResponse.class)
+    private LicenseResponse licence;
 
 }

@@ -9,16 +9,19 @@ package com.io.fastmeet.services.impl;
 import com.io.fastmeet.core.exception.CalendarAppException;
 import com.io.fastmeet.core.i18n.Translator;
 import com.io.fastmeet.core.security.jwt.JWTService;
+import com.io.fastmeet.entitites.Licence;
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.mappers.UserMapper;
-import com.io.fastmeet.models.internals.SocialUserCreateRequest;
+import com.io.fastmeet.models.internals.requests.SocialUserCreateRequest;
 import com.io.fastmeet.models.requests.user.AuthRequest;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;
+import com.io.fastmeet.models.responses.license.LicenseResponse;
 import com.io.fastmeet.models.responses.user.UserResponse;
 import com.io.fastmeet.repositories.LinkedCalendarRepository;
 import com.io.fastmeet.repositories.UserRepository;
 import com.io.fastmeet.repositories.ValidationRepository;
 import com.io.fastmeet.services.CloudinaryService;
+import com.io.fastmeet.services.LicenceService;
 import com.io.fastmeet.services.MailService;
 import com.io.fastmeet.utils.GeneralMessageUtil;
 import org.junit.jupiter.api.BeforeAll;
@@ -35,6 +38,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -62,6 +66,9 @@ class UserServiceImplTest {
 
     @Mock
     private CloudinaryService cloudinaryService;
+
+    @Mock
+    private LicenceService licenceService;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -97,11 +104,14 @@ class UserServiceImplTest {
         createRequest.setPassword("Password");
         UserResponse userResponse = new UserResponse();
         userResponse.setName("Example");
+        userResponse.setLicence(new LicenseResponse());
         when(jwtService.createToken(any())).thenReturn("Bearer token123");
         when(userMapper.mapToModel(any())).thenReturn(userResponse);
+        when(licenceService.generateFreeTrial(any())).thenReturn(new Licence());
         UserResponse userResponse1 = userService.socialSignUp(createRequest);
         assertEquals(userResponse.getName(), userResponse1.getName());
         assertEquals("Bearer token123", userResponse1.getToken());
+        assertNotNull(userResponse1.getLicence());
     }
 
     @Test
