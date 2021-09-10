@@ -7,7 +7,7 @@
 package com.io.fastmeet.controllers.impl;
 
 import com.io.fastmeet.controllers.CalendarController;
-import com.io.fastmeet.models.requests.calendar.CalendarEventsRequest;
+import com.io.fastmeet.models.requests.calendar.CalendarTypeCreateRequest;
 import com.io.fastmeet.services.CalendarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +22,8 @@ public class CalendarControllerImpl implements CalendarController {
     private CalendarService calendarService;
 
     @Override
-    public ResponseEntity<Void> getCalendars(@Valid CalendarEventsRequest request, String token) {
-        calendarService.getCalendars(request, token);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> createCalendarType(@Valid CalendarTypeCreateRequest request, String token) {
+        return null;
     }
+
 }

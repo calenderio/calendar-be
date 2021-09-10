@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class CalendarLocaleResolver extends AcceptHeaderLocaleResolver {
-    List<Locale> locales = Arrays.asList(new Locale("tr"));
+    List<Locale> locales = Arrays.asList(new Locale("en"));
 
     @Override
     public Locale resolveLocale(HttpServletRequest request) {

@@ -11,7 +11,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ValidationMailDTO {
+public class MailValidation {
 
     private String templateName;
     private String header;

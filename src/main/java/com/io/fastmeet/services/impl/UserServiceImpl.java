@@ -12,10 +12,11 @@ import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.entitites.LinkedCalendar;
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.entitites.Validation;
+import com.io.fastmeet.enums.AppProviderType;
 import com.io.fastmeet.enums.ValidationType;
 import com.io.fastmeet.mappers.UserMapper;
 import com.io.fastmeet.models.internals.GenericMailRequest;
-import com.io.fastmeet.models.internals.requests.SocialUserCreateRequest;
+import com.io.fastmeet.models.internals.SocialUser;
 import com.io.fastmeet.models.requests.user.AuthRequest;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
@@ -41,6 +42,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,6 +85,8 @@ public class UserServiceImpl implements UserService {
         user.setEmail(request.getEmail());
         user.setName(request.getName());
         user.setIsCompany(false);
+        user.setTimeZone(TimeZone.getTimeZone(request.getTimeZone()) != null ?
+                TimeZone.getTimeZone(request.getTimeZone()).getID() : TimeZone.getDefault().getID());
         user.setPassword(encodePassword(request.getPassword(), request.getEmail()));
         user.setLicence(licenceService.generateFreeTrial());
         userRepository.save(user);
@@ -98,7 +102,7 @@ public class UserServiceImpl implements UserService {
      * @param request user details
      */
     @Override
-    public UserResponse socialSignUp(SocialUserCreateRequest request) {
+    public UserResponse socialSignUp(SocialUser request) {
         User user = new User();
         user.setEmail(request.getEmail());
         user.setName(request.getName());
@@ -107,6 +111,7 @@ public class UserServiceImpl implements UserService {
         user.setVerified(true);
         user.setLicence(licenceService.generateFreeTrial());
         user.setPicture(cloudinaryService.uploadPhoto(request.getPictureUrl(), request.getEmail()));
+        user.setTimeZone(request.getTimeZone());
         addCalendar(request, user);
         userRepository.save(user);
         UserResponse response = userMapper.mapToModel(user);
@@ -179,9 +184,9 @@ public class UserServiceImpl implements UserService {
      * @param user    user object
      */
     @Override
-    public void addNewLinkToUser(User user, SocialUserCreateRequest request) {
-        List<LinkedCalendar> userLink = user.getCalendars().stream().filter(item -> request.getSocialMediaMail().equals(item.getSocialMail()))
-                .collect(Collectors.toList());
+    public void addNewLinkToUser(User user, SocialUser request) {
+        List<LinkedCalendar> userLink = user.getCalendars().stream().filter(item -> request.getSocialMediaMail().equals(item.getSocialMail())
+                && request.getType().equals(item.getType())).collect(Collectors.toList());
         if (!userLink.isEmpty()) {
             throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage("error.linked"),
                     GeneralMessageUtil.LINKED);
@@ -250,8 +255,8 @@ public class UserServiceImpl implements UserService {
      * @param request social login request
      * @param user    details of user
      */
-    private void addCalendar(SocialUserCreateRequest request, User user) {
-        LinkedCalendar calendar = getCalendar(request.getSocialMediaMail());
+    private void addCalendar(SocialUser request, User user) {
+        LinkedCalendar calendar = getCalendar(request.getSocialMediaMail(), request.getType());
         if (calendar.getId() == null) {
             calendar.setAccessToken(request.getToken());
             calendar.setRefreshToken(request.getRefreshToken());
@@ -284,10 +289,11 @@ public class UserServiceImpl implements UserService {
      * Returns user calendar detail by mail
      *
      * @param mail user mail address
+     * @param type app provider type
      * @return calendar detail
      */
-    private LinkedCalendar getCalendar(String mail) {
-        return calendarRepository.findBySocialMail(mail).orElse(new LinkedCalendar());
+    private LinkedCalendar getCalendar(String mail, AppProviderType type) {
+        return calendarRepository.findBySocialMailAndType(mail, type).orElse(new LinkedCalendar());
     }
 
 }

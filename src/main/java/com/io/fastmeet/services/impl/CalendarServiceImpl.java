@@ -10,7 +10,7 @@ import com.io.fastmeet.core.security.encrypt.TokenEncryptor;
 import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.entitites.LinkedCalendar;
 import com.io.fastmeet.entitites.User;
-import com.io.fastmeet.enums.CalendarProviderType;
+import com.io.fastmeet.enums.AppProviderType;
 import com.io.fastmeet.mappers.CalendarMapper;
 import com.io.fastmeet.models.remotes.google.TokenRefreshResponse;
 import com.io.fastmeet.models.remotes.microsoft.MicrosoftCalendarEventsRequest;
@@ -56,34 +56,34 @@ public class CalendarServiceImpl implements CalendarService {
     }
 
     private void getGoogleCalendars(CalendarEventsRequest request, Set<LinkedCalendar> calendars, String userName) {
-//        List<LinkedCalendar> filtered = calendars.stream().filter(item -> CalendarProviderType.GOOGLE.equals(item.getType()))
+//        List<LinkedCalendar> filtered = calendars.stream().filter(item -> AppProviderType.GOOGLE.equals(item.getType()))
 //                .collect(Collectors.toList());
 //        if (!filtered.isEmpty()) {
 //            LinkedCalendar selected = filtered.get(0);
-//            checkAndCreateToken(filtered, selected, CalendarProviderType.GOOGLE);
+//            checkAndCreateToken(filtered, selected, AppProviderType.GOOGLE);
 //            GoogleCalendarEventsRequest eventsRequest = calendarMapper.mapToGoogle(request);
 //            eventsRequest.setUserName(userName);
 //            eventsRequest.setAccessToken(tokenEncryptor.getDecryptedString(selected.getAccessToken()));
 //            googleService.getCalendarEvents(eventsRequest);
 //        }
-        List<LinkedCalendar> filteredMicrosft = calendars.stream().filter(item -> CalendarProviderType.MICROSOFT.equals(item.getType()))
+        List<LinkedCalendar> filteredMicrosft = calendars.stream().filter(item -> AppProviderType.MICROSOFT.equals(item.getType()))
                 .collect(Collectors.toList());
         if (!filteredMicrosft.isEmpty()) {
             LinkedCalendar selected = filteredMicrosft.get(0);
-            checkAndCreateToken(filteredMicrosft, selected, CalendarProviderType.MICROSOFT);
+            checkAndCreateToken(filteredMicrosft, selected, AppProviderType.MICROSOFT);
             MicrosoftCalendarEventsRequest eventsRequest = calendarMapper.mapToMicrosoft(request);
             eventsRequest.setAccessToken(tokenEncryptor.getDecryptedString(selected.getAccessToken()));
             microsoftService.getCalendarEvents(eventsRequest);
         }
     }
 
-    private void checkAndCreateToken(List<LinkedCalendar> filtered, LinkedCalendar selected, CalendarProviderType type) {
+    private void checkAndCreateToken(List<LinkedCalendar> filtered, LinkedCalendar selected, AppProviderType type) {
         if (!LocalDateTime.now().plusSeconds(10).isBefore(filtered.get(0).getExpireDate())) {
             LocalDateTime callTime = LocalDateTime.now();
             TokenRefreshResponse response = new TokenRefreshResponse();
-            if (CalendarProviderType.GOOGLE.equals(type)) {
+            if (AppProviderType.GOOGLE.equals(type)) {
                 response = googleService.getNewAccessToken(tokenEncryptor.getDecryptedString(selected.getRefreshToken()));
-            } else if (CalendarProviderType.MICROSOFT.equals(type)) {
+            } else if (AppProviderType.MICROSOFT.equals(type)) {
                 response = microsoftService.getNewAccessToken(tokenEncryptor.getDecryptedString(selected.getRefreshToken()));
             }
             selected.setExpireDate(callTime.plusSeconds(response.getExpiresIn()));

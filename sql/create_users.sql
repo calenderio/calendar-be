@@ -9,6 +9,7 @@ create table users
     licence_id bigint                not null,
     company_id bigint,
     is_company boolean default false not null,
+    time_zone  varchar(50)           not null,
     verified   boolean default false not null,
     password   varchar(512)          not null
 );

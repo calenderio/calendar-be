@@ -6,13 +6,11 @@
  **/
 package com.io.fastmeet.models.requests.user;
 
-import com.io.fastmeet.enums.LicenceTypes;
 import com.io.fastmeet.validators.Password;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
@@ -22,6 +20,10 @@ public class UserCreateRequest {
     @Schema(description = "Name of user", example = "example", required = true)
     @NotBlank
     private String name;
+
+    @Schema(description = "Name of user", example = "example", required = true)
+    @NotBlank
+    private String timeZone;
 
     @Schema(description = "Password of user", example = "aB123@.123", required = true)
     @NotBlank

@@ -9,7 +9,7 @@ package com.io.fastmeet.services.impl;
 import com.google.gson.Gson;
 import com.io.fastmeet.core.exception.CalendarAppException;
 import com.io.fastmeet.core.i18n.Translator;
-import com.io.fastmeet.enums.CalendarProviderType;
+import com.io.fastmeet.enums.AppProviderType;
 import com.io.fastmeet.models.remotes.google.GoogleCalendarEventResponse;
 import com.io.fastmeet.models.remotes.google.GoogleCalendarEventsRequest;
 import com.io.fastmeet.models.remotes.google.TokenRefreshResponse;
@@ -77,7 +77,7 @@ public class GoogleServiceImpl implements GoogleService {
             GoogleCalendarEventResponse googleResponse = new Gson().fromJson(response.body(), GoogleCalendarEventResponse.class);
         } catch (Exception e) {
             Thread.currentThread().interrupt();
-            throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.EXTERNAL_APP_MSG, CalendarProviderType.GOOGLE.name()),
+            throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.EXTERNAL_APP_MSG, AppProviderType.GOOGLE.name()),
                     GeneralMessageUtil.EXTERNAL_APP);
         }
     }
@@ -104,7 +104,7 @@ public class GoogleServiceImpl implements GoogleService {
             return new Gson().fromJson(response.body(), TokenRefreshResponse.class);
         } catch (Exception e) {
             Thread.currentThread().interrupt();
-            throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.EXTERNAL_APP_MSG, CalendarProviderType.GOOGLE.name()),
+            throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.EXTERNAL_APP_MSG, AppProviderType.GOOGLE.name()),
                     GeneralMessageUtil.EXTERNAL_APP);
         }
     }
@@ -121,7 +121,7 @@ public class GoogleServiceImpl implements GoogleService {
             client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception e) {
             Thread.currentThread().interrupt();
-            throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.EXTERNAL_APP_MSG, CalendarProviderType.GOOGLE.name()),
+            throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.EXTERNAL_APP_MSG, AppProviderType.GOOGLE.name()),
                     GeneralMessageUtil.EXTERNAL_APP);
         }
     }

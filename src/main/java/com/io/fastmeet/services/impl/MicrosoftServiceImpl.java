@@ -9,7 +9,7 @@ package com.io.fastmeet.services.impl;
 import com.google.gson.Gson;
 import com.io.fastmeet.core.exception.CalendarAppException;
 import com.io.fastmeet.core.i18n.Translator;
-import com.io.fastmeet.enums.CalendarProviderType;
+import com.io.fastmeet.enums.AppProviderType;
 import com.io.fastmeet.models.remotes.google.TokenRefreshResponse;
 import com.io.fastmeet.models.remotes.microsoft.Attachment;
 import com.io.fastmeet.models.remotes.microsoft.CalendarEventItem;
@@ -135,7 +135,7 @@ public class MicrosoftServiceImpl implements MicrosoftService {
             CalendarResponse response1 = new Gson().fromJson(response.body(), CalendarResponse.class);
         } catch (Exception e) {
             Thread.currentThread().interrupt();
-            throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.EXTERNAL_APP_MSG, CalendarProviderType.GOOGLE.name()),
+            throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.EXTERNAL_APP_MSG, AppProviderType.GOOGLE.name()),
                     GeneralMessageUtil.EXTERNAL_APP);
         }
     }
@@ -164,7 +164,7 @@ public class MicrosoftServiceImpl implements MicrosoftService {
             return new Gson().fromJson(response.body(), TokenRefreshResponse.class);
         } catch (Exception e) {
             Thread.currentThread().interrupt();
-            throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.EXTERNAL_APP_MSG, CalendarProviderType.GOOGLE.name()),
+            throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.EXTERNAL_APP_MSG, AppProviderType.GOOGLE.name()),
                     GeneralMessageUtil.EXTERNAL_APP);
         }
     }

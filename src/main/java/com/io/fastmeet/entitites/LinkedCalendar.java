@@ -7,7 +7,7 @@
 package com.io.fastmeet.entitites;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.io.fastmeet.enums.CalendarProviderType;
+import com.io.fastmeet.enums.AppProviderType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -32,7 +32,7 @@ import java.util.Set;
 public class LinkedCalendar extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
-    private CalendarProviderType type;
+    private AppProviderType type;
     private String refreshToken;
     private String socialMail;
     @Column(name = "token")

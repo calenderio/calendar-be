@@ -34,6 +34,7 @@ public class User extends BaseEntity {
     private String email;
     private String picture;
     private String password;
+    private String timeZone = "UTC";
     private Boolean isCompany;
     private Boolean verified = Boolean.FALSE;
     private Long companyId;
@@ -41,7 +42,7 @@ public class User extends BaseEntity {
     @JsonManagedReference
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user")
     private Licence licence;
 
     @JsonManagedReference

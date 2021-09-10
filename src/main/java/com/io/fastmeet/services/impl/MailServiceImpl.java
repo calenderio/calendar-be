@@ -8,7 +8,7 @@ package com.io.fastmeet.services.impl;
 
 import com.io.fastmeet.core.i18n.Translator;
 import com.io.fastmeet.models.internals.GenericMailRequest;
-import com.io.fastmeet.models.internals.ValidationMailDTO;
+import com.io.fastmeet.models.internals.MailValidation;
 import com.io.fastmeet.services.MailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ public class MailServiceImpl implements MailService {
     public void sendMailValidation(GenericMailRequest requestDto) {
         try {
             String header = Translator.getMessage("mail.validation.subject", Translator.getLanguage("tr_TR"));
-            genericMessage(new ValidationMailDTO("validation", header), requestDto);
+            genericMessage(new MailValidation("validation", header), requestDto);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -58,7 +58,7 @@ public class MailServiceImpl implements MailService {
      * @param dto request object
      * @throws MessagingException
      */
-    private void genericMessage(ValidationMailDTO dto, GenericMailRequest requestDto) throws MessagingException {
+    private void genericMessage(MailValidation dto, GenericMailRequest requestDto) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message,
                 MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED);

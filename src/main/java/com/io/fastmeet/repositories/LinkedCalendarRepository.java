@@ -7,12 +7,13 @@
 package com.io.fastmeet.repositories;
 
 import com.io.fastmeet.entitites.LinkedCalendar;
+import com.io.fastmeet.enums.AppProviderType;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
 public interface LinkedCalendarRepository extends CrudRepository<LinkedCalendar, Long> {
 
-    Optional<LinkedCalendar> findBySocialMail(String mail);
+    Optional<LinkedCalendar> findBySocialMailAndType(String mail, AppProviderType type);
 
 }

@@ -6,7 +6,7 @@
  **/
 package com.io.fastmeet.models.responses.calendar;
 
-import com.io.fastmeet.enums.CalendarProviderType;
+import com.io.fastmeet.enums.AppProviderType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -14,7 +14,7 @@ import lombok.Data;
 public class LinkedCalendarResponse {
 
     @Schema(description = "Calendar Provider", example = "MICROSOFT")
-    private CalendarProviderType type;
+    private AppProviderType type;
 
     @Schema(description = "Calendar E-Mail", example = "test@test.com")
     private String socialMail;

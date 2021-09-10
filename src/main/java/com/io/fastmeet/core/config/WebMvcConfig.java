@@ -63,7 +63,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         ResourceBundleMessageSource rs = new ResourceBundleMessageSource();
         rs.addBasenames("messages/error/error_messages",
                 "messages/app/app_messages",
-                "messages/validation/validation_messages");
+                "messages/validation/validation_messages",
+                "org/hibernate/validator/ValidationMessages");
         rs.setDefaultEncoding("UTF-8");
         rs.setUseCodeAsDefaultMessage(true);
         return rs;

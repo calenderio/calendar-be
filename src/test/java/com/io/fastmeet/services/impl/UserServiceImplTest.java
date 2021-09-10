@@ -12,7 +12,7 @@ import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.entitites.Licence;
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.mappers.UserMapper;
-import com.io.fastmeet.models.internals.requests.SocialUserCreateRequest;
+import com.io.fastmeet.models.internals.SocialUser;
 import com.io.fastmeet.models.requests.user.AuthRequest;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;
 import com.io.fastmeet.models.responses.license.LicenseResponse;
@@ -99,7 +99,7 @@ class UserServiceImplTest {
 
     @Test
     void socialSignUp() {
-        SocialUserCreateRequest createRequest = new SocialUserCreateRequest();
+        SocialUser createRequest = new SocialUser();
         createRequest.setEmail("example@example.com");
         createRequest.setPassword("Password");
         UserResponse userResponse = new UserResponse();

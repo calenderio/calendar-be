@@ -7,7 +7,7 @@
 package com.io.fastmeet.services;
 
 import com.io.fastmeet.entitites.User;
-import com.io.fastmeet.models.internals.requests.SocialUserCreateRequest;
+import com.io.fastmeet.models.internals.SocialUser;
 import com.io.fastmeet.models.requests.user.AuthRequest;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
@@ -16,7 +16,7 @@ import org.springframework.scheduling.annotation.Async;
 public interface UserService {
     UserResponse createIndividualUser(UserCreateRequest request);
 
-    UserResponse socialSignUp(SocialUserCreateRequest request);
+    UserResponse socialSignUp(SocialUser request);
 
     UserResponse loginUser(AuthRequest authRequest);
 
@@ -26,7 +26,7 @@ public interface UserService {
 
     boolean ifUserExist(String mail);
 
-    void addNewLinkToUser(User user, SocialUserCreateRequest request);
+    void addNewLinkToUser(User user, SocialUser request);
 
     @Async
     void createValidationInfo(User user, String language);
