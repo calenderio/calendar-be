@@ -111,7 +111,7 @@ public class UserServiceImpl implements UserService {
         user.setVerified(true);
         user.setLicence(licenceService.generateFreeTrial());
         user.setPicture(cloudinaryService.uploadPhoto(request.getPictureUrl(), request.getEmail()));
-        user.setTimeZone(request.getTimeZone());
+        user.setTimeZone(TimeZone.getDefault().getID());
         addCalendar(request, user);
         userRepository.save(user);
         UserResponse response = userMapper.mapToModel(user);
