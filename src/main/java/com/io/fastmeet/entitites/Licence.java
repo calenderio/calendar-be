@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -23,7 +22,7 @@ import java.time.LocalDateTime;
 public class Licence extends BaseEntity {
 
     @JsonBackReference
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "licence")
     private User user;
     @Enumerated(EnumType.STRING)
     @Column(name = "type")

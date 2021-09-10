@@ -85,6 +85,7 @@ class UserServiceImplTest {
         UserCreateRequest createRequest = new UserCreateRequest();
         createRequest.setEmail("example@example.com");
         createRequest.setPassword("Password");
+        createRequest.setTimeZone("UTC");
         UserResponse userResponse = new UserResponse();
         userResponse.setName("Example");
         userResponse.setVerified(false);

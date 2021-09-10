@@ -21,7 +21,7 @@ public class UserCreateRequest {
     @NotBlank
     private String name;
 
-    @Schema(description = "Name of user", example = "example", required = true)
+    @Schema(description = "Name of user", example = "Europe/Istanbul", required = true)
     @NotBlank
     private String timeZone;
 

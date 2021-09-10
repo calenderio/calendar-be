@@ -42,7 +42,7 @@ public class User extends BaseEntity {
     @JsonManagedReference
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToOne(mappedBy = "user")
+    @OneToOne(cascade = CascadeType.ALL)
     private Licence licence;
 
     @JsonManagedReference
