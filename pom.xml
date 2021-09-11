@@ -101,6 +101,11 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.vladmihalcea</groupId>
+            <artifactId>hibernate-types-52</artifactId>
+            <version>2.12.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.5.10</version>
@@ -231,6 +236,7 @@
                                 <srcFile>sql/craete_linked_calendars.sql</srcFile>
                                 <srcFile>sql/create_user_calendars.sql</srcFile>
                                 <srcFile>sql/create_validations.sql</srcFile>
+                                <srcFile>sql/create_scheduler.sql</srcFile>
                             </srcFiles>
                         </configuration>
                     </execution>

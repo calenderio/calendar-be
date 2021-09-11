@@ -11,5 +11,13 @@ create table validations
 );
 
 create
-index validations_date_index
-	on validations (date);
+    index validations_date_index
+    on validations (date);
+
+create
+    index validations_user_id_index
+    on validations (user_id);
+
+create
+    unique index validations_user_id_type_index
+    on validations (user_id, type);

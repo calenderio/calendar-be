@@ -4,5 +4,6 @@ drop table IF EXISTS
     companies,
     linked_calendars,
     validations,
+    schedulers,
     user_calendars
 ;
