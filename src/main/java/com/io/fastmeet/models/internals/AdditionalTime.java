@@ -9,6 +9,7 @@ package com.io.fastmeet.models.internals;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
@@ -21,7 +22,9 @@ public class AdditionalTime {
 
     @ArraySchema(schema = @Schema(description = "Scheduler for Sunday", implementation = SchedulerTime.class))
     @Valid
+    @Length(max = 5)
     private List<SchedulerTime> time;
+
     @Schema(description = "Event time", implementation = LocalDate.class)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @NotNull

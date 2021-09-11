@@ -20,6 +20,7 @@ public class SchedulerUpdateRequest {
     @Schema(description = "Timezone of scheduler", example = "Europe/Istanbul", required = true)
     @NotBlank
     private String timeZone;
+
     @Schema(description = "Selected date details", implementation = SchedulerDetails.class, required = true)
     @Valid
     @NotNull

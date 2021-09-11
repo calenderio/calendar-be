@@ -18,6 +18,8 @@ public interface SchedulerRepository extends CrudRepository<Scheduler, Long> {
 
     Optional<List<Scheduler>> findByUserId(Long userId);
 
+    Optional<Scheduler> findByUserIdAndId(Long userId, Long id);
+
     @Query("update Scheduler s set s.name = :name where s.id = :id and s.userId = :userId")
     @Modifying
     int changeSchedulerName(String name, Long id, Long userId);

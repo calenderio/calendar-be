@@ -57,6 +57,15 @@ public class SchedulerServiceImpl implements SchedulerService {
         return new SchedulerResponse(schedulerMapper.mapEntityListToModelList(list));
     }
 
+//    @Override
+//    public SchedulerResponse updateScheduler(SchedulerDetailsRequest request) {
+//        User user = jwtService.getUserFromToken(request.getToken());
+//        Scheduler scheduleObject = schedulerRepository.findByUserIdAndId(user.getId(), request.getSchedulerId()).orElseThrow(() ->
+//                new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.SCH_NOT_FOUND),
+//                GeneralMessageUtil.USR_NOT_FOUND));
+//        return new SchedulerResponse(schedulerMapper.mapEntityListToModelList(list));
+//    }
+
     @Override
     public SchedulerResponse getUserSchedulers(String token) {
         User user = jwtService.getUserFromToken(token);

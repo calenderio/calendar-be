@@ -8,6 +8,7 @@ package com.io.fastmeet.mappers;
 
 import com.io.fastmeet.entitites.Scheduler;
 import com.io.fastmeet.models.internals.SchedulerObject;
+import com.io.fastmeet.models.requests.scheduler.SchedulerUpdateRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -29,6 +30,9 @@ public interface SchedulerMapper {
     @Mapping(target = "schedule.additional", source = "additionalTime")
     @Mapping(target = "schedule.unavailable", source = "unavailable")
     SchedulerObject mapEntityToModel(Scheduler schedulers);
+
+    @Mapping()
+    Scheduler mapModelToEntity(SchedulerUpdateRequest schedulers);
 
 
 }
