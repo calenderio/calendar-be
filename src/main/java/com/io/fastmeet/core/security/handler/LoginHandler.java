@@ -115,12 +115,16 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
         }
     }
 
-    private UserResponse createOrSaveUser(String userName, DefaultOAuth2User oicdUser, OAuth2AuthorizedClient oauth2User, AppProviderType google) {
+    private UserResponse createOrSaveUser(String userName, DefaultOAuth2User oicdUser, OAuth2AuthorizedClient oauth2User, AppProviderType providerType) {
         UserResponse userResponse;
         if (userService.ifUserExist(userName)) {
+            if (oauth2User.getRefreshToken() != null) {
+                SocialUser createRequest = createSocialRequest(userName, oicdUser, oauth2User, providerType);
+                userService.updateToken(createRequest);
+            }
             userResponse = userService.findByMail(userName);
         } else {
-            userResponse = createSocialSignup(userName, oicdUser, oauth2User, google);
+            userResponse = createSocialSignup(userName, oicdUser, oauth2User, providerType);
         }
         return userResponse;
     }

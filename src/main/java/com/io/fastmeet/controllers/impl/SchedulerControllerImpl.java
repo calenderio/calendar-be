@@ -7,6 +7,7 @@
 package com.io.fastmeet.controllers.impl;
 
 import com.io.fastmeet.controllers.SchedulerController;
+import com.io.fastmeet.models.internals.SchedulerDetailsRequest;
 import com.io.fastmeet.models.internals.SchedulerNameUpdateRequest;
 import com.io.fastmeet.models.requests.scheduler.SchedulerUpdateRequest;
 import com.io.fastmeet.models.responses.calendar.SchedulerResponse;
@@ -42,8 +43,8 @@ public class SchedulerControllerImpl implements SchedulerController {
     }
 
     @Override
-    public ResponseEntity<Void> updateScheduler(@Valid SchedulerUpdateRequest request, Long schedulerId, String token) {
-        return null;
+    public ResponseEntity<SchedulerResponse> updateScheduler(@Valid SchedulerUpdateRequest request, Long schedulerId, String token) {
+        return ResponseEntity.ok(schedulerService.updateScheduler(new SchedulerDetailsRequest(request, schedulerId, token)));
     }
 
 }

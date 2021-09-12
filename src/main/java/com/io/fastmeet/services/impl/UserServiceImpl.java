@@ -250,19 +250,35 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * UpdatesToken
+     *
+     * @param request social login request
+     */
+    @Override
+    public void updateToken(SocialUser request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.USER_NOT_FOUND),
+                        GeneralMessageUtil.USR_NOT_FOUND));
+        addCalendar(request, user);
+        userRepository.save(user);
+    }
+
+    /**
      * Add calendar to user
      *
      * @param request social login request
      * @param user    details of user
      */
     private void addCalendar(SocialUser request, User user) {
-        LinkedCalendar calendar = getCalendar(request.getSocialMediaMail(), request.getType());
-        if (calendar.getId() == null) {
+        LinkedCalendar calendar = getCalendar(request.getEmail(), request.getType());
+        if (request.getRefreshToken() != null) {
             calendar.setAccessToken(request.getToken());
             calendar.setRefreshToken(request.getRefreshToken());
+            calendar.setExpireDate(request.getExpireDate());
+        }
+        if (calendar.getId() == null) {
             calendar.setType(request.getType());
             calendar.setSocialMail(request.getSocialMediaMail());
-            calendar.setExpireDate(request.getExpireDate());
             calendar.setUsers(Collections.singleton(user));
         } else {
             calendar.setUsers(new HashSet<>(calendar.getUsers()));

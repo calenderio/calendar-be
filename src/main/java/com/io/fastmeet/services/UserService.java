@@ -32,4 +32,6 @@ public interface UserService {
     void createValidationInfo(User user, String language);
 
     UserResponse getUserDetailsFromToken(String token);
+
+    void updateToken(SocialUser request);
 }

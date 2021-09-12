@@ -64,13 +64,13 @@ public interface SchedulerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Updated scheduler and returns details",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SchedulerUpdateRequest.class))}),
+                            schema = @Schema(implementation = SchedulerResponse.class))}),
             @ApiResponse(responseCode = "400", description = "Updating scheduler error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @PostMapping(value = "/scheduler/{schedulerId}")
-    ResponseEntity<Void> updateScheduler(@RequestBody SchedulerUpdateRequest request,
-                                         @Parameter(name = "schedulerId", example = "1", description = "Id of scheduler") @PathVariable Long schedulerId,
-                                         @RequestHeader(name = "Authorization") String token);
+    ResponseEntity<SchedulerResponse> updateScheduler(@RequestBody SchedulerUpdateRequest request,
+                                                      @Parameter(name = "schedulerId", example = "1", description = "Id of scheduler") @PathVariable Long schedulerId,
+                                                      @RequestHeader(name = "Authorization") String token);
 
 
 }

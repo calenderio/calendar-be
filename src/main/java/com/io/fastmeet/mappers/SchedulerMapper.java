@@ -9,9 +9,12 @@ package com.io.fastmeet.mappers;
 import com.io.fastmeet.entitites.Scheduler;
 import com.io.fastmeet.models.internals.SchedulerObject;
 import com.io.fastmeet.models.requests.scheduler.SchedulerUpdateRequest;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -31,8 +34,51 @@ public interface SchedulerMapper {
     @Mapping(target = "schedule.unavailable", source = "unavailable")
     SchedulerObject mapEntityToModel(Scheduler schedulers);
 
-    @Mapping()
-    Scheduler mapModelToEntity(SchedulerUpdateRequest schedulers);
+    @Mapping(target = "mon", source = "model.schedule.mon")
+    @Mapping(target = "tue", source = "model.schedule.tue")
+    @Mapping(target = "wed", source = "model.schedule.wed")
+    @Mapping(target = "thu", source = "model.schedule.thu")
+    @Mapping(target = "fri", source = "model.schedule.fri")
+    @Mapping(target = "sat", source = "model.schedule.sat")
+    @Mapping(target = "sun", source = "model.schedule.sun")
+    @Mapping(target = "additionalTime", source = "model.schedule.additional")
+    @Mapping(target = "unavailable", source = "model.schedule.unavailable")
+    @Mapping(target = "timeZone", source = "model.timeZone")
+    @Mapping(target = "name", source = "entity.name")
+    @Mapping(target = "id", source = "entity.id")
+    Scheduler mapUpdateModelsToEntity(SchedulerUpdateRequest model, Scheduler entity);
+
+    @AfterMapping
+    default void mapToObject(@MappingTarget SchedulerObject object) {
+        if (object.getSchedule().getMon() == null) {
+            object.getSchedule().setMon(new HashSet<>());
+        }
+        if (object.getSchedule().getTue() == null) {
+            object.getSchedule().setTue(new HashSet<>());
+        }
+        if (object.getSchedule().getWed() == null) {
+            object.getSchedule().setWed(new HashSet<>());
+        }
+        if (object.getSchedule().getThu() == null) {
+            object.getSchedule().setThu(new HashSet<>());
+        }
+        if (object.getSchedule().getFri() == null) {
+            object.getSchedule().setFri(new HashSet<>());
+        }
+        if (object.getSchedule().getSat() == null) {
+            object.getSchedule().setSat(new HashSet<>());
+        }
+        if (object.getSchedule().getSun() == null) {
+            object.getSchedule().setSun(new HashSet<>());
+        }
+        if (object.getSchedule().getAdditional() == null) {
+            object.getSchedule().setAdditional(new HashSet<>());
+        }
+        if (object.getSchedule().getUnavailable() == null) {
+            object.getSchedule().setUnavailable(new HashSet<>());
+        }
+
+    }
 
 
 }
