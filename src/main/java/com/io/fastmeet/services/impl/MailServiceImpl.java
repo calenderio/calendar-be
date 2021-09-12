@@ -53,6 +53,22 @@ public class MailServiceImpl implements MailService {
     }
 
     /**
+     * Sends password reset mail to user
+     *
+     * @param requestDto validation mail send request
+     */
+    @Override
+    @Async
+    public void sendPasswordResetMail(GenericMailRequest requestDto) {
+        try {
+            String header = Translator.getMessage("mail.password.reset", Translator.getLanguage("tr_TR"));
+            genericMessage(new MailValidation("resetPassword", header), requestDto);
+        } catch (Exception e) {
+            log.info("Mail sending error to user {} {}", requestDto.getEmail(), e.getMessage());
+        }
+    }
+
+    /**
      * Send mail for all types
      *
      * @param dto request object

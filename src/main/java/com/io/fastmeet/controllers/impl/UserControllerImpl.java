@@ -9,6 +9,9 @@ package com.io.fastmeet.controllers.impl;
 import com.io.fastmeet.controllers.UserController;
 import com.io.fastmeet.core.annotations.SkipSecurity;
 import com.io.fastmeet.models.requests.user.AuthRequest;
+import com.io.fastmeet.models.requests.user.ChangePasswordRequest;
+import com.io.fastmeet.models.requests.user.ResetPasswordMailRequest;
+import com.io.fastmeet.models.requests.user.ResetPasswordRequest;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
 import com.io.fastmeet.services.UserService;
@@ -42,6 +45,24 @@ public class UserControllerImpl implements UserController {
     @Override
     public ResponseEntity<UserResponse> getDetailsByToken(String token) {
         return ResponseEntity.ok(userService.getUserDetailsFromToken(token));
+    }
+
+    @Override
+    public ResponseEntity<Void> changePassword(@Valid ChangePasswordRequest request, String token) {
+        userService.changePassword(request, token);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> resetPasswordRequest(@Valid ResetPasswordMailRequest request, String language) {
+        userService.resetPasswordRequest(request, language);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> resetPassword(@Valid ResetPasswordRequest request) {
+        userService.resetPassword(request);
+        return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasRole('USER')")

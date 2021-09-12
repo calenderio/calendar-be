@@ -53,7 +53,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/oauth2/**",
                         "/favicon.ico",
                         "/users/verifyEmail",
-                        "/login"
+                        "/login",
+                        "/resetPassword"
                 )
                 .pathMatcher(new AntPathMatcher());
     }

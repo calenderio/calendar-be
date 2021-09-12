@@ -13,4 +13,5 @@ public interface MailService {
 
     void sendMailValidation(GenericMailRequest requestDto);
 
+    void sendPasswordResetMail(GenericMailRequest requestDto);
 }

@@ -10,4 +10,6 @@ import com.io.fastmeet.models.requests.user.ValidationRequest;
 
 public interface ValidationService {
     void verifyMail(ValidationRequest request);
+
+    void verify(ValidationRequest request);
 }

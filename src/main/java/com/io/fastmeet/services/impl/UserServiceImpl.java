@@ -19,7 +19,11 @@ import com.io.fastmeet.mappers.UserMapper;
 import com.io.fastmeet.models.internals.GenericMailRequest;
 import com.io.fastmeet.models.internals.SocialUser;
 import com.io.fastmeet.models.requests.user.AuthRequest;
+import com.io.fastmeet.models.requests.user.ChangePasswordRequest;
+import com.io.fastmeet.models.requests.user.ResetPasswordMailRequest;
+import com.io.fastmeet.models.requests.user.ResetPasswordRequest;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;
+import com.io.fastmeet.models.requests.user.ValidationRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
 import com.io.fastmeet.repositories.LinkedCalendarRepository;
 import com.io.fastmeet.repositories.UserRepository;
@@ -28,6 +32,7 @@ import com.io.fastmeet.services.CloudinaryService;
 import com.io.fastmeet.services.LicenceService;
 import com.io.fastmeet.services.MailService;
 import com.io.fastmeet.services.UserService;
+import com.io.fastmeet.services.ValidationService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +78,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private CloudinaryService cloudinaryService;
 
+    @Autowired
+    private ValidationService validationService;
+
     /**
      * This method creates new individual user
      *
@@ -90,7 +98,8 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encodePassword(request.getPassword(), request.getEmail().toLowerCase()));
         user.setLicence(licenceService.generateFreeTrial());
         userRepository.save(user);
-        createValidationInfo(user, "tr_TR");
+        mailService.sendMailValidation(new GenericMailRequest(user.getEmail(), user.getName(),
+                createValidationInfo(user, "tr_TR", ValidationType.EMAIL), "tr_TR"));
         UserResponse response = userMapper.mapToModel(user);
         response.setToken(jwtService.createToken(user));
         return response;
@@ -201,18 +210,18 @@ public class UserServiceImpl implements UserService {
      *
      * @param user
      * @param language validation mail langugage
+     * @param type     validation type
      */
-    @Override
     @Async
-    public void createValidationInfo(User user, String language) {
+    public String createValidationInfo(User user, String language, ValidationType type) {
         Validation validation = validationRepository.findByMailAndType(user.getEmail(), ValidationType.EMAIL).orElse(new Validation());
         validation.setUserId(user.getId());
         validation.setCode(RandomStringUtils.randomAlphabetic(50));
         validation.setMail(user.getEmail());
         validation.setDate(LocalDateTime.now());
-        validation.setType(ValidationType.EMAIL);
+        validation.setType(type);
         validationRepository.save(validation);
-        mailService.sendMailValidation(new GenericMailRequest(user.getEmail(), user.getName(), validation.getCode(), language));
+        return validation.getCode();
     }
 
     /**
@@ -228,6 +237,55 @@ public class UserServiceImpl implements UserService {
         UserResponse response = userMapper.mapToModel(jwtService.getUserFromToken(token));
         response.setToken(token);
         return response;
+    }
+
+    /**
+     * Performs change password for logged in user
+     *
+     * @param request new and old password
+     * @param token   user token
+     * @throws CalendarAppException if user not exist or infos wrong
+     */
+    @Override
+    public void changePassword(ChangePasswordRequest request, String token) {
+        User user = jwtService.getUserFromToken(token);
+        if (!encodePassword(request.getOldPassword(), user.getEmail().toLowerCase()).equals(user.getPassword())) {
+            throw new CalendarAppException(HttpStatus.FORBIDDEN, Translator.getMessage(GeneralMessageConstants.WRONG_INFO),
+                    GeneralMessageConstants.WRONG_INFO_ERR);
+        }
+        user.setPassword(encodePassword(request.getNewPassword(), user.getEmail()));
+        userRepository.save(user);
+    }
+
+    /**
+     * Performs change password for logged in user
+     *
+     * @param request  user mail
+     * @param language mail language
+     * @throws CalendarAppException if user not exist or infos wrong
+     */
+    @Override
+    public void resetPasswordRequest(ResetPasswordMailRequest request, String language) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
+                        GeneralMessageConstants.USR_NOT_FOUND));
+        GenericMailRequest mailRequest = new GenericMailRequest();
+        mailRequest.setLanguage(request.getEmail());
+        mailRequest.setName(user.getName());
+        mailRequest.setCode(RandomStringUtils.randomAlphabetic(50));
+        mailRequest.setLanguage(language);
+        mailService.sendMailValidation(new GenericMailRequest(user.getEmail(), user.getName(),
+                createValidationInfo(user, "tr_TR", ValidationType.PASSWORD), "tr_TR"));
+        mailService.sendPasswordResetMail(mailRequest);
+    }
+
+    @Override
+    public void resetPassword(ResetPasswordRequest request) {
+        User user = userRepository.findByEmail(request.getEmail().toLowerCase())
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
+                        GeneralMessageConstants.USR_NOT_FOUND));
+        validationService.verify(new ValidationRequest(request.getCode(), request.getEmail()));
+        user.setPassword(encodePassword(request.getPassword(), user.getEmail()));
     }
 
     /**

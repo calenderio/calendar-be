@@ -39,4 +39,16 @@ public class ValidationServiceImpl implements ValidationService {
         userRepository.verifyUserByMail(request.getMail());
     }
 
+    /**
+     * This methods verified user mail
+     *
+     * @param request verify request detail
+     */
+    @Override
+    public void verify(ValidationRequest request) {
+        Validation validation = validationRepository.findByCodeAndMailAndType(request.getCode(), request.getMail(), ValidationType.PASSWORD)
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, "Validation not valid", "VAL_ERR"));
+        validationRepository.delete(validation);
+    }
+
 }
