@@ -43,27 +43,7 @@ public class SchedulerDetailValidator implements ConstraintValidator<SchedulerDe
         if (checkHours(field.getSun(), context, DayValues.SUNDAY)) {
             return false;
         }
-        List<AdditionalTime> sorted = field.getAdditional().stream().sorted(Comparator.comparing(AdditionalTime::getDate))
-                .collect(Collectors.toList());
-        if (checkHours(sorted.get(sorted.size() - 1).getTime(), context, DayValues.ADDITIONAL)) {
-            return false;
-        }
-        for (int i = 0; i < sorted.size() - 1; i++) {
-            if (checkHours(sorted.get(i).getTime(), context, DayValues.ADDITIONAL)) {
-                return false;
-            }
-            if (sorted.get(i).getDate().equals(sorted.get(i + 1).getDate())) {
-                context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate("{scheduler.additional.duplicate}")
-                        .addPropertyNode(DayValues.ADDITIONAL).addConstraintViolation();
-                return false;
-            }
-        }
-        for (AdditionalTime time : field.getAdditional()) {
-            if (checkHours(time.getTime(), context, DayValues.ADDITIONAL)) {
-                return false;
-            }
-        }
+        if (additionalTimeCheck(field, context)) return false;
         for (AdditionalTime time : field.getAdditional()) {
             if (field.getUnavailable() != null && field.getUnavailable().contains(time.getDate())) {
                 context.disableDefaultConstraintViolation();
@@ -76,6 +56,31 @@ public class SchedulerDetailValidator implements ConstraintValidator<SchedulerDe
                 || field.getFri() != null || field.getSat() != null || field.getSun() != null
                 || (field.getAdditional() != null && !field.getAdditional().isEmpty());
 
+    }
+
+    private boolean additionalTimeCheck(SchedulerDetails field, ConstraintValidatorContext context) {
+        List<AdditionalTime> sorted = field.getAdditional().stream().sorted(Comparator.comparing(AdditionalTime::getDate))
+                .collect(Collectors.toList());
+        if (checkHours(sorted.get(sorted.size() - 1).getTime(), context, DayValues.ADDITIONAL)) {
+            return true;
+        }
+        for (int i = 0; i < sorted.size() - 1; i++) {
+            if (checkHours(sorted.get(i).getTime(), context, DayValues.ADDITIONAL)) {
+                return true;
+            }
+            if (sorted.get(i).getDate().equals(sorted.get(i + 1).getDate())) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate("{scheduler.additional.duplicate}")
+                        .addPropertyNode(DayValues.ADDITIONAL).addConstraintViolation();
+                return true;
+            }
+        }
+        for (AdditionalTime time : field.getAdditional()) {
+            if (checkHours(time.getTime(), context, DayValues.ADDITIONAL)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean checkHours(Set<SchedulerTime> set, ConstraintValidatorContext context, String fieldName) {

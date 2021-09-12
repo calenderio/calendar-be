@@ -6,6 +6,7 @@
  **/
 package com.io.fastmeet.services.impl;
 
+import com.io.fastmeet.constants.GeneralMessageConstants;
 import com.io.fastmeet.core.exception.CalendarAppException;
 import com.io.fastmeet.core.i18n.Translator;
 import com.io.fastmeet.core.security.jwt.JWTService;
@@ -23,7 +24,6 @@ import com.io.fastmeet.repositories.ValidationRepository;
 import com.io.fastmeet.services.CloudinaryService;
 import com.io.fastmeet.services.LicenceService;
 import com.io.fastmeet.services.MailService;
-import com.io.fastmeet.utils.GeneralMessageUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -141,7 +141,7 @@ class UserServiceImplTest {
         CalendarAppException exception = assertThrows(CalendarAppException.class, () -> userService.loginUser(authRequest));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Error", exception.getReason());
-        assertEquals(GeneralMessageUtil.USR_NOT_FOUND, exception.getCause().getMessage());
+        assertEquals(GeneralMessageConstants.USR_NOT_FOUND, exception.getCause().getMessage());
     }
 
     @Test

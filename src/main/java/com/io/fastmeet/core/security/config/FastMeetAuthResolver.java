@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.io.fastmeet.utils.GenericProviderUtil.APP_TOKEN;
+import static com.io.fastmeet.constants.GenericProviderConstants.APP_TOKEN;
 
 public class FastMeetAuthResolver implements OAuth2AuthorizationRequestResolver {
     private final OAuth2AuthorizationRequestResolver defaultAuthorizationRequestResolver;

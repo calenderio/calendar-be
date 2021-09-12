@@ -4,13 +4,13 @@
  *
  * Copyright - Calendar App Java API
  **/
-package com.io.fastmeet.utils;
+package com.io.fastmeet.constants;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class GoogleApiURL {
+public class GoogleApiURLConstants {
 
     public static final String REFRESH_TOKEN = "https://oauth2.googleapis.com/token";
     public static final String GET_CALENDAR_EVENTS = "https://www.googleapis.com/calendar/v3/calendars/%s/events";

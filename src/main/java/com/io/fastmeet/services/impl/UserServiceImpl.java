@@ -6,6 +6,7 @@
  **/
 package com.io.fastmeet.services.impl;
 
+import com.io.fastmeet.constants.GeneralMessageConstants;
 import com.io.fastmeet.core.exception.CalendarAppException;
 import com.io.fastmeet.core.i18n.Translator;
 import com.io.fastmeet.core.security.jwt.JWTService;
@@ -27,7 +28,6 @@ import com.io.fastmeet.services.CloudinaryService;
 import com.io.fastmeet.services.LicenceService;
 import com.io.fastmeet.services.MailService;
 import com.io.fastmeet.services.UserService;
-import com.io.fastmeet.utils.GeneralMessageUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,8 +130,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse loginUser(AuthRequest authRequest) {
         User user = userRepository.findByEmail(authRequest.getUsername().toLowerCase())
-                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.USER_NOT_FOUND),
-                        GeneralMessageUtil.USR_NOT_FOUND));
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
+                        GeneralMessageConstants.USR_NOT_FOUND));
         if (encodePassword(authRequest.getPassword(), user.getEmail().toLowerCase()).equals(user.getPassword())) {
             UserResponse userResponse = userMapper.mapToModel(user);
             userResponse.setToken(jwtService.createToken(user));
@@ -148,8 +148,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.USER_NOT_FOUND),
-                        GeneralMessageUtil.USR_NOT_FOUND));
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
+                        GeneralMessageConstants.USR_NOT_FOUND));
     }
 
     /**
@@ -160,8 +160,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse findByMail(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.USER_NOT_FOUND),
-                        GeneralMessageUtil.USR_NOT_FOUND));
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
+                        GeneralMessageConstants.USR_NOT_FOUND));
         UserResponse userResponse = userMapper.mapToModel(user);
         userResponse.setToken(jwtService.createToken(user));
         return userResponse;
@@ -189,7 +189,7 @@ public class UserServiceImpl implements UserService {
                 && request.getType().equals(item.getType())).collect(Collectors.toList());
         if (!userLink.isEmpty()) {
             throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage("error.linked"),
-                    GeneralMessageUtil.LINKED);
+                    GeneralMessageConstants.LINKED);
         }
         addCalendar(request, user);
         userRepository.save(user);
@@ -257,8 +257,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateToken(SocialUser request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.USER_NOT_FOUND),
-                        GeneralMessageUtil.USR_NOT_FOUND));
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
+                        GeneralMessageConstants.USR_NOT_FOUND));
         addCalendar(request, user);
         userRepository.save(user);
     }
@@ -296,8 +296,8 @@ public class UserServiceImpl implements UserService {
      */
     private void ifUserExistWithError(String mail) {
         if (userRepository.existsByEmail(mail)) {
-            throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.USER_FOUND),
-                    GeneralMessageUtil.USR_FOUND);
+            throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_FOUND),
+                    GeneralMessageConstants.USR_FOUND);
         }
     }
 

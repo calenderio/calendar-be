@@ -9,6 +9,7 @@ package com.io.fastmeet.validators;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+@SuppressWarnings("java:S5857")
 public class PasswordValidator implements ConstraintValidator<Password, String> {
 
     private static final String REGEX = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*[^A-Za-z0-9]).{8,}$";

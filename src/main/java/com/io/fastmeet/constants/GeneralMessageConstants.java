@@ -4,13 +4,13 @@
  *
  * Copyright - Calendar App Java API
  **/
-package com.io.fastmeet.utils;
+package com.io.fastmeet.constants;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class GeneralMessageUtil {
+public class GeneralMessageConstants {
 
     public static final String USER_NOT_FOUND = "error.username.not.found";
     public static final String SCH_NOT_FOUND = "error.scheduler.not.found";

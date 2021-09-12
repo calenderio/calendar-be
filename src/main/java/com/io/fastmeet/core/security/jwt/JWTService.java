@@ -6,11 +6,11 @@
  **/
 package com.io.fastmeet.core.security.jwt;
 
+import com.io.fastmeet.constants.GeneralMessageConstants;
 import com.io.fastmeet.core.exception.CalendarAppException;
 import com.io.fastmeet.core.i18n.Translator;
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.repositories.UserRepository;
-import com.io.fastmeet.utils.GeneralMessageUtil;
 import com.io.fastmeet.utils.RoleUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -170,8 +170,8 @@ public class JWTService {
      */
     private User findById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.USER_NOT_FOUND),
-                        GeneralMessageUtil.USR_NOT_FOUND));
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
+                        GeneralMessageConstants.USR_NOT_FOUND));
     }
 
 }

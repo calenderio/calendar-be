@@ -15,7 +15,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,10 +29,9 @@ import java.util.Set;
 @Table(name = "schedulers")
 @Data
 @NoArgsConstructor
-@TypeDefs({
-        @TypeDef(name = "list-array", typeClass = ListArrayType.class),
-        @TypeDef(name = "json", typeClass = JsonType.class)
-})
+@TypeDef(name = "list-array", typeClass = ListArrayType.class)
+@TypeDef(name = "json", typeClass = JsonType.class)
+@SuppressWarnings("java:S1948")
 public class Scheduler extends BaseEntity {
 
     private Long userId;

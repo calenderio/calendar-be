@@ -6,6 +6,7 @@
  **/
 package com.io.fastmeet.services.impl;
 
+import com.io.fastmeet.constants.GeneralMessageConstants;
 import com.io.fastmeet.core.exception.CalendarAppException;
 import com.io.fastmeet.core.i18n.Translator;
 import com.io.fastmeet.core.security.jwt.JWTService;
@@ -18,7 +19,6 @@ import com.io.fastmeet.models.internals.SchedulerTime;
 import com.io.fastmeet.models.responses.calendar.SchedulerResponse;
 import com.io.fastmeet.repositories.SchedulerRepository;
 import com.io.fastmeet.services.SchedulerService;
-import com.io.fastmeet.utils.GeneralMessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -66,8 +66,8 @@ public class SchedulerServiceImpl implements SchedulerService {
     public SchedulerResponse updateScheduler(SchedulerDetailsRequest request) {
         User user = jwtService.getUserFromToken(request.getToken());
         Scheduler scheduleObject = schedulerRepository.findByUserIdAndId(user.getId(), request.getSchedulerId()).orElseThrow(() ->
-                new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageUtil.SCH_NOT_FOUND),
-                        GeneralMessageUtil.USR_NOT_FOUND));
+                new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.SCH_NOT_FOUND),
+                        GeneralMessageConstants.USR_NOT_FOUND));
         schedulerRepository.save(schedulerMapper.mapUpdateModelsToEntity(request.getRequest(), scheduleObject));
         List<Scheduler> list = schedulerRepository.findByUserId(user.getId()).orElse(new ArrayList<>());
         return new SchedulerResponse(schedulerMapper.mapEntityListToModelList(list));

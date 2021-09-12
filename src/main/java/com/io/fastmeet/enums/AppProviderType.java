@@ -6,19 +6,22 @@
  **/
 package com.io.fastmeet.enums;
 
+import com.io.fastmeet.constants.GenericConstants;
+
 public enum AppProviderType {
 
+
     MICROSOFT("microsoft", "preferred_username"),
-    GOOGLE("google", "email"),
-    ZOOM("zoom", "email"),
-    APPLE("apple", "email");
+    GOOGLE("google", GenericConstants.EMAIL),
+    ZOOM("zoom", GenericConstants.EMAIL),
+    APPLE("apple", GenericConstants.EMAIL);
 
     public final String value;
-    public final String prefferedUsername;
+    public final String preferredUsername;
 
-    AppProviderType(String value, String prefferedUsername) {
+    AppProviderType(String value, String preferredUsername) {
         this.value = value;
-        this.prefferedUsername = prefferedUsername;
+        this.preferredUsername = preferredUsername;
     }
 
 }

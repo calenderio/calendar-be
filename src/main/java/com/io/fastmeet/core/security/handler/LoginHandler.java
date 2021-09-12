@@ -96,14 +96,14 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
             if (sessionObject != null && !StringUtils.isBlank(sessionObject.toString())) {
                 User user = jwtService.getUserFromToken(jwtUtil.getTokenPrefix() + sessionObject);
                 SocialUser createRequest = createSocialRequest(user.getName(), oicdUser, oauth2User, type);
-                createRequest.setSocialMediaMail(oicdUser.getAttribute(type.prefferedUsername));
+                createRequest.setSocialMediaMail(oicdUser.getAttribute(type.preferredUsername));
                 userService.addNewLinkToUser(user, createRequest);
                 userName = user.getEmail();
             } else {
                 if (AppProviderType.ZOOM.equals(type)) {
                     throw new UnknownException(StringUtils.EMPTY);
                 }
-                userName = oicdUser.getAttribute(type.prefferedUsername);
+                userName = oicdUser.getAttribute(type.preferredUsername);
             }
             return createOrSaveUser(userName, oicdUser, oauth2User, type);
         } catch (Exception e) {

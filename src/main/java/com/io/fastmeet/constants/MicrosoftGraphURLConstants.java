@@ -4,13 +4,13 @@
  *
  * Copyright - Calendar App Java API
  **/
-package com.io.fastmeet.utils;
+package com.io.fastmeet.constants;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class MicrosoftGraphURL {
+public class MicrosoftGraphURLConstants {
 
     public static final String CREATE_CALENDAR_URL = "https://graph.microsoft.com/v1.0/me/events";
     public static final String CALENDAR_URL = "https://graph.microsoft.com/v1.0/me/calendarview";
