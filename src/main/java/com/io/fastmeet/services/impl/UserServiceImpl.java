@@ -80,14 +80,14 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserResponse createIndividualUser(UserCreateRequest request) {
-        ifUserExistWithError(request.getEmail());
+        ifUserExistWithError(request.getEmail().toLowerCase());
         User user = new User();
-        user.setEmail(request.getEmail());
+        user.setEmail(request.getEmail().toLowerCase());
         user.setName(request.getName());
         user.setIsCompany(false);
         user.setTimeZone(TimeZone.getTimeZone(request.getTimeZone()) != null ?
                 TimeZone.getTimeZone(request.getTimeZone()).getID() : TimeZone.getDefault().getID());
-        user.setPassword(encodePassword(request.getPassword(), request.getEmail()));
+        user.setPassword(encodePassword(request.getPassword(), request.getEmail().toLowerCase()));
         user.setLicence(licenceService.generateFreeTrial());
         userRepository.save(user);
         createValidationInfo(user, "tr_TR");
@@ -104,13 +104,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse socialSignUp(SocialUser request) {
         User user = new User();
-        user.setEmail(request.getEmail());
+        user.setEmail(request.getEmail().toLowerCase());
         user.setName(request.getName());
         user.setIsCompany(false);
-        user.setPassword(encodePassword(request.getPassword(), request.getEmail()));
+        user.setPassword(encodePassword(request.getPassword(), request.getEmail().toLowerCase()));
         user.setVerified(true);
         user.setLicence(licenceService.generateFreeTrial());
-        user.setPicture(cloudinaryService.uploadPhoto(request.getPictureUrl(), request.getEmail()));
+        user.setPicture(cloudinaryService.uploadPhoto(request.getPictureUrl(), request.getEmail().toLowerCase()));
         user.setTimeZone(TimeZone.getDefault().getID());
         addCalendar(request, user);
         userRepository.save(user);
@@ -130,14 +130,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse loginUser(AuthRequest authRequest) {
         User user = userRepository.findByEmail(authRequest.getUsername().toLowerCase())
-                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
-                        GeneralMessageConstants.USR_NOT_FOUND));
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.FORBIDDEN, Translator.getMessage(GeneralMessageConstants.WRONG_INFO),
+                        GeneralMessageConstants.WRONG_INFO_ERR));
         if (encodePassword(authRequest.getPassword(), user.getEmail().toLowerCase()).equals(user.getPassword())) {
             UserResponse userResponse = userMapper.mapToModel(user);
             userResponse.setToken(jwtService.createToken(user));
             return userResponse;
         }
-        throw new CalendarAppException(HttpStatus.FORBIDDEN, Translator.getMessage("error.user.password"), "PWD_ERR");
+        throw new CalendarAppException(HttpStatus.FORBIDDEN, Translator.getMessage(GeneralMessageConstants.WRONG_INFO),
+                GeneralMessageConstants.WRONG_INFO_ERR);
     }
 
     /**
@@ -239,7 +240,7 @@ public class UserServiceImpl implements UserService {
      */
     private synchronized String encodePassword(String password, String userMail) {
         String concat = userMail.toLowerCase();
-        MessageDigest md = DigestUtils.getMd5Digest();
+        MessageDigest md = DigestUtils.getSha256Digest();
         md.update(concat.getBytes(StandardCharsets.UTF_8));
         byte[] bytes = md.digest(password.getBytes());
         StringBuilder sb = new StringBuilder();
@@ -256,7 +257,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void updateToken(SocialUser request) {
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmail(request.getEmail().toLowerCase())
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
                         GeneralMessageConstants.USR_NOT_FOUND));
         addCalendar(request, user);

@@ -15,10 +15,12 @@ public class GeneralMessageConstants {
     public static final String USER_NOT_FOUND = "error.username.not.found";
     public static final String SCH_NOT_FOUND = "error.scheduler.not.found";
     public static final String USER_FOUND = "error.username.found";
+    public static final String WRONG_INFO = "error.wrong.info";
     public static final String USR_NOT_FOUND = "USR_NOT_FOUND";
     public static final String USR_FOUND = "USER_FOUND";
     public static final String LINKED = "LINKED";
     public static final String EXTERNAL_APP = "EXTERNAL_APP";
+    public static final String WRONG_INFO_ERR = "WRONG_INFO";
     public static final String EXTERNAL_APP_MSG = "error.external.app";
 
 

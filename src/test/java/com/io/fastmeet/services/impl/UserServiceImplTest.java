@@ -121,7 +121,7 @@ class UserServiceImplTest {
         authRequest.setPassword("123456");
         authRequest.setUsername("example");
         User user = new User();
-        user.setPassword("8ffc76871497e82846156625a4fdc998");
+        user.setPassword("4b084be9ac9e2d6fa8651df17c6df24b324be0d01e75f07a2f56e4f2645a658d");
         user.setEmail("example");
         when(userRepository.findByEmail("example")).thenReturn(Optional.of(user));
         UserResponse userResponse = new UserResponse();
@@ -139,9 +139,9 @@ class UserServiceImplTest {
         authRequest.setUsername("example");
         when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
         CalendarAppException exception = assertThrows(CalendarAppException.class, () -> userService.loginUser(authRequest));
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
         assertEquals("Error", exception.getReason());
-        assertEquals(GeneralMessageConstants.USR_NOT_FOUND, exception.getCause().getMessage());
+        assertEquals(GeneralMessageConstants.WRONG_INFO_ERR, exception.getCause().getMessage());
     }
 
     @Test
@@ -156,7 +156,7 @@ class UserServiceImplTest {
         CalendarAppException exception = assertThrows(CalendarAppException.class, () -> userService.loginUser(authRequest));
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
         assertEquals("Error", exception.getReason());
-        assertEquals("PWD_ERR", exception.getCause().getMessage());
+        assertEquals(GeneralMessageConstants.WRONG_INFO_ERR, exception.getCause().getMessage());
     }
 
     @Test

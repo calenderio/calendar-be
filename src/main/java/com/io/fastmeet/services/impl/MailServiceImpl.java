@@ -48,7 +48,7 @@ public class MailServiceImpl implements MailService {
             String header = Translator.getMessage("mail.validation.subject", Translator.getLanguage("tr_TR"));
             genericMessage(new MailValidation("validation", header), requestDto);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("Mail sending error to user {} {}", requestDto.getEmail(), e.getMessage());
         }
     }
 
