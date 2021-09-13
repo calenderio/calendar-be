@@ -9,9 +9,13 @@ package com.io.fastmeet.services;
 import com.io.fastmeet.entitites.Calendar;
 import com.io.fastmeet.models.requests.calendar.CalendarEventsRequest;
 
+import java.util.List;
+
 public interface CalendarService {
     //TODO multi calendar support
     void getCalendars(CalendarEventsRequest request, String userToken);
 
     Calendar createCalendarType(Calendar calendar, String token);
+
+    List<Calendar> getCalendarTypes(String token);
 }

@@ -90,6 +90,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Override
     public Scheduler saveCalendarTypeScheduler(Scheduler scheduler, Long userId) {
         scheduler.setForCalendar(true);
+        scheduler.setUserId(userId);
         return schedulerRepository.save(scheduler);
     }
 

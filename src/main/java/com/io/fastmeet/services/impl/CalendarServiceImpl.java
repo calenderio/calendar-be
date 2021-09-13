@@ -10,6 +10,7 @@ import com.io.fastmeet.core.security.encrypt.TokenEncryptor;
 import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.entitites.Calendar;
 import com.io.fastmeet.entitites.LinkedCalendar;
+import com.io.fastmeet.entitites.Scheduler;
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.enums.AppProviderType;
 import com.io.fastmeet.models.remotes.google.TokenRefreshResponse;
@@ -68,9 +69,17 @@ public class CalendarServiceImpl implements CalendarService {
         if (calendar.getPreDefinedSchedulerId() != null) {
             calendar.setScheduler(schedulerService.getUserSchedulerById(calendar.getPreDefinedSchedulerId(), user.getId()));
         } else {
-            calendar.setScheduler(schedulerService.saveCalendarTypeScheduler(calendar.getScheduler(), user.getId()));
+            Scheduler scheduler = calendar.getScheduler();
+            scheduler.setName(calendar.getName());
+            calendar.setScheduler(schedulerService.saveCalendarTypeScheduler(scheduler, user.getId()));
         }
         return calendarRepository.save(calendar);
+    }
+
+    @Override
+    public List<Calendar> getCalendarTypes(String token) {
+        User user = jwtService.getUserFromToken(token);
+        return calendarRepository.findByUserId(user.getId());
     }
 
     private void getGoogleCalendars(CalendarEventsRequest request, Set<LinkedCalendar> calendars, String userName) {

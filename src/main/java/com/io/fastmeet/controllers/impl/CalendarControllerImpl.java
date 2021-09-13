@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class CalendarControllerImpl implements CalendarController {
@@ -32,13 +34,25 @@ public class CalendarControllerImpl implements CalendarController {
     private SchedulerMapper schedulerMapper;
 
     @Override
-    public ResponseEntity<Void> createCalendarType(@Valid CalendarTypeCreateRequest request, String token) {
+    public ResponseEntity<CalendarTypeResponse> createCalendarType(@Valid CalendarTypeCreateRequest request, String token) {
         Calendar calendar = calendarMapper.mapRequestToEntity(request);
         calendar.setScheduler(schedulerMapper.mapDetailsToEntity(request.getSchedule(), request.getTimezone()));
         Calendar calendar1 = calendarService.createCalendarType(calendar, token);
         CalendarTypeResponse response = calendarMapper.mapEntityToModel(calendar1);
         response.setSchedule(schedulerMapper.mapEntityToModel(calendar1.getScheduler()));
-        return null;
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<List<CalendarTypeResponse>> getCalendarTypes(String token) {
+        List<Calendar> list = calendarService.getCalendarTypes(token);
+        List<CalendarTypeResponse> responseList = new ArrayList<>();
+        for (Calendar calendar : list) {
+            CalendarTypeResponse response = calendarMapper.mapEntityToModel(calendar);
+            response.setSchedule(schedulerMapper.mapEntityToModel(calendar.getScheduler()));
+            responseList.add(response);
+        }
+        return ResponseEntity.ok(responseList);
     }
 
 }

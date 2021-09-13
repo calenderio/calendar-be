@@ -32,6 +32,7 @@ public interface CalendarMapper {
     @Mapping(target = "type.duration", source = "duration")
     @Mapping(target = "type.durationType", source = "durationType")
     @Mapping(target = "schedule", ignore = true)
+    @Mapping(target = "timezone", source = "timeZone")
     CalendarTypeResponse mapEntityToModel(Calendar request);
 
 }
