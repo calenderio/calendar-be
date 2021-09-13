@@ -23,6 +23,7 @@ import com.io.fastmeet.models.requests.user.ChangePasswordRequest;
 import com.io.fastmeet.models.requests.user.ResetPasswordMailRequest;
 import com.io.fastmeet.models.requests.user.ResetPasswordRequest;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;
+import com.io.fastmeet.models.requests.user.UserUpdateRequest;
 import com.io.fastmeet.models.requests.user.ValidationRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
 import com.io.fastmeet.repositories.LinkedCalendarRepository;
@@ -240,12 +241,35 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * Update user
+     *
+     * @param token user jwt
+     * @param userUpdateRequest new details
+     * @throws CalendarAppException if user not exist
+     */
+    @Override
+    public void updateUser(UserUpdateRequest userUpdateRequest, String token) {
+        User user = jwtService.getUserFromToken(token);
+
+        if (userUpdateRequest.getEmail().equals(user.getEmail())) {
+            throw new CalendarAppException(HttpStatus.FORBIDDEN, Translator.getMessage(GeneralMessageConstants.WRONG_INFO),
+                    GeneralMessageConstants.WRONG_INFO_ERR);
+        }
+        user.setEmail(userUpdateRequest.getEmail());
+        user.setName(userUpdateRequest.getName());
+        user.setPicture(userUpdateRequest.getPicture());
+        userRepository.save(user);
+    }
+
+    /**
      * Performs change password for logged in user
      *
      * @param request new and old password
      * @param token   user token
      * @throws CalendarAppException if user not exist or infos wrong
      */
+
+
     @Override
     public void changePassword(ChangePasswordRequest request, String token) {
         User user = jwtService.getUserFromToken(token);

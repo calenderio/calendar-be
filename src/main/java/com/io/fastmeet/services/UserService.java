@@ -13,6 +13,7 @@ import com.io.fastmeet.models.requests.user.ChangePasswordRequest;
 import com.io.fastmeet.models.requests.user.ResetPasswordMailRequest;
 import com.io.fastmeet.models.requests.user.ResetPasswordRequest;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;
+import com.io.fastmeet.models.requests.user.UserUpdateRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
 
 public interface UserService {
@@ -39,4 +40,7 @@ public interface UserService {
     void updateToken(SocialUser request);
 
     void changePassword(ChangePasswordRequest request, String token);
+
+    void updateUser(UserUpdateRequest userUpdateRequest , String token);
+
 }

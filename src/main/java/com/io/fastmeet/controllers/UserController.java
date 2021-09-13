@@ -13,6 +13,7 @@ import com.io.fastmeet.models.requests.user.ChangePasswordRequest;
 import com.io.fastmeet.models.requests.user.ResetPasswordMailRequest;
 import com.io.fastmeet.models.requests.user.ResetPasswordRequest;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;
+import com.io.fastmeet.models.requests.user.UserUpdateRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -85,4 +86,13 @@ public interface UserController {
                     schema = @Schema(implementation = ErrorData.class))})})
     @PutMapping(value = "/resetPassword")
     ResponseEntity<Void> resetPassword(@RequestBody ResetPasswordRequest request);
+
+    @Operation(summary = "Update User")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "User infos changed"),
+            @ApiResponse(responseCode = "400", description = "Update user error", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorData.class))})})
+    @PutMapping(value = "/updateUser")
+    ResponseEntity<Void> updateUser(@RequestBody UserUpdateRequest request,
+                                            @RequestHeader(name = "Accept-Language", required = false) String token);
 }

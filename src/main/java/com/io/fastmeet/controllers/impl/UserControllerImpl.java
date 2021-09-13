@@ -13,6 +13,7 @@ import com.io.fastmeet.models.requests.user.ChangePasswordRequest;
 import com.io.fastmeet.models.requests.user.ResetPasswordMailRequest;
 import com.io.fastmeet.models.requests.user.ResetPasswordRequest;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;
+import com.io.fastmeet.models.requests.user.UserUpdateRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
 import com.io.fastmeet.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,12 @@ public class UserControllerImpl implements UserController {
     @Override
     public ResponseEntity<Void> resetPassword(@Valid ResetPasswordRequest request) {
         userService.resetPassword(request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> updateUser(UserUpdateRequest request, String token) {
+        userService.updateUser(request,token);
         return ResponseEntity.noContent().build();
     }
 
