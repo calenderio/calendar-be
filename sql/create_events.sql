@@ -1,7 +1,7 @@
-create table calendar_types
+create table events
 (
     id            bigserial   not null
-        constraint calendar_types_pk
+        constraint events_pk
             primary key,
     user_id       bigint      not null,
     name          varchar(50) not null,
@@ -17,9 +17,9 @@ create table calendar_types
 );
 
 create
-    index calendar_types_user_id_index
-    on calendar_types (user_id);
+    index events_user_id_index
+    on events (user_id);
 
 create
-    index calendar_types_scheduler_id_index
-    on calendar_types (scheduler_id);
+    index events_scheduler_id_index
+    on events (scheduler_id);

@@ -24,10 +24,10 @@ import java.time.LocalDate;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Table(name = "calendar_types")
+@Table(name = "events")
 @NoArgsConstructor
 @Entity
-public class Calendar extends BaseEntity {
+public class Event extends BaseEntity {
 
     private Long userId;
     private String name;

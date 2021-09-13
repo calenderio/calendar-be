@@ -237,7 +237,7 @@
                                 <srcFile>sql/create_user_calendars.sql</srcFile>
                                 <srcFile>sql/create_validations.sql</srcFile>
                                 <srcFile>sql/create_scheduler.sql</srcFile>
-                                <srcFile>sql/create_calendar_types.sql</srcFile>
+                                <srcFile>sql/create_events.sql</srcFile>
                             </srcFiles>
                         </configuration>
                     </execution>

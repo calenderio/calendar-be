@@ -6,13 +6,13 @@
  **/
 package com.io.fastmeet.repositories;
 
-import com.io.fastmeet.entitites.Calendar;
+import com.io.fastmeet.entitites.Event;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface CalendarRepository extends CrudRepository<Calendar, Long> {
+public interface EventRepository extends CrudRepository<Event, Long> {
 
-    List<Calendar> findByUserId(Long userId);
+    List<Event> findByUserId(Long userId);
 
 }

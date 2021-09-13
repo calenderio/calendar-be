@@ -21,7 +21,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Data
-public class CalendarTypeCreateRequest {
+public class EventTypeCreateRequest {
 
     @Schema(description = "Calendar Name", example = "Example Calendar", required = true)
     @NotBlank

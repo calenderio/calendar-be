@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Data
-public class CalendarTypeResponse {
+public class EventTypeResponse {
 
     @Schema(description = "Id of calendar", example = "1")
     private Long id;

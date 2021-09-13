@@ -8,16 +8,16 @@ package com.io.fastmeet.services.impl;
 
 import com.io.fastmeet.core.security.encrypt.TokenEncryptor;
 import com.io.fastmeet.core.security.jwt.JWTService;
-import com.io.fastmeet.entitites.Calendar;
+import com.io.fastmeet.entitites.Event;
 import com.io.fastmeet.entitites.LinkedCalendar;
 import com.io.fastmeet.entitites.Scheduler;
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.enums.AppProviderType;
 import com.io.fastmeet.models.remotes.google.TokenRefreshResponse;
 import com.io.fastmeet.models.requests.calendar.CalendarEventsRequest;
-import com.io.fastmeet.repositories.CalendarRepository;
+import com.io.fastmeet.repositories.EventRepository;
 import com.io.fastmeet.repositories.LinkedCalendarRepository;
-import com.io.fastmeet.services.CalendarService;
+import com.io.fastmeet.services.EventService;
 import com.io.fastmeet.services.MicrosoftService;
 import com.io.fastmeet.services.SchedulerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +31,10 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class CalendarServiceImpl implements CalendarService {
+public class EventServiceImpl implements EventService {
 
     @Autowired
-    private CalendarRepository calendarRepository;
+    private EventRepository eventRepository;
 
     @Autowired
     private GoogleServiceImpl googleService;
@@ -63,23 +63,23 @@ public class CalendarServiceImpl implements CalendarService {
     }
 
     @Override
-    public Calendar createCalendarType(Calendar calendar, String token) {
+    public Event createCalendarType(Event event, String token) {
         User user = jwtService.getUserFromToken(token);
-        calendar.setUserId(user.getId());
-        if (calendar.getPreDefinedSchedulerId() != null) {
-            calendar.setScheduler(schedulerService.getUserSchedulerById(calendar.getPreDefinedSchedulerId(), user.getId()));
+        event.setUserId(user.getId());
+        if (event.getPreDefinedSchedulerId() != null) {
+            event.setScheduler(schedulerService.getUserSchedulerById(event.getPreDefinedSchedulerId(), user.getId()));
         } else {
-            Scheduler scheduler = calendar.getScheduler();
-            scheduler.setName(calendar.getName());
-            calendar.setScheduler(schedulerService.saveCalendarTypeScheduler(scheduler, user.getId()));
+            Scheduler scheduler = event.getScheduler();
+            scheduler.setName(event.getName());
+            event.setScheduler(schedulerService.saveCalendarTypeScheduler(scheduler, user.getId()));
         }
-        return calendarRepository.save(calendar);
+        return eventRepository.save(event);
     }
 
     @Override
-    public List<Calendar> getCalendarTypes(String token) {
+    public List<Event> getCalendarTypes(String token) {
         User user = jwtService.getUserFromToken(token);
-        return calendarRepository.findByUserId(user.getId());
+        return eventRepository.findByUserId(user.getId());
     }
 
     private void getGoogleCalendars(CalendarEventsRequest request, Set<LinkedCalendar> calendars, String userName) {
