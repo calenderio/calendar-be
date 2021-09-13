@@ -12,11 +12,9 @@ import com.io.fastmeet.core.i18n.Translator;
 import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.entitites.Scheduler;
 import com.io.fastmeet.entitites.User;
-import com.io.fastmeet.mappers.SchedulerMapper;
 import com.io.fastmeet.models.internals.SchedulerDetailsRequest;
 import com.io.fastmeet.models.internals.SchedulerNameUpdateRequest;
 import com.io.fastmeet.models.internals.SchedulerTime;
-import com.io.fastmeet.models.responses.calendar.SchedulerResponse;
 import com.io.fastmeet.repositories.SchedulerRepository;
 import com.io.fastmeet.services.SchedulerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +39,8 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Autowired
     private JWTService jwtService;
 
-    @Autowired
-    private SchedulerMapper schedulerMapper;
-
     @Override
-    public SchedulerResponse createScheduler(String name, String token) {
+    public List<Scheduler> createScheduler(String name, String token) {
         User user = jwtService.getUserFromToken(token);
         Scheduler scheduler = new Scheduler();
         scheduler.setTimeZone(user.getTimeZone());
@@ -58,26 +53,25 @@ public class SchedulerServiceImpl implements SchedulerService {
         scheduler.setUserId(user.getId());
         scheduler.setUnavailable(Collections.singletonList(LocalDate.now().toString()));
         schedulerRepository.save(scheduler);
-        List<Scheduler> list = schedulerRepository.findByUserId(user.getId()).orElse(new ArrayList<>());
-        return new SchedulerResponse(schedulerMapper.mapEntityListToModelList(list));
+        return schedulerRepository.findByUserIdAndForCalendarIsFalse(user.getId()).orElse(new ArrayList<>());
     }
 
     @Override
-    public SchedulerResponse updateScheduler(SchedulerDetailsRequest request) {
+    public List<Scheduler> updateScheduler(SchedulerDetailsRequest request) {
         User user = jwtService.getUserFromToken(request.getToken());
         Scheduler scheduleObject = schedulerRepository.findByUserIdAndId(user.getId(), request.getSchedulerId()).orElseThrow(() ->
                 new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.SCH_NOT_FOUND),
                         GeneralMessageConstants.USR_NOT_FOUND));
-        schedulerRepository.save(schedulerMapper.mapUpdateModelsToEntity(request.getRequest(), scheduleObject));
-        List<Scheduler> list = schedulerRepository.findByUserId(user.getId()).orElse(new ArrayList<>());
-        return new SchedulerResponse(schedulerMapper.mapEntityListToModelList(list));
+        request.getScheduler().setId(scheduleObject.getId());
+        request.getScheduler().setName(scheduleObject.getName());
+        schedulerRepository.save(request.getScheduler());
+        return schedulerRepository.findByUserIdAndForCalendarIsFalse(user.getId()).orElse(new ArrayList<>());
     }
 
     @Override
-    public SchedulerResponse getUserSchedulers(String token) {
+    public List<Scheduler> getUserSchedulers(String token) {
         User user = jwtService.getUserFromToken(token);
-        List<Scheduler> list = schedulerRepository.findByUserId(user.getId()).orElse(new ArrayList<>());
-        return new SchedulerResponse(schedulerMapper.mapEntityListToModelList(list));
+        return schedulerRepository.findByUserIdAndForCalendarIsFalse(user.getId()).orElse(new ArrayList<>());
     }
 
     @Override
@@ -85,6 +79,20 @@ public class SchedulerServiceImpl implements SchedulerService {
         User user = jwtService.getUserFromToken(request.getToken());
         schedulerRepository.changeSchedulerName(request.getName(), request.getSchedulerId(), user.getId());
     }
+
+    @Override
+    public Scheduler getUserSchedulerById(Long id, Long userId) {
+        return schedulerRepository.findByUserIdAndId(userId, id).orElseThrow(() ->
+                new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.SCH_NOT_FOUND),
+                        GeneralMessageConstants.USR_NOT_FOUND));
+    }
+
+    @Override
+    public Scheduler saveCalendarTypeScheduler(Scheduler scheduler, Long userId) {
+        scheduler.setForCalendar(true);
+        return schedulerRepository.save(scheduler);
+    }
+
 
     private Set<SchedulerTime> defaultSchedulerTimeSet() {
         Set<SchedulerTime> times = new HashSet<>();

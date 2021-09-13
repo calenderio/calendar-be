@@ -6,16 +6,22 @@
  **/
 package com.io.fastmeet.services;
 
+import com.io.fastmeet.entitites.Scheduler;
 import com.io.fastmeet.models.internals.SchedulerDetailsRequest;
 import com.io.fastmeet.models.internals.SchedulerNameUpdateRequest;
-import com.io.fastmeet.models.responses.calendar.SchedulerResponse;
+
+import java.util.List;
 
 public interface SchedulerService {
-    SchedulerResponse createScheduler(String name, String token);
+    List<Scheduler> createScheduler(String name, String token);
 
-    SchedulerResponse updateScheduler(SchedulerDetailsRequest request);
+    List<Scheduler> updateScheduler(SchedulerDetailsRequest request);
 
-    SchedulerResponse getUserSchedulers(String token);
+    List<Scheduler> getUserSchedulers(String token);
 
     void updateName(SchedulerNameUpdateRequest request);
+
+    Scheduler getUserSchedulerById(Long id, Long userId);
+
+    Scheduler saveCalendarTypeScheduler(Scheduler scheduler, Long userId);
 }

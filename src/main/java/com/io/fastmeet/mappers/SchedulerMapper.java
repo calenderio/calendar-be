@@ -7,8 +7,8 @@
 package com.io.fastmeet.mappers;
 
 import com.io.fastmeet.entitites.Scheduler;
+import com.io.fastmeet.models.internals.SchedulerDetails;
 import com.io.fastmeet.models.internals.SchedulerObject;
-import com.io.fastmeet.models.requests.scheduler.SchedulerUpdateRequest;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -34,19 +34,9 @@ public interface SchedulerMapper {
     @Mapping(target = "schedule.unavailable", source = "unavailable")
     SchedulerObject mapEntityToModel(Scheduler schedulers);
 
-    @Mapping(target = "mon", source = "model.schedule.mon")
-    @Mapping(target = "tue", source = "model.schedule.tue")
-    @Mapping(target = "wed", source = "model.schedule.wed")
-    @Mapping(target = "thu", source = "model.schedule.thu")
-    @Mapping(target = "fri", source = "model.schedule.fri")
-    @Mapping(target = "sat", source = "model.schedule.sat")
-    @Mapping(target = "sun", source = "model.schedule.sun")
-    @Mapping(target = "additionalTime", source = "model.schedule.additional")
-    @Mapping(target = "unavailable", source = "model.schedule.unavailable")
-    @Mapping(target = "timeZone", source = "model.timeZone")
-    @Mapping(target = "name", source = "entity.name")
-    @Mapping(target = "id", source = "entity.id")
-    Scheduler mapUpdateModelsToEntity(SchedulerUpdateRequest model, Scheduler entity);
+    @Mapping(target = "additionalTime", source = "model.additional")
+    @Mapping(target = "unavailable", source = "model.unavailable")
+    Scheduler mapDetailsToEntity(SchedulerDetails model, String timeZone);
 
     @AfterMapping
     default void mapToObject(@MappingTarget SchedulerObject object) {

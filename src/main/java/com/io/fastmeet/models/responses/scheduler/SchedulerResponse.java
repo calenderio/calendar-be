@@ -4,7 +4,7 @@
  *
  * Copyright - Calendar App Java API
  **/
-package com.io.fastmeet.models.responses.calendar;
+package com.io.fastmeet.models.responses.scheduler;
 
 import com.io.fastmeet.models.internals.SchedulerObject;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

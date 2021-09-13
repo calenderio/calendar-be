@@ -7,10 +7,11 @@
 package com.io.fastmeet.controllers.impl;
 
 import com.io.fastmeet.controllers.SchedulerController;
+import com.io.fastmeet.mappers.SchedulerMapper;
 import com.io.fastmeet.models.internals.SchedulerDetailsRequest;
 import com.io.fastmeet.models.internals.SchedulerNameUpdateRequest;
 import com.io.fastmeet.models.requests.scheduler.SchedulerUpdateRequest;
-import com.io.fastmeet.models.responses.calendar.SchedulerResponse;
+import com.io.fastmeet.models.responses.scheduler.SchedulerResponse;
 import com.io.fastmeet.services.SchedulerService;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +27,19 @@ public class SchedulerControllerImpl implements SchedulerController {
     @Autowired
     private SchedulerService schedulerService;
 
+    @Autowired
+    private SchedulerMapper mapper;
+
     @Override
     public ResponseEntity<SchedulerResponse> createScheduler(@Length(max = 50, min = 1) String name, String token) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(schedulerService.createScheduler(name, token));
+        SchedulerResponse schedulerResponse = new SchedulerResponse(mapper.mapEntityListToModelList(schedulerService.createScheduler(name, token)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(schedulerResponse);
     }
 
     @Override
     public ResponseEntity<SchedulerResponse> getSchedulers(String token) {
-        return ResponseEntity.ok(schedulerService.getUserSchedulers(token));
+        SchedulerResponse schedulerResponse = new SchedulerResponse(mapper.mapEntityListToModelList(schedulerService.getUserSchedulers(token)));
+        return ResponseEntity.ok(schedulerResponse);
     }
 
     @Override
@@ -44,7 +50,12 @@ public class SchedulerControllerImpl implements SchedulerController {
 
     @Override
     public ResponseEntity<SchedulerResponse> updateScheduler(@Valid SchedulerUpdateRequest request, Long schedulerId, String token) {
-        return ResponseEntity.ok(schedulerService.updateScheduler(new SchedulerDetailsRequest(request, schedulerId, token)));
+        SchedulerDetailsRequest schedulerDetailsRequest = new SchedulerDetailsRequest();
+        schedulerDetailsRequest.setSchedulerId(schedulerId);
+        schedulerDetailsRequest.setToken(token);
+        schedulerDetailsRequest.setScheduler(mapper.mapDetailsToEntity(request.getSchedule(), request.getTimeZone()));
+        SchedulerResponse schedulerResponse = new SchedulerResponse(mapper.mapEntityListToModelList(schedulerService.updateScheduler(schedulerDetailsRequest)));
+        return ResponseEntity.ok(schedulerResponse);
     }
 
 }

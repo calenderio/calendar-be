@@ -16,9 +16,11 @@ import java.util.Optional;
 
 public interface SchedulerRepository extends CrudRepository<Scheduler, Long> {
 
-    Optional<List<Scheduler>> findByUserId(Long userId);
+    Optional<List<Scheduler>> findByUserIdAndForCalendarIsFalse(Long userId);
 
     Optional<Scheduler> findByUserIdAndId(Long userId, Long id);
+
+    boolean existsByIdAndUserId(Long id, Long userId);
 
     @Query("update Scheduler s set s.name = :name where s.id = :id and s.userId = :userId")
     @Modifying

@@ -63,6 +63,7 @@ public class Scheduler extends BaseEntity {
     private Set<AdditionalTime> additionalTime = new HashSet<>();
     @Type(type = "list-array")
     private List<String> unavailable = new ArrayList<>();
+    private boolean forCalendar = Boolean.FALSE;
 
 
 }

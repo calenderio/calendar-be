@@ -8,7 +8,7 @@ package com.io.fastmeet.controllers;
 
 import com.io.fastmeet.core.exception.ErrorData;
 import com.io.fastmeet.models.requests.scheduler.SchedulerUpdateRequest;
-import com.io.fastmeet.models.responses.calendar.SchedulerResponse;
+import com.io.fastmeet.models.responses.scheduler.SchedulerResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

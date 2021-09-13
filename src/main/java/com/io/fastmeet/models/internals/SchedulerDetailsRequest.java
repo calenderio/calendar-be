@@ -6,15 +6,13 @@
  **/
 package com.io.fastmeet.models.internals;
 
-import com.io.fastmeet.models.requests.scheduler.SchedulerUpdateRequest;
-import lombok.AllArgsConstructor;
+import com.io.fastmeet.entitites.Scheduler;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class SchedulerDetailsRequest {
 
-    private SchedulerUpdateRequest request;
+    private Scheduler scheduler;
     private Long schedulerId;
     private String token;
 }

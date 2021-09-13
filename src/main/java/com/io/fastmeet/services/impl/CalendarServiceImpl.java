@@ -8,18 +8,20 @@ package com.io.fastmeet.services.impl;
 
 import com.io.fastmeet.core.security.encrypt.TokenEncryptor;
 import com.io.fastmeet.core.security.jwt.JWTService;
+import com.io.fastmeet.entitites.Calendar;
 import com.io.fastmeet.entitites.LinkedCalendar;
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.enums.AppProviderType;
-import com.io.fastmeet.mappers.CalendarMapper;
 import com.io.fastmeet.models.remotes.google.TokenRefreshResponse;
-import com.io.fastmeet.models.remotes.microsoft.MicrosoftCalendarEventsRequest;
 import com.io.fastmeet.models.requests.calendar.CalendarEventsRequest;
+import com.io.fastmeet.repositories.CalendarRepository;
 import com.io.fastmeet.repositories.LinkedCalendarRepository;
 import com.io.fastmeet.services.CalendarService;
 import com.io.fastmeet.services.MicrosoftService;
+import com.io.fastmeet.services.SchedulerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,7 +29,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class CalendarServiceImpl implements CalendarService {
+
+    @Autowired
+    private CalendarRepository calendarRepository;
 
     @Autowired
     private GoogleServiceImpl googleService;
@@ -42,7 +48,7 @@ public class CalendarServiceImpl implements CalendarService {
     private JWTService jwtService;
 
     @Autowired
-    private CalendarMapper calendarMapper;
+    private SchedulerService schedulerService;
 
     @Autowired
     private TokenEncryptor tokenEncryptor;
@@ -53,6 +59,18 @@ public class CalendarServiceImpl implements CalendarService {
         User user = jwtService.getUserFromToken(userToken);
         Set<LinkedCalendar> calendars = user.getCalendars();
         getGoogleCalendars(request, calendars, user.getEmail());
+    }
+
+    @Override
+    public Calendar createCalendarType(Calendar calendar, String token) {
+        User user = jwtService.getUserFromToken(token);
+        calendar.setUserId(user.getId());
+        if (calendar.getPreDefinedSchedulerId() != null) {
+            calendar.setScheduler(schedulerService.getUserSchedulerById(calendar.getPreDefinedSchedulerId(), user.getId()));
+        } else {
+            calendar.setScheduler(schedulerService.saveCalendarTypeScheduler(calendar.getScheduler(), user.getId()));
+        }
+        return calendarRepository.save(calendar);
     }
 
     private void getGoogleCalendars(CalendarEventsRequest request, Set<LinkedCalendar> calendars, String userName) {
@@ -68,13 +86,13 @@ public class CalendarServiceImpl implements CalendarService {
 //        }
         List<LinkedCalendar> filteredMicrosft = calendars.stream().filter(item -> AppProviderType.MICROSOFT.equals(item.getType()))
                 .collect(Collectors.toList());
-        if (!filteredMicrosft.isEmpty()) {
-            LinkedCalendar selected = filteredMicrosft.get(0);
-            checkAndCreateToken(filteredMicrosft, selected, AppProviderType.MICROSOFT);
-            MicrosoftCalendarEventsRequest eventsRequest = calendarMapper.mapToMicrosoft(request);
-            eventsRequest.setAccessToken(tokenEncryptor.getDecryptedString(selected.getAccessToken()));
-            microsoftService.getCalendarEvents(eventsRequest);
-        }
+//        if (!filteredMicrosft.isEmpty()) {
+//            LinkedCalendar selected = filteredMicrosft.get(0);
+//            checkAndCreateToken(filteredMicrosft, selected, AppProviderType.MICROSOFT);
+//            MicrosoftCalendarEventsRequest eventsRequest = calendarMapper.mapToMicrosoft(request);
+//            eventsRequest.setAccessToken(tokenEncryptor.getDecryptedString(selected.getAccessToken()));
+//            microsoftService.getCalendarEvents(eventsRequest);
+//        }
     }
 
     private void checkAndCreateToken(List<LinkedCalendar> filtered, LinkedCalendar selected, AppProviderType type) {

@@ -14,7 +14,8 @@ create table schedulers
     fri             jsonb,
     sat             jsonb,
     sun             jsonb,
-    additional_time jsonb
+    additional_time jsonb,
+    for_calendar    bool        not null default false
 );
 
 create
