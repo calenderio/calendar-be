@@ -10,6 +10,7 @@ package com.io.fastmeet.controllers;
 import com.io.fastmeet.core.exception.ErrorData;
 import com.io.fastmeet.models.requests.user.AuthRequest;
 import com.io.fastmeet.models.requests.user.ChangePasswordRequest;
+import com.io.fastmeet.models.requests.user.ResendVerificationMailRequest;
 import com.io.fastmeet.models.requests.user.ResetPasswordMailRequest;
 import com.io.fastmeet.models.requests.user.ResetPasswordRequest;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;
@@ -87,12 +88,24 @@ public interface UserController {
     @PutMapping(value = "/resetPassword")
     ResponseEntity<Void> resetPassword(@RequestBody ResetPasswordRequest request);
 
+    @Operation(summary = "Resend validation mail")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Resent validation mail"),
+            @ApiResponse(responseCode = "400", description = "Sending mail error", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorData.class))})})
+    @PostMapping(value = "/resendVerification")
+    ResponseEntity<Void> resendVerification(@RequestBody ResendVerificationMailRequest request,
+                                            @RequestHeader(name = "Accept-Language", required = false) String language);
+
     @Operation(summary = "Update User")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "User infos changed"),
+            @ApiResponse(responseCode = "200", description = "User infos changed",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponse.class))}),
             @ApiResponse(responseCode = "400", description = "Update user error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @PutMapping(value = "/updateUser")
-    ResponseEntity<Void> updateUser(@RequestBody UserUpdateRequest request,
-                                            @RequestHeader(name = "Accept-Language", required = false) String token);
+    ResponseEntity<UserResponse> updateUser(@RequestBody UserUpdateRequest request,
+                                            @RequestHeader(name = "Authorization") String token,
+                                            @RequestHeader(name = "Accept-Language", required = false) String language);
 }

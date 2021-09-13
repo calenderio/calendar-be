@@ -10,6 +10,7 @@ import com.io.fastmeet.controllers.UserController;
 import com.io.fastmeet.core.annotations.SkipSecurity;
 import com.io.fastmeet.models.requests.user.AuthRequest;
 import com.io.fastmeet.models.requests.user.ChangePasswordRequest;
+import com.io.fastmeet.models.requests.user.ResendVerificationMailRequest;
 import com.io.fastmeet.models.requests.user.ResetPasswordMailRequest;
 import com.io.fastmeet.models.requests.user.ResetPasswordRequest;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;
@@ -34,7 +35,7 @@ public class UserControllerImpl implements UserController {
     @Override
     @SkipSecurity
     public ResponseEntity<UserResponse> createUser(@Valid UserCreateRequest request, String language) {
-        return ResponseEntity.ok(userService.createIndividualUser(request));
+        return ResponseEntity.ok(userService.createIndividualUser(request, language));
     }
 
     @Override
@@ -67,9 +68,15 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<Void> updateUser(UserUpdateRequest request, String token) {
-        userService.updateUser(request,token);
+    public ResponseEntity<Void> resendVerification(ResendVerificationMailRequest request, String language) {
+        userService.resendValidationMail(request, language);
         return ResponseEntity.noContent().build();
+
+    }
+
+    @Override
+    public ResponseEntity<UserResponse> updateUser(UserUpdateRequest request, String token, String language) {
+        return ResponseEntity.ok(userService.updateUser(request, token, language));
     }
 
     @PreAuthorize("hasRole('USER')")

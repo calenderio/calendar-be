@@ -9,6 +9,7 @@ package com.io.fastmeet.services.impl;
 import com.io.fastmeet.core.exception.CalendarAppException;
 import com.io.fastmeet.entitites.Validation;
 import com.io.fastmeet.enums.ValidationType;
+import com.io.fastmeet.models.internals.ResendValidation;
 import com.io.fastmeet.models.requests.user.ValidationRequest;
 import com.io.fastmeet.repositories.UserRepository;
 import com.io.fastmeet.repositories.ValidationRepository;
@@ -49,6 +50,17 @@ public class ValidationServiceImpl implements ValidationService {
         Validation validation = validationRepository.findByCodeAndMailAndType(request.getCode(), request.getMail(), ValidationType.PASSWORD)
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, "Validation not valid", "VAL_ERR"));
         validationRepository.delete(validation);
+    }
+
+    /**
+     * This methods verified user mail
+     *
+     * @param request verify request detail
+     */
+    @Override
+    public Validation getValidationDetail(ResendValidation request) {
+        return validationRepository.findByMailAndType(request.getMail(), request.getType())
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, "Validation not valid", "VAL_ERR"));
     }
 
 }

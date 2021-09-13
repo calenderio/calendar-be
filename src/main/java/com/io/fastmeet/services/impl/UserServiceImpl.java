@@ -17,9 +17,11 @@ import com.io.fastmeet.enums.AppProviderType;
 import com.io.fastmeet.enums.ValidationType;
 import com.io.fastmeet.mappers.UserMapper;
 import com.io.fastmeet.models.internals.GenericMailRequest;
+import com.io.fastmeet.models.internals.ResendValidation;
 import com.io.fastmeet.models.internals.SocialUser;
 import com.io.fastmeet.models.requests.user.AuthRequest;
 import com.io.fastmeet.models.requests.user.ChangePasswordRequest;
+import com.io.fastmeet.models.requests.user.ResendVerificationMailRequest;
 import com.io.fastmeet.models.requests.user.ResetPasswordMailRequest;
 import com.io.fastmeet.models.requests.user.ResetPasswordRequest;
 import com.io.fastmeet.models.requests.user.UserCreateRequest;
@@ -85,10 +87,11 @@ public class UserServiceImpl implements UserService {
     /**
      * This method creates new individual user
      *
-     * @param request user details
+     * @param request  user details
+     * @param language user Language
      */
     @Override
-    public UserResponse createIndividualUser(UserCreateRequest request) {
+    public UserResponse createIndividualUser(UserCreateRequest request, String language) {
         ifUserExistWithError(request.getEmail().toLowerCase());
         User user = new User();
         user.setEmail(request.getEmail().toLowerCase());
@@ -100,7 +103,7 @@ public class UserServiceImpl implements UserService {
         user.setLicence(licenceService.generateFreeTrial());
         userRepository.save(user);
         mailService.sendMailValidation(new GenericMailRequest(user.getEmail(), user.getName(),
-                createValidationInfo(user, "tr_TR", ValidationType.EMAIL), "tr_TR"));
+                createValidationInfo(user, ValidationType.EMAIL), language));
         UserResponse response = userMapper.mapToModel(user);
         response.setToken(jwtService.createToken(user));
         return response;
@@ -210,11 +213,10 @@ public class UserServiceImpl implements UserService {
      * Create new validation information for user
      *
      * @param user
-     * @param language validation mail langugage
-     * @param type     validation type
+     * @param type validation type
      */
     @Async
-    public String createValidationInfo(User user, String language, ValidationType type) {
+    public String createValidationInfo(User user, ValidationType type) {
         Validation validation = validationRepository.findByMailAndType(user.getEmail(), ValidationType.EMAIL).orElse(new Validation());
         validation.setUserId(user.getId());
         validation.setCode(RandomStringUtils.randomAlphabetic(50));
@@ -243,22 +245,24 @@ public class UserServiceImpl implements UserService {
     /**
      * Update user
      *
-     * @param token user jwt
+     * @param token             user jwt
      * @param userUpdateRequest new details
+     * @param language          user language
      * @throws CalendarAppException if user not exist
      */
     @Override
-    public void updateUser(UserUpdateRequest userUpdateRequest, String token) {
+    public UserResponse updateUser(UserUpdateRequest userUpdateRequest, String token, String language) {
         User user = jwtService.getUserFromToken(token);
-
-        if (userUpdateRequest.getEmail().equals(user.getEmail())) {
-            throw new CalendarAppException(HttpStatus.FORBIDDEN, Translator.getMessage(GeneralMessageConstants.WRONG_INFO),
-                    GeneralMessageConstants.WRONG_INFO_ERR);
+        if (!userUpdateRequest.getEmail().equals(user.getEmail())) {
+            user.setVerified(false);
+            mailService.sendMailValidation(new GenericMailRequest(user.getEmail(), user.getName(),
+                    createValidationInfo(user, ValidationType.EMAIL), language));
         }
         user.setEmail(userUpdateRequest.getEmail());
         user.setName(userUpdateRequest.getName());
         user.setPicture(userUpdateRequest.getPicture());
-        userRepository.save(user);
+        user.setTimeZone(TimeZone.getTimeZone(userUpdateRequest.getTimeZone()).getID());
+        return userMapper.mapToModel(userRepository.save(user));
     }
 
     /**
@@ -268,8 +272,6 @@ public class UserServiceImpl implements UserService {
      * @param token   user token
      * @throws CalendarAppException if user not exist or infos wrong
      */
-
-
     @Override
     public void changePassword(ChangePasswordRequest request, String token) {
         User user = jwtService.getUserFromToken(token);
@@ -296,13 +298,18 @@ public class UserServiceImpl implements UserService {
         GenericMailRequest mailRequest = new GenericMailRequest();
         mailRequest.setLanguage(request.getEmail());
         mailRequest.setName(user.getName());
-        mailRequest.setCode(RandomStringUtils.randomAlphabetic(50));
+        mailRequest.setCode(createValidationInfo(user, ValidationType.PASSWORD));
         mailRequest.setLanguage(language);
-        mailService.sendMailValidation(new GenericMailRequest(user.getEmail(), user.getName(),
-                createValidationInfo(user, "tr_TR", ValidationType.PASSWORD), "tr_TR"));
+        mailRequest.setEmail(request.getEmail());
         mailService.sendPasswordResetMail(mailRequest);
     }
 
+    /**
+     * Reset password
+     *
+     * @param request password details
+     * @throws CalendarAppException if user not exist or infos wrong
+     */
     @Override
     public void resetPassword(ResetPasswordRequest request) {
         User user = userRepository.findByEmail(request.getEmail().toLowerCase())
@@ -312,24 +319,25 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encodePassword(request.getPassword(), user.getEmail()));
     }
 
+
     /**
-     * Encode user password for security
-     * Combine username, usernameid and security
+     * Resend validation
      *
-     * @param password password information
-     * @param userMail mail of user
-     * @return encoded password
+     * @param request  mail details
+     * @param language user jwt
+     * @throws CalendarAppException if validation info not exist
      */
-    private synchronized String encodePassword(String password, String userMail) {
-        String concat = userMail.toLowerCase();
-        MessageDigest md = DigestUtils.getSha256Digest();
-        md.update(concat.getBytes(StandardCharsets.UTF_8));
-        byte[] bytes = md.digest(password.getBytes());
-        StringBuilder sb = new StringBuilder();
-        for (byte aByte : bytes) {
-            sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
+    @Override
+    public void resendValidationMail(ResendVerificationMailRequest request, String language) {
+        Validation validation = validationService.getValidationDetail(new ResendValidation(request.getEmail(), request.getType()));
+        User user = userRepository.findByEmail(request.getEmail().toLowerCase())
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
+                        GeneralMessageConstants.USR_NOT_FOUND));
+        if (ValidationType.EMAIL.equals(request.getType())) {
+            mailService.sendMailValidation(new GenericMailRequest(request.getEmail(), user.getName(), validation.getCode(), language));
+        } else {
+            mailService.sendPasswordResetMail(new GenericMailRequest(request.getEmail(), user.getName(), validation.getCode(), language));
         }
-        return sb.toString();
     }
 
     /**
@@ -393,6 +401,26 @@ public class UserServiceImpl implements UserService {
      */
     private LinkedCalendar getCalendar(String mail, AppProviderType type) {
         return calendarRepository.findBySocialMailAndType(mail, type).orElse(new LinkedCalendar());
+    }
+
+    /**
+     * Encode user password for security
+     * Combine username, usernameid and security
+     *
+     * @param password password information
+     * @param userMail mail of user
+     * @return encoded password
+     */
+    private synchronized String encodePassword(String password, String userMail) {
+        String concat = userMail.toLowerCase();
+        MessageDigest md = DigestUtils.getSha256Digest();
+        md.update(concat.getBytes(StandardCharsets.UTF_8));
+        byte[] bytes = md.digest(password.getBytes());
+        StringBuilder sb = new StringBuilder();
+        for (byte aByte : bytes) {
+            sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
+        }
+        return sb.toString();
     }
 
 }

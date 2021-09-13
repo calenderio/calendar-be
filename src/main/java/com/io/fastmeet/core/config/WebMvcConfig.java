@@ -54,6 +54,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/favicon.ico",
                         "/users/verifyEmail",
                         "/login",
+                        "/resendVerification",
                         "/resetPassword"
                 )
                 .pathMatcher(new AntPathMatcher());
