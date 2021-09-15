@@ -6,6 +6,7 @@
  **/
 package com.io.fastmeet.validators;
 
+import com.io.fastmeet.constants.DayValues;
 import com.io.fastmeet.models.internals.AdditionalTime;
 import com.io.fastmeet.models.internals.SchedulerDetails;
 import com.io.fastmeet.models.internals.SchedulerTime;

@@ -7,6 +7,7 @@
 package com.io.fastmeet.services.impl;
 
 import com.io.fastmeet.core.exception.CalendarAppException;
+import com.io.fastmeet.core.i18n.Translator;
 import com.io.fastmeet.entitites.Validation;
 import com.io.fastmeet.enums.ValidationType;
 import com.io.fastmeet.models.internals.ResendValidation;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ValidationServiceImpl implements ValidationService {
 
+    private static final String VAL_ERR = "VAL_ERR";
     @Autowired
     private ValidationRepository validationRepository;
 
@@ -35,7 +37,7 @@ public class ValidationServiceImpl implements ValidationService {
     @Override
     public void verifyMail(ValidationRequest request) {
         Validation validation = validationRepository.findByCodeAndMailAndType(request.getCode(), request.getMail(), ValidationType.EMAIL)
-                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, "Validation not valid", "VAL_ERR"));
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage("validation_not_valid"), VAL_ERR));
         validationRepository.delete(validation);
         userRepository.verifyUserByMail(request.getMail());
     }
@@ -48,7 +50,7 @@ public class ValidationServiceImpl implements ValidationService {
     @Override
     public void verify(ValidationRequest request) {
         Validation validation = validationRepository.findByCodeAndMailAndType(request.getCode(), request.getMail(), ValidationType.PASSWORD)
-                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, "Validation not valid", "VAL_ERR"));
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage("validation_not_valid"), VAL_ERR));
         validationRepository.delete(validation);
     }
 
@@ -60,7 +62,7 @@ public class ValidationServiceImpl implements ValidationService {
     @Override
     public Validation getValidationDetail(ResendValidation request) {
         return validationRepository.findByMailAndType(request.getMail(), request.getType())
-                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, "Validation not valid", "VAL_ERR"));
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage("validation_not_valid"), VAL_ERR));
     }
 
 }

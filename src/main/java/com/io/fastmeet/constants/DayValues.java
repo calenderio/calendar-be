@@ -4,8 +4,12 @@
  *
  * Copyright - Calendar App Java API
  **/
-package com.io.fastmeet.validators;
+package com.io.fastmeet.constants;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DayValues {
 
     public static final String MONDAY = "mon";
