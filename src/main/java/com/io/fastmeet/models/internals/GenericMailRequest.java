@@ -18,6 +18,5 @@ public class GenericMailRequest {
     private String email;
     private String name;
     private String code;
-    private String language;
 
 }

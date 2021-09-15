@@ -31,28 +31,27 @@ public class SchedulerControllerImpl implements SchedulerController {
     private SchedulerMapper mapper;
 
     @Override
-    public ResponseEntity<SchedulerResponse> createScheduler(@Length(max = 50, min = 1) String name, String token) {
-        SchedulerResponse schedulerResponse = new SchedulerResponse(mapper.mapEntityListToModelList(schedulerService.createScheduler(name, token)));
+    public ResponseEntity<SchedulerResponse> createScheduler(@Length(max = 50, min = 1) String name) {
+        SchedulerResponse schedulerResponse = new SchedulerResponse(mapper.mapEntityListToModelList(schedulerService.createScheduler(name)));
         return ResponseEntity.status(HttpStatus.CREATED).body(schedulerResponse);
     }
 
     @Override
-    public ResponseEntity<SchedulerResponse> getSchedulers(String token) {
-        SchedulerResponse schedulerResponse = new SchedulerResponse(mapper.mapEntityListToModelList(schedulerService.getUserSchedulers(token)));
+    public ResponseEntity<SchedulerResponse> getSchedulers() {
+        SchedulerResponse schedulerResponse = new SchedulerResponse(mapper.mapEntityListToModelList(schedulerService.getUserSchedulers()));
         return ResponseEntity.ok(schedulerResponse);
     }
 
     @Override
-    public ResponseEntity<Void> changeName(String name, Long schedulerId, String token) {
-        schedulerService.updateName(new SchedulerNameUpdateRequest(name, schedulerId, token));
+    public ResponseEntity<Void> changeName(String name, Long schedulerId) {
+        schedulerService.updateName(new SchedulerNameUpdateRequest(name, schedulerId));
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<SchedulerResponse> updateScheduler(@Valid SchedulerUpdateRequest request, Long schedulerId, String token) {
+    public ResponseEntity<SchedulerResponse> updateScheduler(@Valid SchedulerUpdateRequest request, Long schedulerId) {
         SchedulerDetailsRequest schedulerDetailsRequest = new SchedulerDetailsRequest();
         schedulerDetailsRequest.setSchedulerId(schedulerId);
-        schedulerDetailsRequest.setToken(token);
         schedulerDetailsRequest.setScheduler(mapper.mapDetailsToEntity(request.getSchedule(), request.getTimeZone()));
         SchedulerResponse schedulerResponse = new SchedulerResponse(mapper.mapEntityListToModelList(schedulerService.updateScheduler(schedulerDetailsRequest)));
         return ResponseEntity.ok(schedulerResponse);

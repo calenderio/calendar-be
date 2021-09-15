@@ -92,7 +92,7 @@ class UserServiceImplTest {
         when(userRepository.existsByEmail("example@example.com")).thenReturn(false);
         when(jwtService.createToken(any())).thenReturn("Bearer token123");
         when(userMapper.mapToModel(any())).thenReturn(userResponse);
-        UserResponse userResponse1 = userService.createIndividualUser(createRequest, "");
+        UserResponse userResponse1 = userService.createIndividualUser(createRequest);
         assertEquals(userResponse.getName(), userResponse1.getName());
         assertEquals("Bearer token123", userResponse1.getToken());
         assertFalse(userResponse1.getVerified());

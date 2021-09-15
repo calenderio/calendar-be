@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "User Scheduler Operations", description = "This endpoint performs user scheduler operations")
@@ -36,8 +35,7 @@ public interface SchedulerController {
             @ApiResponse(responseCode = "400", description = "Creating scheduler error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @PostMapping(value = "/scheduler")
-    ResponseEntity<SchedulerResponse> createScheduler(@Parameter(name = "name", example = "Example") @RequestParam String name,
-                                                      @RequestHeader(name = "Authorization") String token);
+    ResponseEntity<SchedulerResponse> createScheduler(@Parameter(name = "name", example = "Example") @RequestParam String name);
 
     @Operation(summary = "Gets User Schedulers")
     @ApiResponses(value = {
@@ -47,7 +45,7 @@ public interface SchedulerController {
             @ApiResponse(responseCode = "400", description = "Getting scheduler error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @GetMapping(value = "/scheduler")
-    ResponseEntity<SchedulerResponse> getSchedulers(@RequestHeader(name = "Authorization") String token);
+    ResponseEntity<SchedulerResponse> getSchedulers();
 
     @Operation(summary = "Change Scheduler Name")
     @ApiResponses(value = {
@@ -56,8 +54,7 @@ public interface SchedulerController {
                     schema = @Schema(implementation = ErrorData.class))})})
     @PutMapping(value = "/scheduler/{schedulerId}")
     ResponseEntity<Void> changeName(@Parameter(name = "name", example = "Example", description = "New name of scheduler") @RequestParam String name,
-                                    @Parameter(name = "schedulerId", example = "1", description = "Id of scheduler") @PathVariable Long schedulerId,
-                                    @RequestHeader(name = "Authorization") String token);
+                                    @Parameter(name = "schedulerId", example = "1", description = "Id of scheduler") @PathVariable Long schedulerId);
 
 
     @Operation(summary = "Update Scheduler Type")
@@ -69,8 +66,7 @@ public interface SchedulerController {
                     schema = @Schema(implementation = ErrorData.class))})})
     @PostMapping(value = "/scheduler/{schedulerId}")
     ResponseEntity<SchedulerResponse> updateScheduler(@RequestBody SchedulerUpdateRequest request,
-                                                      @Parameter(name = "schedulerId", example = "1", description = "Id of scheduler") @PathVariable Long schedulerId,
-                                                      @RequestHeader(name = "Authorization") String token);
+                                                      @Parameter(name = "schedulerId", example = "1", description = "Id of scheduler") @PathVariable Long schedulerId);
 
 
 }

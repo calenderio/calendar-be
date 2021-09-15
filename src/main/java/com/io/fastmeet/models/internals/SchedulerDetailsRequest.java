@@ -14,5 +14,5 @@ public class SchedulerDetailsRequest {
 
     private Scheduler scheduler;
     private Long schedulerId;
-    private String token;
+
 }

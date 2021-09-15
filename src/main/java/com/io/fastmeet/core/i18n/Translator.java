@@ -6,7 +6,6 @@
  **/
 package com.io.fastmeet.core.i18n;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -38,10 +37,7 @@ public class Translator {
         return messageSource.getMessage(message, null, locale);
     }
 
-    public static Locale getLanguage(String language) {
-        if (StringUtils.isBlank(language)) {
-            return LocaleContextHolder.getLocale();
-        }
-        return Locale.forLanguageTag(language);
+    public static Locale getLanguage() {
+        return LocaleContextHolder.getLocale();
     }
 }

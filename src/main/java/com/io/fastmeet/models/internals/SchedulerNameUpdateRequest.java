@@ -15,5 +15,4 @@ public class SchedulerNameUpdateRequest {
 
     private String name;
     private Long schedulerId;
-    private String token;
 }

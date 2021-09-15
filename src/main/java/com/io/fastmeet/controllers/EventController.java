@@ -20,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
 
@@ -35,8 +34,7 @@ public interface EventController {
             @ApiResponse(responseCode = "400", description = "Creating event error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @PostMapping(value = "/users/event")
-    ResponseEntity<EventTypeResponse> createEventType(@RequestBody EventTypeCreateRequest request,
-                                                      @RequestHeader(name = "Authorization") String token);
+    ResponseEntity<EventTypeResponse> createEventType(@RequestBody EventTypeCreateRequest request);
 
     @Operation(summary = "Get event Types")
     @ApiResponses(value = {
@@ -46,6 +44,6 @@ public interface EventController {
             @ApiResponse(responseCode = "400", description = "Getting event types", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @GetMapping(value = "/users/event")
-    ResponseEntity<List<EventTypeResponse>> getEventTypes(@RequestHeader(name = "Authorization") String token);
+    ResponseEntity<List<EventTypeResponse>> getEventTypes();
 
 }

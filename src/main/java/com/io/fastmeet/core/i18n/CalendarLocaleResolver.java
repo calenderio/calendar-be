@@ -22,7 +22,8 @@ public class CalendarLocaleResolver extends AcceptHeaderLocaleResolver {
         if (StringUtils.isBlank(request.getHeader("Accept-Language"))) {
             return Locale.getDefault();
         }
-        List<Locale.LanguageRange> list = Locale.LanguageRange.parse(request.getHeader("Accept-Language"));
-        return Locale.lookup(list, locales);
+        String[] split = request.getHeader("Accept-Language").split("_");
+        List<Locale.LanguageRange> list = Locale.LanguageRange.parse(split[0]);
+        return Locale.lookup(list, locales) != null ? Locale.lookup(list, locales) : Locale.getDefault();
     }
 }

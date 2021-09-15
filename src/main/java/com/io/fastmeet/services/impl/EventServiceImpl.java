@@ -57,14 +57,14 @@ public class EventServiceImpl implements EventService {
     //TODO multi calendar support
     @Override
     public void getCalendars(CalendarEventsRequest request, String userToken) {
-        User user = jwtService.getUserFromToken(userToken);
+        User user = jwtService.getLoggedUser();
         Set<LinkedCalendar> calendars = user.getCalendars();
         getGoogleCalendars(request, calendars, user.getEmail());
     }
 
     @Override
-    public Event createCalendarType(Event event, String token) {
-        User user = jwtService.getUserFromToken(token);
+    public Event createCalendarType(Event event) {
+        User user = jwtService.getLoggedUser();
         event.setUserId(user.getId());
         if (event.getPreDefinedSchedulerId() != null) {
             event.setScheduler(schedulerService.getUserSchedulerById(event.getPreDefinedSchedulerId(), user.getId()));
@@ -77,8 +77,8 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Event> getCalendarTypes(String token) {
-        User user = jwtService.getUserFromToken(token);
+    public List<Event> getCalendarTypes() {
+        User user = jwtService.getLoggedUser();
         return eventRepository.findByUserId(user.getId());
     }
 

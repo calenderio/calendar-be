@@ -18,7 +18,7 @@ import com.io.fastmeet.models.requests.user.UserUpdateRequest;
 import com.io.fastmeet.models.responses.user.UserResponse;
 
 public interface UserService {
-    UserResponse createIndividualUser(UserCreateRequest request, String language);
+    UserResponse createIndividualUser(UserCreateRequest request);
 
     UserResponse socialSignUp(SocialUser request);
 
@@ -32,18 +32,18 @@ public interface UserService {
 
     void addNewLinkToUser(User user, SocialUser request);
 
-    UserResponse getUserDetailsFromToken(String token);
+    UserResponse getUserDetailsFromToken();
 
-    void resetPasswordRequest(ResetPasswordMailRequest request, String language);
+    void resetPasswordRequest(ResetPasswordMailRequest request);
 
     void resetPassword(ResetPasswordRequest request);
 
     void updateToken(SocialUser request);
 
-    void changePassword(ChangePasswordRequest request, String token);
+    void changePassword(ChangePasswordRequest request);
 
-    void resendValidationMail(ResendVerificationMailRequest request, String language);
+    void resendValidationMail(ResendVerificationMailRequest request);
 
-    UserResponse updateUser(UserUpdateRequest userUpdateRequest, String token, String language);
+    UserResponse updateUser(UserUpdateRequest userUpdateRequest);
 
 }

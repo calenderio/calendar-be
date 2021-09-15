@@ -41,6 +41,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,11 +89,10 @@ public class UserServiceImpl implements UserService {
     /**
      * This method creates new individual user
      *
-     * @param request  user details
-     * @param language user Language
+     * @param request user details
      */
     @Override
-    public UserResponse createIndividualUser(UserCreateRequest request, String language) {
+    public UserResponse createIndividualUser(UserCreateRequest request) {
         ifUserExistWithError(request.getEmail().toLowerCase());
         User user = new User();
         user.setEmail(request.getEmail().toLowerCase());
@@ -103,7 +104,7 @@ public class UserServiceImpl implements UserService {
         user.setLicence(licenceService.generateFreeTrial());
         userRepository.save(user);
         mailService.sendMailValidation(new GenericMailRequest(user.getEmail(), user.getName(),
-                createValidationInfo(user, ValidationType.EMAIL), language));
+                createValidationInfo(user, ValidationType.EMAIL)));
         UserResponse response = userMapper.mapToModel(user);
         response.setToken(jwtService.createToken(user));
         return response;
@@ -230,33 +231,30 @@ public class UserServiceImpl implements UserService {
     /**
      * Get details by user token
      *
-     * @param token user jwt
      * @return User detail object
      * @throws CalendarAppException if user not exist
      * @see com.io.fastmeet.models.responses.user.UserResponse for return object details
      */
     @Override
-    public UserResponse getUserDetailsFromToken(String token) {
-        UserResponse response = userMapper.mapToModel(jwtService.getUserFromToken(token));
-        response.setToken(token);
+    public UserResponse getUserDetailsFromToken() {
+        UserResponse response = userMapper.mapToModel(jwtService.getLoggedUser());
+        response.setToken("token");
         return response;
     }
 
     /**
      * Update user
      *
-     * @param token             user jwt
      * @param userUpdateRequest new details
-     * @param language          user language
      * @throws CalendarAppException if user not exist
      */
     @Override
-    public UserResponse updateUser(UserUpdateRequest userUpdateRequest, String token, String language) {
-        User user = jwtService.getUserFromToken(token);
+    public UserResponse updateUser(UserUpdateRequest userUpdateRequest) {
+        User user = jwtService.getLoggedUser();
         if (!userUpdateRequest.getEmail().equals(user.getEmail())) {
             user.setVerified(false);
             mailService.sendMailValidation(new GenericMailRequest(user.getEmail(), user.getName(),
-                    createValidationInfo(user, ValidationType.EMAIL), language));
+                    createValidationInfo(user, ValidationType.EMAIL)));
         }
         user.setEmail(userUpdateRequest.getEmail());
         user.setName(userUpdateRequest.getName());
@@ -269,12 +267,12 @@ public class UserServiceImpl implements UserService {
      * Performs change password for logged in user
      *
      * @param request new and old password
-     * @param token   user token
      * @throws CalendarAppException if user not exist or infos wrong
      */
     @Override
-    public void changePassword(ChangePasswordRequest request, String token) {
-        User user = jwtService.getUserFromToken(token);
+    public void changePassword(ChangePasswordRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
         if (!encodePassword(request.getOldPassword(), user.getEmail().toLowerCase()).equals(user.getPassword())) {
             throw new CalendarAppException(HttpStatus.FORBIDDEN, Translator.getMessage(GeneralMessageConstants.WRONG_INFO),
                     GeneralMessageConstants.WRONG_INFO_ERR);
@@ -287,19 +285,16 @@ public class UserServiceImpl implements UserService {
      * Performs change password for logged in user
      *
      * @param request  user mail
-     * @param language mail language
      * @throws CalendarAppException if user not exist or infos wrong
      */
     @Override
-    public void resetPasswordRequest(ResetPasswordMailRequest request, String language) {
+    public void resetPasswordRequest(ResetPasswordMailRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
                         GeneralMessageConstants.USR_NOT_FOUND));
         GenericMailRequest mailRequest = new GenericMailRequest();
-        mailRequest.setLanguage(request.getEmail());
         mailRequest.setName(user.getName());
         mailRequest.setCode(createValidationInfo(user, ValidationType.PASSWORD));
-        mailRequest.setLanguage(language);
         mailRequest.setEmail(request.getEmail());
         mailService.sendPasswordResetMail(mailRequest);
     }
@@ -324,19 +319,18 @@ public class UserServiceImpl implements UserService {
      * Resend validation
      *
      * @param request  mail details
-     * @param language user jwt
      * @throws CalendarAppException if validation info not exist
      */
     @Override
-    public void resendValidationMail(ResendVerificationMailRequest request, String language) {
+    public void resendValidationMail(ResendVerificationMailRequest request) {
         Validation validation = validationService.getValidationDetail(new ResendValidation(request.getEmail(), request.getType()));
         User user = userRepository.findByEmail(request.getEmail().toLowerCase())
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
                         GeneralMessageConstants.USR_NOT_FOUND));
         if (ValidationType.EMAIL.equals(request.getType())) {
-            mailService.sendMailValidation(new GenericMailRequest(request.getEmail(), user.getName(), validation.getCode(), language));
+            mailService.sendMailValidation(new GenericMailRequest(request.getEmail(), user.getName(), validation.getCode()));
         } else {
-            mailService.sendPasswordResetMail(new GenericMailRequest(request.getEmail(), user.getName(), validation.getCode(), language));
+            mailService.sendPasswordResetMail(new GenericMailRequest(request.getEmail(), user.getName(), validation.getCode()));
         }
     }
 

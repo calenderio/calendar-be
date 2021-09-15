@@ -40,8 +40,8 @@ public class SchedulerServiceImpl implements SchedulerService {
     private JWTService jwtService;
 
     @Override
-    public List<Scheduler> createScheduler(String name, String token) {
-        User user = jwtService.getUserFromToken(token);
+    public List<Scheduler> createScheduler(String name) {
+        User user = jwtService.getLoggedUser();
         Scheduler scheduler = new Scheduler();
         scheduler.setTimeZone(user.getTimeZone());
         scheduler.setMon(defaultSchedulerTimeSet());
@@ -58,7 +58,7 @@ public class SchedulerServiceImpl implements SchedulerService {
 
     @Override
     public List<Scheduler> updateScheduler(SchedulerDetailsRequest request) {
-        User user = jwtService.getUserFromToken(request.getToken());
+        User user = jwtService.getLoggedUser();
         Scheduler scheduleObject = schedulerRepository.findByUserIdAndId(user.getId(), request.getSchedulerId()).orElseThrow(() ->
                 new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.SCH_NOT_FOUND),
                         GeneralMessageConstants.USR_NOT_FOUND));
@@ -69,14 +69,14 @@ public class SchedulerServiceImpl implements SchedulerService {
     }
 
     @Override
-    public List<Scheduler> getUserSchedulers(String token) {
-        User user = jwtService.getUserFromToken(token);
+    public List<Scheduler> getUserSchedulers() {
+        User user = jwtService.getLoggedUser();
         return schedulerRepository.findByUserIdAndForCalendarIsFalse(user.getId()).orElse(new ArrayList<>());
     }
 
     @Override
     public void updateName(SchedulerNameUpdateRequest request) {
-        User user = jwtService.getUserFromToken(request.getToken());
+        User user = jwtService.getLoggedUser();
         schedulerRepository.changeSchedulerName(request.getName(), request.getSchedulerId(), user.getId());
     }
 

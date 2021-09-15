@@ -13,11 +13,11 @@ import com.io.fastmeet.models.internals.SchedulerNameUpdateRequest;
 import java.util.List;
 
 public interface SchedulerService {
-    List<Scheduler> createScheduler(String name, String token);
+    List<Scheduler> createScheduler(String name);
 
     List<Scheduler> updateScheduler(SchedulerDetailsRequest request);
 
-    List<Scheduler> getUserSchedulers(String token);
+    List<Scheduler> getUserSchedulers();
 
     void updateName(SchedulerNameUpdateRequest request);
 

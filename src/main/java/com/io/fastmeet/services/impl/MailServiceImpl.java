@@ -42,11 +42,11 @@ public class MailServiceImpl implements MailService {
      * @param requestDto validation mail send request
      */
     @Override
-    @Async
     public void sendMailValidation(GenericMailRequest requestDto) {
         try {
-            String header = Translator.getMessage("mail.validation.subject", Translator.getLanguage("tr_TR"));
-            genericMessage(new MailValidation("validation", header), requestDto);
+            Context context = new Context(Translator.getLanguage());
+            String header = Translator.getMessage("mail.validation.subject", Translator.getLanguage());
+            genericMessage(new MailValidation("validation", header), requestDto, context);
         } catch (Exception e) {
             log.info("Mail sending error to user {} {}", requestDto.getEmail(), e.getMessage());
         }
@@ -58,11 +58,11 @@ public class MailServiceImpl implements MailService {
      * @param requestDto validation mail send request
      */
     @Override
-    @Async
     public void sendPasswordResetMail(GenericMailRequest requestDto) {
         try {
-            String header = Translator.getMessage("mail.password.reset", Translator.getLanguage("tr_TR"));
-            genericMessage(new MailValidation("resetPassword", header), requestDto);
+            Context context = new Context(Translator.getLanguage());
+            String header = Translator.getMessage("mail.password.reset", Translator.getLanguage());
+            genericMessage(new MailValidation("resetPassword", header), requestDto, context);
         } catch (Exception e) {
             log.info("Mail sending error to user {} {}", requestDto.getEmail(), e.getMessage());
         }
@@ -74,11 +74,11 @@ public class MailServiceImpl implements MailService {
      * @param dto request object
      * @throws MessagingException
      */
-    private void genericMessage(MailValidation dto, GenericMailRequest requestDto) throws MessagingException {
+    @Async
+    private void genericMessage(MailValidation dto, GenericMailRequest requestDto, Context context) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message,
                 MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED);
-        Context context = new Context(Translator.getLanguage(requestDto.getLanguage()));
         context.setVariable("code", requestDto.getCode());
         context.setVariable("name", requestDto.getName());
         helper.setTo(requestDto.getEmail());

@@ -22,8 +22,10 @@ import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -93,6 +95,16 @@ public class JWTService {
     /**
      * Parses token and returns user data
      *
+     * @return user data
+     */
+    public User getLoggedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (User) authentication.getPrincipal();
+    }
+
+    /**
+     * Parses token and returns user data
+     *
      * @param token user token
      * @return user data
      */
@@ -155,8 +167,8 @@ public class JWTService {
 
         final Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(new String[]{
-                        claims.get("roles").toString()
-                })
+                                claims.get("roles").toString()
+                        })
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 

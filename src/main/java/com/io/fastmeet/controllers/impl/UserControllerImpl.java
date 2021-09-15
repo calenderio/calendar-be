@@ -19,7 +19,6 @@ import com.io.fastmeet.models.responses.user.UserResponse;
 import com.io.fastmeet.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,8 +33,8 @@ public class UserControllerImpl implements UserController {
 
     @Override
     @SkipSecurity
-    public ResponseEntity<UserResponse> createUser(@Valid UserCreateRequest request, String language) {
-        return ResponseEntity.ok(userService.createIndividualUser(request, language));
+    public ResponseEntity<UserResponse> createUser(@Valid UserCreateRequest request) {
+        return ResponseEntity.ok(userService.createIndividualUser(request));
     }
 
     @Override
@@ -45,19 +44,19 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<UserResponse> getDetailsByToken(String token) {
-        return ResponseEntity.ok(userService.getUserDetailsFromToken(token));
+    public ResponseEntity<UserResponse> getDetailsByToken() {
+        return ResponseEntity.ok(userService.getUserDetailsFromToken());
     }
 
     @Override
-    public ResponseEntity<Void> changePassword(@Valid ChangePasswordRequest request, String token) {
-        userService.changePassword(request, token);
+    public ResponseEntity<Void> changePassword(@Valid ChangePasswordRequest request) {
+        userService.changePassword(request);
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<Void> resetPasswordRequest(@Valid ResetPasswordMailRequest request, String language) {
-        userService.resetPasswordRequest(request, language);
+    public ResponseEntity<Void> resetPasswordRequest(@Valid ResetPasswordMailRequest request) {
+        userService.resetPasswordRequest(request);
         return ResponseEntity.noContent().build();
     }
 
@@ -68,25 +67,24 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<Void> resendVerification(ResendVerificationMailRequest request, String language) {
-        userService.resendValidationMail(request, language);
+    public ResponseEntity<Void> resendVerification(ResendVerificationMailRequest request) {
+        userService.resendValidationMail(request);
         return ResponseEntity.noContent().build();
 
     }
 
     @Override
-    public ResponseEntity<UserResponse> updateUser(UserUpdateRequest request, String token, String language) {
-        return ResponseEntity.ok(userService.updateUser(request, token, language));
+    public ResponseEntity<UserResponse> updateUser(UserUpdateRequest request) {
+        return ResponseEntity.ok(userService.updateUser(request));
     }
 
-    @PreAuthorize("hasRole('USER')")
     @RequestMapping(value = "/userping", method = RequestMethod.GET)
     public String userPing() {
         return "Any User Can Read This";
     }
 
-    @PreAuthorize("hasRole('NOONE')")
     @RequestMapping(value = "/noone", method = RequestMethod.GET)
+    @SkipSecurity
     public String usernoone() {
         return "Not accessible";
     }

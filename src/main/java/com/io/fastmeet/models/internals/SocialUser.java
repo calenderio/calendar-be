@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 @Data
 public class SocialUser extends UserCreateRequest {
 
-    private String token;
     private String refreshToken;
+    private String token;
     private String pictureUrl;
     private AppProviderType type;
     private LocalDateTime expireDate;

@@ -34,18 +34,18 @@ public class EventControllerImpl implements EventController {
     private SchedulerMapper schedulerMapper;
 
     @Override
-    public ResponseEntity<EventTypeResponse> createEventType(@Valid EventTypeCreateRequest request, String token) {
+    public ResponseEntity<EventTypeResponse> createEventType(@Valid EventTypeCreateRequest request) {
         Event event = eventMapper.mapRequestToEntity(request);
         event.setScheduler(schedulerMapper.mapDetailsToEntity(request.getSchedule(), request.getTimezone()));
-        Event event1 = eventService.createCalendarType(event, token);
+        Event event1 = eventService.createCalendarType(event);
         EventTypeResponse response = eventMapper.mapEntityToModel(event1);
         response.setSchedule(schedulerMapper.mapEntityToModel(event1.getScheduler()));
         return ResponseEntity.ok(response);
     }
 
     @Override
-    public ResponseEntity<List<EventTypeResponse>> getEventTypes(String token) {
-        List<Event> list = eventService.getCalendarTypes(token);
+    public ResponseEntity<List<EventTypeResponse>> getEventTypes() {
+        List<Event> list = eventService.getCalendarTypes();
         List<EventTypeResponse> responseList = new ArrayList<>();
         for (Event event : list) {
             EventTypeResponse response = eventMapper.mapEntityToModel(event);

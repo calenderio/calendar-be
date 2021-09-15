@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 @Tag(name = "User operations", description = "This endpoint performs user operations")
 public interface UserController {
@@ -40,8 +39,7 @@ public interface UserController {
             @ApiResponse(responseCode = "400", description = "Creating user error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @PostMapping(value = "/users")
-    ResponseEntity<UserResponse> createUser(@RequestBody UserCreateRequest request,
-                                            @RequestHeader(name = "Accept-Language", required = false) String language);
+    ResponseEntity<UserResponse> createUser(@RequestBody UserCreateRequest request);
 
     @Operation(summary = "Login User")
     @ApiResponses(value = {
@@ -61,7 +59,7 @@ public interface UserController {
             @ApiResponse(responseCode = "400", description = "Creating user error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @GetMapping(value = "/users")
-    ResponseEntity<UserResponse> getDetailsByToken(@RequestHeader(name = "Authorization") String token);
+    ResponseEntity<UserResponse> getDetailsByToken();
 
     @Operation(summary = "Changes user password")
     @ApiResponses(value = {
@@ -69,7 +67,7 @@ public interface UserController {
             @ApiResponse(responseCode = "400", description = "Changing user password error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @PutMapping(value = "/password")
-    ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest request, @RequestHeader(name = "Authorization") String token);
+    ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest request);
 
     @Operation(summary = "Reset user password")
     @ApiResponses(value = {
@@ -77,8 +75,7 @@ public interface UserController {
             @ApiResponse(responseCode = "400", description = "Sending mail error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @PostMapping(value = "/resetPassword")
-    ResponseEntity<Void> resetPasswordRequest(@RequestBody ResetPasswordMailRequest request,
-                                              @RequestHeader(name = "Accept-Language", required = false) String language);
+    ResponseEntity<Void> resetPasswordRequest(@RequestBody ResetPasswordMailRequest request);
 
     @Operation(summary = "Reset user password")
     @ApiResponses(value = {
@@ -94,8 +91,7 @@ public interface UserController {
             @ApiResponse(responseCode = "400", description = "Sending mail error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @PostMapping(value = "/resendVerification")
-    ResponseEntity<Void> resendVerification(@RequestBody ResendVerificationMailRequest request,
-                                            @RequestHeader(name = "Accept-Language", required = false) String language);
+    ResponseEntity<Void> resendVerification(@RequestBody ResendVerificationMailRequest request);
 
     @Operation(summary = "Update User")
     @ApiResponses(value = {
@@ -105,7 +101,5 @@ public interface UserController {
             @ApiResponse(responseCode = "400", description = "Update user error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @PutMapping(value = "/updateUser")
-    ResponseEntity<UserResponse> updateUser(@RequestBody UserUpdateRequest request,
-                                            @RequestHeader(name = "Authorization") String token,
-                                            @RequestHeader(name = "Accept-Language", required = false) String language);
+    ResponseEntity<UserResponse> updateUser(@RequestBody UserUpdateRequest request);
 }

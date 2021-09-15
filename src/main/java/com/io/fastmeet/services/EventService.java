@@ -15,7 +15,7 @@ public interface EventService {
     //TODO multi calendar support
     void getCalendars(CalendarEventsRequest request, String userToken);
 
-    Event createCalendarType(Event event, String token);
+    Event createCalendarType(Event event);
 
-    List<Event> getCalendarTypes(String token);
+    List<Event> getCalendarTypes();
 }
