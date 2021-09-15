@@ -45,6 +45,9 @@ public class User extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     private Licence licence;
 
+    @OneToOne
+    private Calendar calendar;
+
     @JsonManagedReference
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
