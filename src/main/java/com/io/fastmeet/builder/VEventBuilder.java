@@ -10,6 +10,7 @@ import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.parameter.Role;
 import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.Description;
+import net.fortuna.ical4j.model.property.Location;
 import net.fortuna.ical4j.model.property.Organizer;
 import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.TzId;
@@ -57,6 +58,11 @@ public class VEventBuilder {
 
     public VEventBuilder addSummary(String summary) {
         addProperty(new Summary(summary));
+        return this;
+    }
+
+    public VEventBuilder addLocation(String location) {
+        addProperty(new Location(location));
         return this;
     }
 
