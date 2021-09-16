@@ -7,6 +7,7 @@
 package com.io.fastmeet.controllers.impl;
 
 import com.io.fastmeet.controllers.EventController;
+import com.io.fastmeet.core.exception.CalendarAppException;
 import com.io.fastmeet.entitites.Event;
 import com.io.fastmeet.mappers.EventMapper;
 import com.io.fastmeet.mappers.SchedulerMapper;
@@ -14,6 +15,7 @@ import com.io.fastmeet.models.requests.calendar.EventTypeCreateRequest;
 import com.io.fastmeet.models.responses.calendar.EventTypeResponse;
 import com.io.fastmeet.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,6 +37,9 @@ public class EventControllerImpl implements EventController {
 
     @Override
     public ResponseEntity<EventTypeResponse> createEventType(@Valid EventTypeCreateRequest request) {
+        if (request.getPreDefinedSchedulerId() == null && request.getSchedule() == null) {
+            throw new CalendarAppException(HttpStatus.BAD_REQUEST, "Schedule details null", "NLL_SCH");
+        }
         Event event = eventMapper.mapRequestToEntity(request);
         event.setScheduler(schedulerMapper.mapDetailsToEntity(request.getSchedule(), request.getTimezone()));
         Event event1 = eventService.createCalendarType(event);
