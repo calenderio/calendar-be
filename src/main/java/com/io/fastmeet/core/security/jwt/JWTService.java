@@ -36,6 +36,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
@@ -157,18 +158,15 @@ public class JWTService {
     /**
      * Generates user authorities
      *
-     * @param token       user token
      * @param userDetails details
      * @return spring object
      */
-    public UsernamePasswordAuthenticationToken getAuthenticationToken(final String token, final User userDetails) {
+    public UsernamePasswordAuthenticationToken getAuthenticationToken(final User userDetails) {
 
-        final Claims claims = getJwtToken(token);
+        Set<String> roles = RoleUtil.userRole(userDetails.getLicence().getLicenceType());
 
         final Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(new String[]{
-                                claims.get("roles").toString()
-                        })
+                Arrays.stream(roles.toArray(new String[0]))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 

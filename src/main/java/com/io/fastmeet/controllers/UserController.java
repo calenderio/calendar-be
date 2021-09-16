@@ -69,7 +69,7 @@ public interface UserController {
     @PutMapping(value = "/password")
     ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest request);
 
-    @Operation(summary = "Reset user password")
+    @Operation(summary = "Send reset mail to user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User password reset mail sent"),
             @ApiResponse(responseCode = "400", description = "Sending mail error", content = {@Content(mediaType = "application/json",

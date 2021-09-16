@@ -53,8 +53,8 @@ public class JWTInterceptor implements HandlerInterceptor {
         } catch (Exception e) {
             throw new CalendarAppException(HttpStatus.UNAUTHORIZED, "JWT token is invalid", "JWT_TOKEN_INVALID");
         }
-        User user = userService.findById(jwtService.getUserFromToken(token).getId());
-        UsernamePasswordAuthenticationToken authentication = jwtService.getAuthenticationToken(token, user);
+        User user = jwtService.getUserFromToken(token);
+        UsernamePasswordAuthenticationToken authentication = jwtService.getAuthenticationToken(user);
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return true;
