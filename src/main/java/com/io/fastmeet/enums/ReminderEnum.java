@@ -5,6 +5,7 @@ import lombok.Getter;
 import java.time.Duration;
 
 public enum ReminderEnum {
+
     ONE_DAYS("1 DAY", Duration.ofDays(1).toMinutes()),
     TWO_DAYS("2 DAYS", Duration.ofDays(2).toMinutes()),
     THREE_DAYS("3 DAYS", Duration.ofDays(3).toMinutes()),
@@ -21,7 +22,6 @@ public enum ReminderEnum {
     ReminderEnum(String description, long toMinutes) {
             this.description = description;
             this.toMinutes = toMinutes;
-
 
     }
 }
