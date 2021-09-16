@@ -2,9 +2,8 @@ package com.io.fastmeet.builder;
 
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.TimeZone;
-import net.fortuna.ical4j.model.TimeZoneRegistry;
-import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.parameter.Role;
@@ -12,10 +11,8 @@ import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.Description;
 import net.fortuna.ical4j.model.property.Location;
 import net.fortuna.ical4j.model.property.Organizer;
-import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.TzId;
 import net.fortuna.ical4j.model.property.Uid;
-import net.fortuna.ical4j.transform.rfc5545.TzIdRule;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,16 +21,15 @@ import java.util.List;
 
 
 public class VEventBuilder {
-    private VEvent vEvent;
+    private final VEvent vEvent;
 
     public VEventBuilder(Date startDate, Date endDate, String eventTitle, String timeZone) {
-        DateTime start = new DateTime(startDate.getTime());
-        DateTime end = new DateTime(endDate.getTime());
+        PropertyList propertyList = new PropertyList();
+        propertyList.add(new TzId(timeZone));
+        DateTime start = new DateTime(startDate, new TimeZone(new VTimeZone(propertyList)));
+        DateTime end = new DateTime(endDate, new TimeZone(new VTimeZone(propertyList)));
 
-        start.setTimeZone((TimeZone) TimeZone.getTimeZone(timeZone));
-        end.setTimeZone((TimeZone) TimeZone.getTimeZone(timeZone));
-
-        vEvent = new VEvent(start,end, eventTitle);
+        vEvent = new VEvent(start, end, eventTitle);
 
     }
 
@@ -51,33 +47,19 @@ public class VEventBuilder {
         return this;
     }
 
+    public VEventBuilder addTimeZone(String id) {
+        TzId tzId = new TzId(id);
+        addProperty(tzId);
+        return this;
+    }
+
     public VEventBuilder addDescription(String description) {
         addProperty(new Description(description));
         return this;
     }
 
-    public VEventBuilder addSummary(String summary) {
-        addProperty(new Summary(summary));
-        return this;
-    }
-
     public VEventBuilder addLocation(String location) {
         addProperty(new Location(location));
-        return this;
-    }
-
-    public VEventBuilder addTimeZone(String id) {
-        TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
-        TimeZone timezone = registry.getTimeZone(id);
-        if (timezone == null) {
-            TzId tzId = new TzId(id);
-            TzIdRule rule = new TzIdRule();
-            rule.applyTo(tzId);
-            id = tzId.getValue();
-            timezone = registry.getTimeZone(id);
-        }
-        VTimeZone tz = timezone.getVTimeZone();
-        addProperty(tz.getTimeZoneId());
         return this;
     }
 
@@ -94,6 +76,5 @@ public class VEventBuilder {
         }
         return this;
     }
-
 
 }

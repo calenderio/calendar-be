@@ -6,12 +6,13 @@
  **/
 package com.io.fastmeet.models.internals;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class GenericMailRequest {
 
@@ -19,5 +20,13 @@ public class GenericMailRequest {
     private String name;
     private String code;
     private String language;
+    private List<AttachmentModel> attachments = new ArrayList<>();
+    private byte[] meetingDetails;
 
+    public GenericMailRequest(String email, String name, String code, String language) {
+        this.email = email;
+        this.name = name;
+        this.code = code;
+        this.language = language;
+    }
 }

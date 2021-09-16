@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -18,11 +18,11 @@ public class MeetingRequest {
 
     private String location;
 
-    private  Date startDate;
+    private LocalDateTime startDate;
 
-    private  Date endDate;
+    private LocalDateTime endDate;
 
-    private long Duration;
+    private long duration;
 
     private String organizer;
 
@@ -33,7 +33,6 @@ public class MeetingRequest {
     private String description;
 
     private String calendarId;
-
 
 
 }

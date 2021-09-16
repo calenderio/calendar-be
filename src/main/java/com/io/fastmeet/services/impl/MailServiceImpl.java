@@ -7,6 +7,7 @@
 package com.io.fastmeet.services.impl;
 
 import com.io.fastmeet.core.i18n.Translator;
+import com.io.fastmeet.models.internals.AttachmentModel;
 import com.io.fastmeet.models.internals.GenericMailRequest;
 import com.io.fastmeet.models.internals.MailValidation;
 import com.io.fastmeet.services.MailService;
@@ -20,8 +21,14 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
 
 @Service
 @Slf4j
@@ -84,8 +91,28 @@ public class MailServiceImpl implements MailService {
         helper.setTo(requestDto.getEmail());
         helper.setSubject(dto.getHeader());
         helper.setFrom(from);
+        if (requestDto.getMeetingDetails() != null) {
+            DataSource iCalData = new ByteArrayDataSource(requestDto.getMeetingDetails(), "text/calendar; charset=UTF-8");
+            message.setDataHandler(new DataHandler(iCalData));
+            message.setHeader("Content-Type", "text/calendar; charset=UTF-8; method=REQUEST");
+        }
+        addAttachments(requestDto, message);
         String html = templateEngine.process("emails/" + dto.getTemplateName(), context);
         helper.setText(html, true);
         emailSender.send(message);
     }
+
+    private void addAttachments(GenericMailRequest requestDto, MimeMessage message) throws MessagingException {
+        if (requestDto.getAttachments() != null) {
+            Multipart multipart = new MimeMultipart();
+            MimeBodyPart messageBodyPart = new MimeBodyPart();
+            for (AttachmentModel model : requestDto.getAttachments()) {
+                DataSource source = new ByteArrayDataSource(model.getData(), model.getType());
+                message.setDataHandler(new DataHandler(source));
+                message.setFileName(model.getName());
+                multipart.addBodyPart(messageBodyPart);
+            }
+        }
+    }
+
 }

@@ -1,11 +1,11 @@
 package com.io.fastmeet.builder;
 
 import com.io.fastmeet.models.requests.meet.MeetingRequest;
+import com.io.fastmeet.utils.DateUtil;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.CalendarException;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.component.CalendarComponent;
-import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.Method;
 import net.fortuna.ical4j.model.property.ProdId;
@@ -29,15 +29,17 @@ public class ICalendarBuilder {
 
 
     private void addEvent(MeetingRequest meeting) {
-        VEventBuilder vEventBuilder = new VEventBuilder(meeting.getStartDate(), meeting.getEndDate(), meeting.getMeetingTitle(), meeting.getTimeZone());
+        VEventBuilder vEventBuilder = new VEventBuilder(DateUtil.localDateTimeToDate(meeting.getStartDate(), meeting.getTimeZone()),
+                DateUtil.localDateTimeToDate(meeting.getEndDate(), meeting.getTimeZone()),
+                meeting.getMeetingTitle(), meeting.getTimeZone());
         try {
             vEventBuilder
                     .addOrganizer(meeting.getOrganizer())
                     .addParticipants(meeting.getParticipants())
-                    .addTimeZone(meeting.getTimeZone())
                     .addDescription(meeting.getDescription())
                     .addIcsUid(meeting.getIcsUid())
-                    .addSummary(meeting.getMeetingTitle());
+                    .addTimeZone(meeting.getTimeZone())
+                    .addLocation(meeting.getLocation());
 
         } catch (Exception exc) {
             throw new CalendarException("Invalid Meeting");
@@ -46,10 +48,7 @@ public class ICalendarBuilder {
     }
 
     public void addMethod(Method method) {
-        VTimeZone timeZone = new VTimeZone.Factory().createComponent();
-
         addProperty(method);
-        addComponent(timeZone);
     }
 
     private void addProperty(Property property) {
@@ -60,7 +59,7 @@ public class ICalendarBuilder {
         iCalendar.getComponents().add(component);
     }
 
-    private Calendar build() {
+    public Calendar build() {
         return iCalendar;
     }
 

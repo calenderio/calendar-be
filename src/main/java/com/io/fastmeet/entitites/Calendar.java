@@ -1,16 +1,13 @@
 package com.io.fastmeet.entitites;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 
-@Entity
-@Table(name = "calendar")
-public class Calendar extends BaseEntity {
+
+public class Calendar {
 
     @OneToOne(mappedBy = "calendar")
     private User userId;
