@@ -5,6 +5,8 @@ drop table IF EXISTS
     linked_calendars,
     validations,
     schedulers,
-    calendar_types,
-    user_calendars
+    questions,
+    user_calendars,
+    events,
+    caches
 ;

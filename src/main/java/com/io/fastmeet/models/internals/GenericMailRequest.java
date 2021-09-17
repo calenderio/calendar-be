@@ -22,10 +22,9 @@ public class GenericMailRequest {
     private List<AttachmentModel> attachments = new ArrayList<>();
     private byte[] meetingDetails;
 
-    public GenericMailRequest(String email, String name, String code, String language) {
+    public GenericMailRequest(String email, String name, String code) {
         this.email = email;
         this.name = name;
         this.code = code;
-        this.language = language;
     }
 }

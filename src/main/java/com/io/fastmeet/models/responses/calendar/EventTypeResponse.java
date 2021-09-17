@@ -49,4 +49,10 @@ public class EventTypeResponse {
     @ArraySchema(schema = @Schema(description = "Additional questions for meeting request", implementation = Question.class), uniqueItems = true)
     private Set<Question> questions;
 
+    @Schema(description = "Is mail required for meeting", example = "true")
+    private Boolean mailRequired;
+
+    @Schema(description = "Is name required for meeting", example = "true")
+    private Boolean nameRequired;
+
 }

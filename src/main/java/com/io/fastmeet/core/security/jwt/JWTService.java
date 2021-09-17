@@ -106,6 +106,16 @@ public class JWTService {
     /**
      * Parses token and returns user data
      *
+     * @return user data
+     */
+    public Set<String> getUserRoles() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+    }
+
+    /**
+     * Parses token and returns user data
+     *
      * @param token user token
      * @return user data
      */

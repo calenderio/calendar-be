@@ -82,7 +82,7 @@ public class MailServiceImpl implements MailService {
      * @throws MessagingException
      */
     @Async
-    private void genericMessage(MailValidation dto, GenericMailRequest requestDto, Context context) throws MessagingException {
+    public void genericMessage(MailValidation dto, GenericMailRequest requestDto, Context context) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message,
                 MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED);

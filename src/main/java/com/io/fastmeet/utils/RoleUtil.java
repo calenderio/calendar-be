@@ -6,6 +6,7 @@
  **/
 package com.io.fastmeet.utils;
 
+import com.io.fastmeet.constants.RoleConstants;
 import com.io.fastmeet.enums.LicenceTypes;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -21,11 +22,11 @@ public class RoleUtil {
     private static final Set<String> COMMERCIAL = new HashSet<>();
 
     static {
-        FREE.add("ROLE_FREE");
+        FREE.add(RoleConstants.FREE);
         INDIVIDUAL.addAll(FREE);
-        INDIVIDUAL.add("ROLE_INDIVIDUAL");
+        INDIVIDUAL.add(RoleConstants.INDIVIDUAL);
         COMMERCIAL.addAll(INDIVIDUAL);
-        COMMERCIAL.add("ROLE_COMMERCIAL");
+        COMMERCIAL.add(RoleConstants.COMMERCIAL);
     }
 
     public static Set<String> userRole(LicenceTypes licenceTypes) {

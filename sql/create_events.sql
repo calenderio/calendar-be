@@ -12,6 +12,8 @@ create table events
     end_date      date        not null,
     duration      int         not null,
     duration_type varchar(4)  not null,
+    mail_required bool        not null,
+    name_required bool        not null,
     scheduler_id  bigint      not null
 
 );

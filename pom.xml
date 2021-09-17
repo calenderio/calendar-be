@@ -243,6 +243,8 @@
                                 <srcFile>sql/create_validations.sql</srcFile>
                                 <srcFile>sql/create_scheduler.sql</srcFile>
                                 <srcFile>sql/create_events.sql</srcFile>
+                                <srcFile>sql/create_java_caches.sql</srcFile>
+                                <srcFile>sql/create_questions.sql</srcFile>
                             </srcFiles>
                         </configuration>
                     </execution>
