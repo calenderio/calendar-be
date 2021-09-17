@@ -245,6 +245,7 @@
                                 <srcFile>sql/create_events.sql</srcFile>
                                 <srcFile>sql/create_java_caches.sql</srcFile>
                                 <srcFile>sql/create_questions.sql</srcFile>
+                                <srcFile>sql/create_answers.sql</srcFile>
                             </srcFiles>
                         </configuration>
                     </execution>

@@ -6,6 +6,7 @@
  **/
 package com.io.fastmeet.entitites;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.io.fastmeet.enums.DurationType;
 import lombok.Data;
@@ -18,9 +19,11 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.time.LocalDate;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -48,6 +51,14 @@ public class Event extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "scheduler_id", referencedColumnName = "id")
     private Scheduler scheduler;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    private List<Question> questions;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    private List<Answer> answers;
 
     private transient Long preDefinedSchedulerId;
 

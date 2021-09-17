@@ -7,7 +7,7 @@
 package com.io.fastmeet.models.requests.calendar;
 
 import com.io.fastmeet.models.internals.CalendarDuration;
-import com.io.fastmeet.models.internals.Question;
+import com.io.fastmeet.models.internals.QuestionModel;
 import com.io.fastmeet.models.internals.SchedulerDetails;
 import com.io.fastmeet.validators.Event;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -55,9 +55,9 @@ public class EventTypeCreateRequest {
     @Valid
     private CalendarDuration type;
 
-    @ArraySchema(schema = @Schema(description = "Additional questions for meeting request", implementation = Question.class), uniqueItems = true)
+    @ArraySchema(schema = @Schema(description = "Additional questionModels for meeting request", implementation = QuestionModel.class), uniqueItems = true)
     @Valid
-    private List<Question> questions;
+    private List<QuestionModel> questionModels;
 
     @Schema(description = "Schedule id for predefined schedulers", example = "1")
     private Long preDefinedSchedulerId;

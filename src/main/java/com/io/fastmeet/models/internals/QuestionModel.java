@@ -12,7 +12,7 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class Question {
+public class QuestionModel {
 
     @Schema(description = "Question text", example = "Example Question", required = true)
     @NotNull
