@@ -1,4 +1,4 @@
-package com.io.fastmeet.builder;
+package com.io.fastmeet.builders;
 
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Property;

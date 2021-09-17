@@ -1,4 +1,4 @@
-package com.io.fastmeet.builder;
+package com.io.fastmeet.builders;
 
 import com.io.fastmeet.models.requests.meet.MeetingRequest;
 import com.io.fastmeet.utils.DateUtil;
