@@ -6,9 +6,10 @@
  **/
 package com.io.fastmeet.constants;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CacheConstants {
 
     public static final String QUESTION_LIMIT_IND = "QUESTION_LIMIT_IND";

@@ -6,9 +6,10 @@
  **/
 package com.io.fastmeet.constants;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RoleConstants {
 
     public static final String FREE = "ROLE_FREE";
