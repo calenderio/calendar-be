@@ -55,15 +55,15 @@ public class EventValidator implements ConstraintValidator<Event, EventTypeCreat
     }
 
     private boolean checkRolePermission(EventTypeCreateRequest field, ConstraintValidatorContext context) {
-        if (field.getQuestionModels().size() > cacheService.getIntegerCacheValue(CacheConstants.QUESTION_LIMIT_FREE)) {
+        if (field.getQuestions().size() > cacheService.getIntegerCacheValue(CacheConstants.QUESTION_LIMIT_FREE)) {
             Set<String> roles = jwtService.getUserRoles();
             if (roles.contains(RoleConstants.COMMERCIAL)) {
-                if (field.getQuestionModels().size() > cacheService.getIntegerCacheValue(CacheConstants.QUESTION_LIMIT_COMMERCIAL)) {
+                if (field.getQuestions().size() > cacheService.getIntegerCacheValue(CacheConstants.QUESTION_LIMIT_COMMERCIAL)) {
                     return overSize(context, EVENT_QUESTION_OVERSIZE, QUESTIONS);
                 }
                 return true;
             } else if (roles.contains(RoleConstants.INDIVIDUAL)) {
-                if (field.getQuestionModels().size() > cacheService.getIntegerCacheValue(CacheConstants.QUESTION_LIMIT_IND)) {
+                if (field.getQuestions().size() > cacheService.getIntegerCacheValue(CacheConstants.QUESTION_LIMIT_IND)) {
                     return overSize(context, EVENT_QUESTION_OVERSIZE, QUESTIONS);
                 }
                 return true;

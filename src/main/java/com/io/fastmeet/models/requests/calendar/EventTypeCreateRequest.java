@@ -57,7 +57,7 @@ public class EventTypeCreateRequest {
 
     @ArraySchema(schema = @Schema(description = "Additional questionModels for meeting request", implementation = QuestionModel.class), uniqueItems = true)
     @Valid
-    private List<QuestionModel> questionModels;
+    private List<QuestionModel> questions;
 
     @Schema(description = "Schedule id for predefined schedulers", example = "1")
     private Long preDefinedSchedulerId;

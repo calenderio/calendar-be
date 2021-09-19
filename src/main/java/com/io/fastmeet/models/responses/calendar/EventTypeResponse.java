@@ -47,7 +47,7 @@ public class EventTypeResponse {
     private SchedulerObject schedule;
 
     @ArraySchema(schema = @Schema(description = "Additional questionModels for meeting request", implementation = QuestionModel.class), uniqueItems = true)
-    private Set<QuestionModel> questionModels;
+    private Set<QuestionModel> questions;
 
     @Schema(description = "Is mail required for meeting", example = "true")
     private Boolean mailRequired;

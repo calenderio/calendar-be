@@ -10,6 +10,7 @@ import com.io.fastmeet.core.security.encrypt.TokenEncryptor;
 import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.entitites.Event;
 import com.io.fastmeet.entitites.LinkedCalendar;
+import com.io.fastmeet.entitites.Question;
 import com.io.fastmeet.entitites.Scheduler;
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.enums.AppProviderType;
@@ -63,7 +64,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Event createCalendarType(Event event) {
+    public Event createEvent(Event event) {
         User user = jwtService.getLoggedUser();
         event.setUserId(user.getId());
         if (event.getPreDefinedSchedulerId() != null) {
@@ -73,11 +74,14 @@ public class EventServiceImpl implements EventService {
             scheduler.setName(event.getName());
             event.setScheduler(schedulerService.saveCalendarTypeScheduler(scheduler, user.getId()));
         }
+        for (Question question : event.getQuestions()) {
+            question.setEvent(event);
+        }
         return eventRepository.save(event);
     }
 
     @Override
-    public List<Event> getCalendarTypes() {
+    public List<Event> getEvents() {
         User user = jwtService.getLoggedUser();
         return eventRepository.findByUserId(user.getId());
     }
