@@ -38,8 +38,6 @@ public class Event extends BaseEntity {
     private String description;
     private String timeZone;
     private boolean fileRequired;
-    private boolean mailRequired;
-    private boolean nameRequired;
     private LocalDate startDate;
     private LocalDate endDate;
     private int duration;

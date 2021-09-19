@@ -66,10 +66,4 @@ public class EventTypeCreateRequest {
     @Valid
     private SchedulerDetails schedule;
 
-    @Schema(description = "Is mail required for meeting", example = "true", required = true)
-    private Boolean mailRequired;
-
-    @Schema(description = "Is name required for meeting", example = "true", required = true)
-    private Boolean nameRequired;
-
 }
