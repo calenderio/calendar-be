@@ -19,8 +19,9 @@ public class IcsServiceImpl implements IcsService {
         iCalendarBuilder = new ICalendarBuilder(request);
         Calendar calendar = iCalendarBuilder.build();
 
-        CalendarOutputter outputter = new CalendarOutputter();
+        CalendarOutputter calendarOutputter = new CalendarOutputter();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
+        calendarOutputter.output(calendar , os);
 
         return os.toByteArray();
     }
