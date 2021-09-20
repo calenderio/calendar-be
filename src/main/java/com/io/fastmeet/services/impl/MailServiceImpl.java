@@ -114,5 +114,8 @@ public class MailServiceImpl implements MailService {
             }
         }
     }
+    private void sendInvitation(){
+
+    }
 
 }
