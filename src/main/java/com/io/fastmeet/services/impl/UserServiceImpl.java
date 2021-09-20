@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
         user.setLicence(licenceService.generateFreeTrial());
         userRepository.save(user);
         mailService.sendMailValidation(new GenericMailRequest(user.getEmail(), user.getName(),
-                createValidationInfo(user, ValidationType.EMAIL)));
+                createValidationInfo(user, ValidationType.EMAIL), Translator.getLanguage()));
         UserResponse response = userMapper.mapToModel(user);
         response.setToken(jwtService.createToken(user));
         return response;
@@ -254,7 +254,7 @@ public class UserServiceImpl implements UserService {
         if (!userUpdateRequest.getEmail().equals(user.getEmail())) {
             user.setVerified(false);
             mailService.sendMailValidation(new GenericMailRequest(user.getEmail(), user.getName(),
-                    createValidationInfo(user, ValidationType.EMAIL)));
+                    createValidationInfo(user, ValidationType.EMAIL), Translator.getLanguage()));
         }
         user.setEmail(userUpdateRequest.getEmail());
         user.setName(userUpdateRequest.getName());
@@ -328,9 +328,9 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
                         GeneralMessageConstants.USR_NOT_FOUND));
         if (ValidationType.EMAIL.equals(request.getType())) {
-            mailService.sendMailValidation(new GenericMailRequest(request.getEmail(), user.getName(), validation.getCode()));
+            mailService.sendMailValidation(new GenericMailRequest(request.getEmail(), user.getName(), validation.getCode(), Translator.getLanguage()));
         } else {
-            mailService.sendPasswordResetMail(new GenericMailRequest(request.getEmail(), user.getName(), validation.getCode()));
+            mailService.sendPasswordResetMail(new GenericMailRequest(request.getEmail(), user.getName(), validation.getCode(), Translator.getLanguage()));
         }
     }
 

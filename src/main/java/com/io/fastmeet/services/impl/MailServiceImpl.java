@@ -49,10 +49,11 @@ public class MailServiceImpl implements MailService {
      * @param requestDto validation mail send request
      */
     @Override
+    @Async
     public void sendMailValidation(GenericMailRequest requestDto) {
         try {
             Context context = new Context(Translator.getLanguage());
-            String header = Translator.getMessage("mail.validation.subject", Translator.getLanguage());
+            String header = Translator.getMessage("mail.validation.subject", requestDto.getLanguage());
             genericMessage(new MailValidation("validation", header), requestDto, context);
         } catch (Exception e) {
             log.info("Mail sending error to user {} {}", requestDto.getEmail(), e.getMessage());
@@ -65,10 +66,11 @@ public class MailServiceImpl implements MailService {
      * @param requestDto validation mail send request
      */
     @Override
+    @Async
     public void sendPasswordResetMail(GenericMailRequest requestDto) {
         try {
             Context context = new Context(Translator.getLanguage());
-            String header = Translator.getMessage("mail.password.reset", Translator.getLanguage());
+            String header = Translator.getMessage("mail.password.reset", requestDto.getLanguage());
             genericMessage(new MailValidation("resetPassword", header), requestDto, context);
         } catch (Exception e) {
             log.info("Mail sending error to user {} {}", requestDto.getEmail(), e.getMessage());
@@ -81,8 +83,7 @@ public class MailServiceImpl implements MailService {
      * @param dto request object
      * @throws MessagingException
      */
-    @Async
-    public void genericMessage(MailValidation dto, GenericMailRequest requestDto, Context context) throws MessagingException {
+    private void genericMessage(MailValidation dto, GenericMailRequest requestDto, Context context) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message,
                 MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED);

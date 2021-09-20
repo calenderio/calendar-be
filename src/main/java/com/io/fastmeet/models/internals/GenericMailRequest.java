@@ -11,20 +11,23 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Data
 @NoArgsConstructor
 public class GenericMailRequest {
 
     private String email;
+    private Locale language;
     private String name;
     private String code;
     private List<AttachmentModel> attachments = new ArrayList<>();
     private byte[] meetingDetails;
 
-    public GenericMailRequest(String email, String name, String code) {
+    public GenericMailRequest(String email, String name, String code, Locale language) {
         this.email = email;
         this.name = name;
         this.code = code;
+        this.language = language;
     }
 }
