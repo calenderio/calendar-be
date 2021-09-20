@@ -156,6 +156,11 @@
             <artifactId>commons-codec</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.9</version>
+        </dependency>
+        <dependency>
             <groupId>org.jasypt</groupId>
             <artifactId>jasypt</artifactId>
             <version>1.9.3</version>
@@ -246,6 +251,7 @@
                                 <srcFile>sql/create_java_caches.sql</srcFile>
                                 <srcFile>sql/create_questions.sql</srcFile>
                                 <srcFile>sql/create_answers.sql</srcFile>
+                                <srcFile>sql/create_invitation.sql</srcFile>
                             </srcFiles>
                         </configuration>
                     </execution>

@@ -9,7 +9,6 @@ package com.io.fastmeet.core.security.jwt;
 import com.io.fastmeet.core.annotations.SkipSecurity;
 import com.io.fastmeet.core.exception.CalendarAppException;
 import com.io.fastmeet.entitites.User;
-import com.io.fastmeet.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
@@ -29,9 +28,6 @@ public class JWTInterceptor implements HandlerInterceptor {
 
     @Autowired
     private JWTUtil util;
-
-    @Autowired
-    private UserService userService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
@@ -54,6 +50,9 @@ public class JWTInterceptor implements HandlerInterceptor {
             throw new CalendarAppException(HttpStatus.UNAUTHORIZED, "JWT token is invalid", "JWT_TOKEN_INVALID");
         }
         User user = jwtService.getUserFromToken(token);
+//        if (!Boolean.TRUE.equals(user.getVerified())) {
+//            throw new CalendarAppException(HttpStatus.FORBIDDEN, "Pls validate mail address", "NOT_VALIDATED");
+//        }
         UsernamePasswordAuthenticationToken authentication = jwtService.getAuthenticationToken(user);
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);

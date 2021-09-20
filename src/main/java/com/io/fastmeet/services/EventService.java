@@ -7,6 +7,7 @@
 package com.io.fastmeet.services;
 
 import com.io.fastmeet.entitites.Event;
+import com.io.fastmeet.models.internals.MeetInvitationDetailRequest;
 import com.io.fastmeet.models.requests.calendar.CalendarEventsRequest;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface EventService {
     Event createEvent(Event event);
 
     List<Event> getEvents();
+
+    void sendEventInvitation(MeetInvitationDetailRequest request);
 }

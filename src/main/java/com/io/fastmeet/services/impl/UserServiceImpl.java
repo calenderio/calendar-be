@@ -38,6 +38,7 @@ import com.io.fastmeet.services.UserService;
 import com.io.fastmeet.services.ValidationService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
@@ -96,7 +97,7 @@ public class UserServiceImpl implements UserService {
         ifUserExistWithError(request.getEmail().toLowerCase());
         User user = new User();
         user.setEmail(request.getEmail().toLowerCase());
-        user.setName(request.getName());
+        user.setName(WordUtils.capitalize(request.getName()));
         user.setIsCompany(false);
         user.setTimeZone(TimeZone.getTimeZone(request.getTimeZone()) != null ?
                 TimeZone.getTimeZone(request.getTimeZone()).getID() : TimeZone.getDefault().getID());
@@ -119,7 +120,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse socialSignUp(SocialUser request) {
         User user = new User();
         user.setEmail(request.getEmail().toLowerCase());
-        user.setName(request.getName());
+        user.setName(WordUtils.capitalize(request.getName()));
         user.setIsCompany(false);
         user.setPassword(encodePassword(request.getPassword(), request.getEmail().toLowerCase()));
         user.setVerified(true);
@@ -284,7 +285,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Performs change password for logged in user
      *
-     * @param request  user mail
+     * @param request user mail
      * @throws CalendarAppException if user not exist or infos wrong
      */
     @Override
@@ -318,7 +319,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Resend validation
      *
-     * @param request  mail details
+     * @param request mail details
      * @throws CalendarAppException if validation info not exist
      */
     @Override

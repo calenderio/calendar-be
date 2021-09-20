@@ -1,6 +1,6 @@
 /*
  * @author : Oguz Kahraman
- * @since : 16.09.2021
+ * @since : 21.09.2021
  *
  * Copyright - Calendar App Java API
  **/
@@ -8,15 +8,16 @@ package com.io.fastmeet.models.internals;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
-public class AttachmentModel {
+public class MeetInvitationDetailRequest {
 
-    private byte[] data;
+    private String userMail;
     private String name;
-    private String type;
+    private Long eventId;
+    private List<AttachmentModel> attachments;
 
 }

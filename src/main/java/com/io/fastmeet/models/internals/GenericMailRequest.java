@@ -21,6 +21,7 @@ public class GenericMailRequest {
     private Locale language;
     private String name;
     private String code;
+    private String inviter;
     private List<AttachmentModel> attachments = new ArrayList<>();
     private byte[] meetingDetails;
 

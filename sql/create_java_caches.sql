@@ -10,4 +10,6 @@ create table caches
 INSERT INTO caches
 values ('QUESTION_LIMIT_IND', '5', now()),
        ('QUESTION_LIMIT_FREE', '1', now()),
+       ('ATTACH_LIMIT_IND', '1', now()),
+       ('ATTACH_LIMIT_COMMERCIAL', '5', now()),
        ('QUESTION_LIMIT_COMMERCIAL', '20', now());

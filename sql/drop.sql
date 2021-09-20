@@ -9,5 +9,6 @@ drop table IF EXISTS
     user_calendars,
     events,
     answers,
+    invitations,
     caches
 ;
