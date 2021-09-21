@@ -13,7 +13,9 @@ import com.io.fastmeet.mappers.InvitationMapper;
 import com.io.fastmeet.models.internals.AttachmentModel;
 import com.io.fastmeet.models.internals.MeetInvitationDetailRequest;
 import com.io.fastmeet.models.requests.meet.MeetInvitationRequest;
+import com.io.fastmeet.models.requests.meet.MeetingDateRequest;
 import com.io.fastmeet.models.responses.InvitationResponse;
+import com.io.fastmeet.services.CalendarService;
 import com.io.fastmeet.services.EventService;
 import com.io.fastmeet.services.InvitationService;
 import org.apache.tika.Tika;
@@ -24,8 +26,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 public class MeetControllerImpl implements MeetController {
@@ -35,6 +41,9 @@ public class MeetControllerImpl implements MeetController {
 
     @Autowired
     private InvitationService invitationService;
+
+    @Autowired
+    private CalendarService calendarService;
 
     @Autowired
     private InvitationMapper mapper;
@@ -67,6 +76,11 @@ public class MeetControllerImpl implements MeetController {
     public ResponseEntity<Void> deleteMapping(Long meetingId) {
         invitationService.deleteInvitation(meetingId);
         return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Map<LocalDate, Set<LocalTime>>> getAvailableDates(MeetingDateRequest request) {
+        return ResponseEntity.ok(calendarService.getAllCalendars(request.getLocalDate(), request.getInvitationId()));
     }
 
     private List<AttachmentModel> checkAttachments(List<MultipartFile> files) {

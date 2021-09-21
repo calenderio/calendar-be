@@ -55,6 +55,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/users/verifyEmail",
                         "/login",
                         "/resendVerification",
+                        "/meets/availability",
                         "/resetPassword"
                 )
                 .pathMatcher(new AntPathMatcher());

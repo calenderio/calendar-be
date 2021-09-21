@@ -15,30 +15,37 @@ import com.io.fastmeet.enums.AppProviderType;
 import com.io.fastmeet.enums.DurationType;
 import com.io.fastmeet.models.internals.AdditionalTime;
 import com.io.fastmeet.models.internals.SchedulerTime;
+import com.io.fastmeet.models.remotes.google.GoogleCalendarEventItem;
+import com.io.fastmeet.models.remotes.google.GoogleCalendarEventResponse;
+import com.io.fastmeet.models.remotes.google.GoogleCalendarEventsRequest;
 import com.io.fastmeet.models.remotes.google.TokenRefreshResponse;
+import com.io.fastmeet.models.remotes.microsoft.CalendarEventItem;
 import com.io.fastmeet.models.remotes.microsoft.CalendarResponse;
 import com.io.fastmeet.models.remotes.microsoft.MicrosoftCalendarEventsRequest;
 import com.io.fastmeet.repositories.InvitationRepository;
 import com.io.fastmeet.repositories.LinkedCalendarRepository;
+import com.io.fastmeet.services.CalendarService;
 import com.io.fastmeet.services.GoogleService;
 import com.io.fastmeet.services.MicrosoftService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @Service
-public class CalendarServiceImpl {
+public class CalendarServiceImpl implements CalendarService {
 
     private static final String TIME_RANGE_NOT_AVAILABLE = "Time range not available";
     private static final String RANGE_NOT_AVAILABLE = "RANGE_NOT_AVAILABLE";
@@ -57,32 +64,110 @@ public class CalendarServiceImpl {
     @Autowired
     private LinkedCalendarRepository linkedCalendarRepository;
 
-    @PostConstruct
-    private void itet() {
-        getAllCalendars(2021, 9, "47a3aafca7714192905dad62eb637cf4GYBeZyDcQGoConRxxa", "GMT+3");
-    }
-
-    public void getAllCalendars(Integer year, Integer month, String invitationId, String timeZone) {
+    @Override
+    public Map<LocalDate, Set<LocalTime>> getAllCalendars(LocalDate localDate, String invitationId) {
         Invitation invitation = invitationRepository.findByInvitationIdAndScheduledIsFalse(invitationId).orElseThrow(() ->
                 new CalendarAppException(HttpStatus.BAD_REQUEST, "No event found", "NO_EVENT"));
         Event event = invitation.getEvent();
+        int year;
+        int month;
+        if (localDate == null) {
+            checkForNow(event);
+            year = LocalDate.now().getYear();
+            month = LocalDate.now().getMonthValue();
+        } else {
+            year = localDate.getYear();
+            month = localDate.getMonthValue();
+        }
+        String timeZone = event.getTimeZone();
         LocalDateTime starDate = getMinDate(year, month, event);
         LocalDateTime endDate = getMaxDate(year, month, event);
-        getAvailableHours(starDate, endDate, event);
+        Map<LocalDate, Set<LocalTime>> availableDates = getAvailableHours(starDate, endDate, event);
         Set<LinkedCalendar> linkedCalendarSet = invitation.getUser().getCalendars();
-        List<LinkedCalendar> filteredMicrosoft = linkedCalendarSet.stream().filter(item -> AppProviderType.MICROSOFT.equals(item.getType())).toList();
-        if (!filteredMicrosoft.isEmpty()) {
-            LinkedCalendar selected = filteredMicrosoft.get(0);
-            checkAndCreateToken(filteredMicrosoft, selected, AppProviderType.MICROSOFT);
-            MicrosoftCalendarEventsRequest eventsRequest = new MicrosoftCalendarEventsRequest();
-            eventsRequest.setTimeZone(timeZone);
-            eventsRequest.setAccessToken(selected.getAccessToken());
-            eventsRequest.setTimeMin(starDate);
-            eventsRequest.setTimeMax(endDate);
-            eventsRequest.setAccessToken(tokenEncryptor.getDecryptedString(selected.getAccessToken()));
-            CalendarResponse response = microsoftService.getCalendarEvents(eventsRequest);
-        }
+        List<LinkedCalendar> filteredMicrosoft = linkedCalendarSet.stream().filter(item -> AppProviderType.MICROSOFT.equals(item.getType())).collect(Collectors.toList());
+        List<LinkedCalendar> filteredGoogle = linkedCalendarSet.stream().filter(item -> AppProviderType.GOOGLE.equals(item.getType())).collect(Collectors.toList());
+        microsoftCalendarMap(timeZone, event, starDate, endDate, availableDates, filteredMicrosoft);
+        googleCalendarMap(timeZone, event, starDate, endDate, availableDates, filteredGoogle);
+        availableDates.entrySet().removeIf(time -> time.getValue().isEmpty());
+        return availableDates;
+    }
 
+    private void googleCalendarMap(String timeZone, Event event, LocalDateTime starDate, LocalDateTime endDate, Map<LocalDate, Set<LocalTime>> availableDates, List<LinkedCalendar> filteredGoogle) {
+        if (!filteredGoogle.isEmpty()) {
+            for (LinkedCalendar selected : filteredGoogle) {
+                checkAndCreateToken(filteredGoogle, selected, AppProviderType.GOOGLE);
+                GoogleCalendarEventsRequest eventsRequest = new GoogleCalendarEventsRequest();
+                eventsRequest.setAccessToken(tokenEncryptor.getDecryptedString(selected.getAccessToken()));
+                eventsRequest.setUserName(selected.getSocialMail());
+                eventsRequest.setTimeZone(timeZone);
+                eventsRequest.setTimeMin(starDate);
+                eventsRequest.setTimeMax(endDate);
+                GoogleCalendarEventResponse response = googleService.getCalendarEvents(eventsRequest);
+                for (GoogleCalendarEventItem item : response.getItems()) {
+                    int multiply = DurationType.HOUR.equals(event.getDurationType()) ? 60 : 1;
+                    int minutes = event.getDuration() * multiply;
+                    ZonedDateTime startTime = ZonedDateTime.parse(item.getStart().getDateTime())
+                            .withZoneSameInstant(ZoneId.of(event.getTimeZone()));
+                    ZonedDateTime endTime = ZonedDateTime.parse(item.getEnd().getDateTime())
+                            .withZoneSameInstant(ZoneId.of(event.getTimeZone()));
+                    genericFilter(availableDates, minutes, startTime, endTime);
+                }
+            }
+        }
+    }
+
+    private void microsoftCalendarMap(String timeZone, Event event, LocalDateTime starDate, LocalDateTime endDate, Map<LocalDate, Set<LocalTime>> availableDates, List<LinkedCalendar> filteredMicrosoft) {
+        if (!filteredMicrosoft.isEmpty()) {
+            for (LinkedCalendar selected : filteredMicrosoft) {
+                checkAndCreateToken(filteredMicrosoft, selected, AppProviderType.MICROSOFT);
+                MicrosoftCalendarEventsRequest eventsRequest = new MicrosoftCalendarEventsRequest();
+                eventsRequest.setTimeZone(timeZone);
+                eventsRequest.setAccessToken(selected.getAccessToken());
+                eventsRequest.setTimeMin(starDate);
+                eventsRequest.setTimeMax(endDate);
+                eventsRequest.setAccessToken(tokenEncryptor.getDecryptedString(selected.getAccessToken()));
+                CalendarResponse response = microsoftService.getCalendarEvents(eventsRequest);
+                List<CalendarEventItem> items = response.getValue();
+                for (CalendarEventItem item : items) {
+                    int multiply = DurationType.HOUR.equals(event.getDurationType()) ? 60 : 1;
+                    ZonedDateTime startTime = LocalDateTime.parse(item.getStart().getDateTime())
+                            .atZone(ZoneId.of(item.getStart().getTimeZone())).withZoneSameInstant(ZoneId.of(event.getTimeZone()));
+                    ZonedDateTime endTime = LocalDateTime.parse(item.getEnd().getDateTime())
+                            .atZone(ZoneId.of(item.getEnd().getTimeZone())).withZoneSameInstant(ZoneId.of(event.getTimeZone()));
+                    genericFilter(availableDates, multiply, startTime, endTime);
+                }
+            }
+        }
+    }
+
+    private void genericFilter(Map<LocalDate, Set<LocalTime>> availableDates, int multiply, ZonedDateTime startTime, ZonedDateTime endTime) {
+        if (!startTime.toLocalDate().isEqual(endTime.toLocalDate())) {
+            availableDates.entrySet().removeIf(time -> time.getKey().isAfter(startTime.toLocalDate()) && time.getKey().isBefore(endTime.toLocalDate()));
+            if (availableDates.containsKey(startTime.toLocalDate())) {
+                availableDates.get(startTime.toLocalDate())
+                        .removeIf(time -> startTime.toLocalTime().minusMinutes(multiply).isBefore(time)
+                                && endTime.toLocalTime().withHour(23).withMinute(59).isAfter(time));
+            }
+            if (availableDates.containsKey(endTime.toLocalDate())) {
+                availableDates.get(endTime.toLocalDate())
+                        .removeIf(time -> endTime.toLocalTime().withMinute(0).withHour(0).isBefore(time)
+                                && endTime.toLocalTime().isAfter(time));
+            }
+        } else {
+            if (availableDates.containsKey(startTime.toLocalDate())) {
+                availableDates.get(startTime.toLocalDate())
+                        .removeIf(time -> startTime.toLocalTime().minusMinutes(multiply).isBefore(time)
+                                && endTime.toLocalTime().isAfter(time));
+            }
+        }
+    }
+
+    private void checkForNow(Event event) {
+        LocalDate localDate = LocalDate.now();
+        if (localDate.isBefore(event.getStartDate()) ||
+                localDate.isAfter(event.getEndDate())) {
+            throw new CalendarAppException(HttpStatus.BAD_REQUEST, TIME_RANGE_NOT_AVAILABLE, RANGE_NOT_AVAILABLE);
+        }
     }
 
     private void checkAndCreateToken(List<LinkedCalendar> filtered, LinkedCalendar selected, AppProviderType type) {
@@ -97,14 +182,6 @@ public class CalendarServiceImpl {
             selected.setExpireDate(callTime.plusSeconds(response.getExpiresIn()));
             selected.setAccessToken(tokenEncryptor.getEncryptedString(response.getAccessToken()));
             linkedCalendarRepository.save(selected);
-        }
-    }
-
-    private void checkForNow(Event event) {
-        LocalDate localDate = LocalDate.now();
-        if (localDate.isBefore(event.getStartDate()) ||
-                localDate.isAfter(event.getEndDate())) {
-            throw new CalendarAppException(HttpStatus.BAD_REQUEST, TIME_RANGE_NOT_AVAILABLE, RANGE_NOT_AVAILABLE);
         }
     }
 
@@ -147,7 +224,7 @@ public class CalendarServiceImpl {
         if (times != null && !times.isEmpty()) {
             List<LocalDate> sorted = times.stream().map(LocalDate::parse)
                     .filter(item -> !item.isAfter(endDate.toLocalDate()) && !item.isBefore(startDate.toLocalDate()))
-                    .toList();
+                    .collect(Collectors.toList());
             for (LocalDate selected : sorted) {
                 availableDates.remove(selected);
             }
@@ -159,7 +236,7 @@ public class CalendarServiceImpl {
         if (times != null && !times.isEmpty()) {
             List<AdditionalTime> sorted = times.stream()
                     .filter(item -> !item.getDate().isAfter(endDate.toLocalDate()) && !item.getDate().isBefore(startDate.toLocalDate()))
-                    .toList();
+                    .collect(Collectors.toList());
             for (AdditionalTime selected : sorted) {
                 Set<LocalTime> availableTimes = new TreeSet<>();
                 for (SchedulerTime time : selected.getTime()) {
@@ -216,9 +293,11 @@ public class CalendarServiceImpl {
         String[] endStrings = time.getEnd().split(":");
         LocalTime startTime = LocalTime.of(Integer.parseInt(startStrings[0]), Integer.parseInt(startStrings[1]));
         LocalTime endTime = LocalTime.of(Integer.parseInt(endStrings[0]), Integer.parseInt(endStrings[1]));
-        while (!startTime.plusMinutes(minutes).isAfter(endTime)) {
-            availableTimes.add(startTime);
-            startTime = startTime.plusMinutes(minutes);
+        LocalDateTime startDate = startTime.atDate(LocalDate.MIN);
+        LocalDateTime endDate = endTime.atDate(LocalDate.MIN);
+        while (!startDate.plusMinutes(minutes).isAfter(endDate)) {
+            availableTimes.add(startDate.toLocalTime());
+            startDate = startDate.plusMinutes(minutes);
         }
     }
 

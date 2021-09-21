@@ -48,7 +48,7 @@ public class GoogleServiceImpl implements GoogleService {
     private String clientSecret;
 
     @Override
-    public void getCalendarEvents(GoogleCalendarEventsRequest request) {
+    public GoogleCalendarEventResponse getCalendarEvents(GoogleCalendarEventsRequest request) {
         String timeZone = StringUtils.defaultIfBlank(request.getTimeZone(), "UTC");
 
         UriComponentsBuilder builder = UriComponentsBuilder.
@@ -74,7 +74,7 @@ public class GoogleServiceImpl implements GoogleService {
                 .build();
         try {
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            GoogleCalendarEventResponse googleResponse = new Gson().fromJson(response.body(), GoogleCalendarEventResponse.class);
+            return new Gson().fromJson(response.body(), GoogleCalendarEventResponse.class);
         } catch (Exception e) {
             Thread.currentThread().interrupt();
             throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.EXTERNAL_APP_MSG, AppProviderType.GOOGLE.name()),

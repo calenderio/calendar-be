@@ -132,7 +132,7 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
     private UserResponse createSocialSignup(String userName, DefaultOAuth2User oicdUser, OAuth2AuthorizedClient user, AppProviderType providerType) {
         UserResponse userResponse;
         SocialUser createRequest = createSocialRequest(userName, oicdUser, user, providerType);
-        createRequest.setSocialMediaMail(userName);
+        createRequest.setSocialMediaMail(oicdUser.getAttribute(providerType.preferredUsername));
         userResponse = userService.socialSignUp(createRequest);
         return userResponse;
     }
@@ -153,6 +153,7 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
         createRequest.setToken(tokenEncryptor.getEncryptedString(user.getAccessToken().getTokenValue()));
         createRequest.setRefreshToken(tokenEncryptor.getEncryptedString(Objects.requireNonNull(user.getRefreshToken()).getTokenValue()));
         createRequest.setExpireDate(LocalDateTime.ofInstant(Objects.requireNonNull(user.getAccessToken().getExpiresAt()), ZoneId.of("UTC")));
+        createRequest.setSocialMediaMail(oicdUser.getAttribute(providerType.preferredUsername));
         createRequest.setType(providerType);
         return createRequest;
     }
