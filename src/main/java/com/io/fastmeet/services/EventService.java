@@ -7,6 +7,7 @@
 package com.io.fastmeet.services;
 
 import com.io.fastmeet.entitites.Event;
+import com.io.fastmeet.models.internals.MeetInvitationDetailRequest;
 import com.io.fastmeet.models.requests.calendar.CalendarEventsRequest;
 
 import java.util.List;
@@ -15,7 +16,9 @@ public interface EventService {
     //TODO multi calendar support
     void getCalendars(CalendarEventsRequest request, String userToken);
 
-    Event createCalendarType(Event event);
+    Event createEvent(Event event);
 
-    List<Event> getCalendarTypes();
+    List<Event> getEvents();
+
+    void sendEventInvitation(MeetInvitationDetailRequest request);
 }

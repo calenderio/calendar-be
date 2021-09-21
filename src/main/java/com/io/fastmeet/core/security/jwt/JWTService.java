@@ -74,7 +74,7 @@ public class JWTService {
                 .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
                 .setSubject(user.getEmail())
                 .setAudience("FastMeet")
-                .setExpiration(Timestamp.valueOf(LocalDateTime.now().plusHours(1)))
+                .setExpiration(Timestamp.valueOf(LocalDateTime.now().plusDays(1)))
                 .claim("username", user.getEmail().toLowerCase())
                 .claim("id", user.getId())
                 .claim("roles", RoleUtil.userRole(user.getLicence().getLicenceType()))

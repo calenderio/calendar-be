@@ -12,6 +12,7 @@ import com.io.fastmeet.models.internals.GenericMailRequest;
 import com.io.fastmeet.models.internals.MailValidation;
 import com.io.fastmeet.services.MailService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -24,11 +25,9 @@ import org.thymeleaf.context.Context;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
+import java.nio.charset.StandardCharsets;
 
 @Service
 @Slf4j
@@ -49,10 +48,11 @@ public class MailServiceImpl implements MailService {
      * @param requestDto validation mail send request
      */
     @Override
+    @Async
     public void sendMailValidation(GenericMailRequest requestDto) {
         try {
             Context context = new Context(Translator.getLanguage());
-            String header = Translator.getMessage("mail.validation.subject", Translator.getLanguage());
+            String header = Translator.getMessage("mail.validation.subject", requestDto.getLanguage());
             genericMessage(new MailValidation("validation", header), requestDto, context);
         } catch (Exception e) {
             log.info("Mail sending error to user {} {}", requestDto.getEmail(), e.getMessage());
@@ -65,11 +65,29 @@ public class MailServiceImpl implements MailService {
      * @param requestDto validation mail send request
      */
     @Override
+    @Async
     public void sendPasswordResetMail(GenericMailRequest requestDto) {
         try {
             Context context = new Context(Translator.getLanguage());
-            String header = Translator.getMessage("mail.password.reset", Translator.getLanguage());
+            String header = Translator.getMessage("mail.password.reset", requestDto.getLanguage());
             genericMessage(new MailValidation("resetPassword", header), requestDto, context);
+        } catch (Exception e) {
+            log.info("Mail sending error to user {} {}", requestDto.getEmail(), e.getMessage());
+        }
+    }
+
+    /**
+     * Sends invitation mail to user
+     *
+     * @param requestDto invitation mail send request
+     */
+    @Override
+    @Async
+    public void sendInvitationMail(GenericMailRequest requestDto) {
+        try {
+            Context context = new Context(Translator.getLanguage());
+            String header = Translator.getMessage("mail.event.header", requestDto.getLanguage());
+            genericMessage(new MailValidation("invitation", header), requestDto, context);
         } catch (Exception e) {
             log.info("Mail sending error to user {} {}", requestDto.getEmail(), e.getMessage());
         }
@@ -81,13 +99,14 @@ public class MailServiceImpl implements MailService {
      * @param dto request object
      * @throws MessagingException
      */
-    @Async
-    public void genericMessage(MailValidation dto, GenericMailRequest requestDto, Context context) throws MessagingException {
+    private void genericMessage(MailValidation dto, GenericMailRequest requestDto, Context context) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message,
-                MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED);
+                MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                StandardCharsets.UTF_8.name());
         context.setVariable("code", requestDto.getCode());
-        context.setVariable("name", requestDto.getName());
+        context.setVariable("name", WordUtils.capitalize(requestDto.getName()));
+        context.setVariable("inviter", WordUtils.capitalize(requestDto.getInviter()));
         helper.setTo(requestDto.getEmail());
         helper.setSubject(dto.getHeader());
         helper.setFrom(from);
@@ -96,21 +115,17 @@ public class MailServiceImpl implements MailService {
             message.setDataHandler(new DataHandler(iCalData));
             message.setHeader("Content-Type", "text/calendar; charset=UTF-8; method=REQUEST");
         }
-        addAttachments(requestDto, message);
+        addAttachments(requestDto, helper);
         String html = templateEngine.process("emails/" + dto.getTemplateName(), context);
         helper.setText(html, true);
         emailSender.send(message);
     }
 
-    private void addAttachments(GenericMailRequest requestDto, MimeMessage message) throws MessagingException {
-        if (requestDto.getAttachments() != null) {
-            Multipart multipart = new MimeMultipart();
-            MimeBodyPart messageBodyPart = new MimeBodyPart();
+    private void addAttachments(GenericMailRequest requestDto, MimeMessageHelper helper) throws MessagingException {
+        if (requestDto.getAttachments() != null && !requestDto.getAttachments().isEmpty()) {
             for (AttachmentModel model : requestDto.getAttachments()) {
                 DataSource source = new ByteArrayDataSource(model.getData(), model.getType());
-                message.setDataHandler(new DataHandler(source));
-                message.setFileName(model.getName());
-                multipart.addBodyPart(messageBodyPart);
+                helper.addAttachment(model.getName(), source);
             }
         }
     }

@@ -24,7 +24,7 @@ public class VEventBuilder {
     private final VEvent vEvent;
 
     public VEventBuilder(Date startDate, Date endDate, String eventTitle, String timeZone) {
-        PropertyList propertyList = new PropertyList();
+        PropertyList<Property> propertyList = new PropertyList<>();
         propertyList.add(new TzId(timeZone));
         DateTime start = new DateTime(startDate, new TimeZone(new VTimeZone(propertyList)));
         DateTime end = new DateTime(endDate, new TimeZone(new VTimeZone(propertyList)));

@@ -8,5 +8,7 @@ drop table IF EXISTS
     questions,
     user_calendars,
     events,
+    answers,
+    invitations,
     caches
 ;
