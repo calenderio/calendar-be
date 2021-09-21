@@ -38,8 +38,14 @@ public class Invitation extends BaseEntity {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
+    @JsonManagedReference
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     private String userEmail;
-    private Long userId;
     private String name;
     private String invitationId;
     private Boolean scheduled = Boolean.FALSE;
