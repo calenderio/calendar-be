@@ -89,6 +89,8 @@ public class EventServiceImpl implements EventService {
         genericMailRequest.setInviter(user.getName());
         String id = invitationService.saveInvitation(request);
         genericMailRequest.setCode(id);
+        genericMailRequest.setCc(null);
+        genericMailRequest.setBcc(null);
         mailService.sendInvitationMail(genericMailRequest);
     }
 
@@ -99,6 +101,8 @@ public class EventServiceImpl implements EventService {
         GenericMailRequest genericMailRequest = mapper.meetingRequestToMail(invitation);
         genericMailRequest.setInviter(user.getName());
         genericMailRequest.setAttachments(attachments);
+        genericMailRequest.setCc(null);
+        genericMailRequest.setBcc(null);
         mailService.sendInvitationMail(genericMailRequest);
     }
 
