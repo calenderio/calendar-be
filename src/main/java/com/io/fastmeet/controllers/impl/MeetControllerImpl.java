@@ -49,7 +49,8 @@ public class MeetControllerImpl implements MeetController {
                 }
             }
         }
-        eventService.sendEventInvitation(new MeetInvitationDetailRequest(request.getUserMail(), request.getName(), request.getEventId(), modelList));
+        eventService.sendEventInvitation(new MeetInvitationDetailRequest(request.getUserMail(), request.getName(), request.getEventId(), modelList,
+                request.getCcUsers(), request.getBccUsers()));
         return ResponseEntity.noContent().build();
     }
 }

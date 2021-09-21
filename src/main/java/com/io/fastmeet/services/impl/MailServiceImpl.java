@@ -33,6 +33,8 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class MailServiceImpl implements MailService {
 
+    private static final String MAIL_SENDING_ERROR_TO_USER = "Mail sending error to user {} {}";
+
     @Autowired
     private JavaMailSender emailSender;
 
@@ -55,7 +57,7 @@ public class MailServiceImpl implements MailService {
             String header = Translator.getMessage("mail.validation.subject", requestDto.getLanguage());
             genericMessage(new MailValidation("validation", header), requestDto, context);
         } catch (Exception e) {
-            log.info("Mail sending error to user {} {}", requestDto.getEmail(), e.getMessage());
+            log.info(MAIL_SENDING_ERROR_TO_USER, requestDto.getEmails(), e.getMessage());
         }
     }
 
@@ -72,7 +74,7 @@ public class MailServiceImpl implements MailService {
             String header = Translator.getMessage("mail.password.reset", requestDto.getLanguage());
             genericMessage(new MailValidation("resetPassword", header), requestDto, context);
         } catch (Exception e) {
-            log.info("Mail sending error to user {} {}", requestDto.getEmail(), e.getMessage());
+            log.info(MAIL_SENDING_ERROR_TO_USER, requestDto.getEmails(), e.getMessage());
         }
     }
 
@@ -89,7 +91,7 @@ public class MailServiceImpl implements MailService {
             String header = Translator.getMessage("mail.event.header", requestDto.getLanguage());
             genericMessage(new MailValidation("invitation", header), requestDto, context);
         } catch (Exception e) {
-            log.info("Mail sending error to user {} {}", requestDto.getEmail(), e.getMessage());
+            log.info(MAIL_SENDING_ERROR_TO_USER, requestDto.getEmails(), e.getMessage());
         }
     }
 
@@ -107,9 +109,10 @@ public class MailServiceImpl implements MailService {
         context.setVariable("code", requestDto.getCode());
         context.setVariable("name", WordUtils.capitalize(requestDto.getName()));
         context.setVariable("inviter", WordUtils.capitalize(requestDto.getInviter()));
-        helper.setTo(requestDto.getEmail());
+        helper.setTo(requestDto.getEmails().toArray(new String[0]));
         helper.setSubject(dto.getHeader());
         helper.setFrom(from);
+        addCCAndBCC(requestDto, helper);
         if (requestDto.getMeetingDetails() != null) {
             DataSource iCalData = new ByteArrayDataSource(requestDto.getMeetingDetails(), "text/calendar; charset=UTF-8");
             message.setDataHandler(new DataHandler(iCalData));
@@ -127,6 +130,15 @@ public class MailServiceImpl implements MailService {
                 DataSource source = new ByteArrayDataSource(model.getData(), model.getType());
                 helper.addAttachment(model.getName(), source);
             }
+        }
+    }
+
+    private void addCCAndBCC(GenericMailRequest requestDto, MimeMessageHelper helper) throws MessagingException {
+        if (requestDto.getBcc() != null && !requestDto.getBcc().isEmpty()) {
+            helper.setBcc(requestDto.getBcc().toArray(new String[0]));
+        }
+        if (requestDto.getCc() != null && !requestDto.getCc().isEmpty()) {
+            helper.setCc(requestDto.getCc().toArray(new String[0]));
         }
     }
 

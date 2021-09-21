@@ -8,13 +8,19 @@ package com.io.fastmeet.mappers;
 
 import com.io.fastmeet.models.internals.GenericMailRequest;
 import com.io.fastmeet.models.internals.MeetInvitationDetailRequest;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+
+import java.util.Collections;
 
 @Mapper(componentModel = "spring")
 public interface MailRequestMapper {
 
-    @Mapping(source = "userMail", target = "email")
     GenericMailRequest meetingRequestToMail(MeetInvitationDetailRequest request);
 
+    @AfterMapping
+    default void setEmails(MeetInvitationDetailRequest from, @MappingTarget GenericMailRequest to) {
+        to.setEmails(Collections.singletonList(from.getUserMail()));
+    }
 }

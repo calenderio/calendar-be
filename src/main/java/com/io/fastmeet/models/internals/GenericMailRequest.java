@@ -17,7 +17,9 @@ import java.util.Locale;
 @NoArgsConstructor
 public class GenericMailRequest {
 
-    private String email;
+    private List<String> emails;
+    private List<String> cc;
+    private List<String> bcc;
     private Locale language;
     private String name;
     private String code;
@@ -25,8 +27,8 @@ public class GenericMailRequest {
     private List<AttachmentModel> attachments = new ArrayList<>();
     private byte[] meetingDetails;
 
-    public GenericMailRequest(String email, String name, String code, Locale language) {
-        this.email = email;
+    public GenericMailRequest(List<String> emails, String name, String code, Locale language) {
+        this.emails = emails;
         this.name = name;
         this.code = code;
         this.language = language;

@@ -8,7 +8,9 @@ create table invitations
     name          varchar(255) not null,
     user_id       bigint       not null,
     scheduled     bool         not null default false,
-    invitation_id varchar(50)
+    invitation_id varchar(50),
+    cc_list       text[],
+    bcc_list      text[]
 
 );
 
