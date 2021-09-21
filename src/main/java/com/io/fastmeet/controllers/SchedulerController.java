@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -64,7 +65,7 @@ public interface SchedulerController {
                             schema = @Schema(implementation = SchedulerResponse.class))}),
             @ApiResponse(responseCode = "400", description = "Updating scheduler error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
-    @PostMapping(value = "/scheduler/{schedulerId}")
+    @PatchMapping(value = "/scheduler/{schedulerId}")
     ResponseEntity<SchedulerResponse> updateScheduler(@RequestBody SchedulerUpdateRequest request,
                                                       @Parameter(name = "schedulerId", example = "1", description = "Id of scheduler") @PathVariable Long schedulerId);
 

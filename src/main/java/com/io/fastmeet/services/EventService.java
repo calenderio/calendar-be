@@ -7,6 +7,7 @@
 package com.io.fastmeet.services;
 
 import com.io.fastmeet.entitites.Event;
+import com.io.fastmeet.models.internals.AttachmentModel;
 import com.io.fastmeet.models.internals.MeetInvitationDetailRequest;
 import com.io.fastmeet.models.requests.calendar.CalendarEventsRequest;
 
@@ -21,4 +22,6 @@ public interface EventService {
     List<Event> getEvents();
 
     void sendEventInvitation(MeetInvitationDetailRequest request);
+
+    void resendInvitation(Long invitationId, List<AttachmentModel> attachments);
 }

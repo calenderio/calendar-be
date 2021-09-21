@@ -8,11 +8,13 @@ package com.io.fastmeet.services.impl;
 
 import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.entitites.Event;
+import com.io.fastmeet.entitites.Invitation;
 import com.io.fastmeet.entitites.LinkedCalendar;
 import com.io.fastmeet.entitites.Question;
 import com.io.fastmeet.entitites.Scheduler;
 import com.io.fastmeet.entitites.User;
 import com.io.fastmeet.mappers.MailRequestMapper;
+import com.io.fastmeet.models.internals.AttachmentModel;
 import com.io.fastmeet.models.internals.GenericMailRequest;
 import com.io.fastmeet.models.internals.MeetInvitationDetailRequest;
 import com.io.fastmeet.models.requests.calendar.CalendarEventsRequest;
@@ -87,6 +89,16 @@ public class EventServiceImpl implements EventService {
         genericMailRequest.setInviter(user.getName());
         String id = invitationService.saveInvitation(request);
         genericMailRequest.setCode(id);
+        mailService.sendInvitationMail(genericMailRequest);
+    }
+
+    @Override
+    public void resendInvitation(Long invitationId, List<AttachmentModel> attachments) {
+        User user = jwtService.getLoggedUser();
+        Invitation invitation = invitationService.findInvitationByUserId(invitationId, attachments);
+        GenericMailRequest genericMailRequest = mapper.meetingRequestToMail(invitation);
+        genericMailRequest.setInviter(user.getName());
+        genericMailRequest.setAttachments(attachments);
         mailService.sendInvitationMail(genericMailRequest);
     }
 
