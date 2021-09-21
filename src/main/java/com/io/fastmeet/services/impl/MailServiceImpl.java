@@ -12,7 +12,7 @@ import com.io.fastmeet.models.internals.GenericMailRequest;
 import com.io.fastmeet.models.internals.MailValidation;
 import com.io.fastmeet.services.MailService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.text.WordUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -129,8 +129,5 @@ public class MailServiceImpl implements MailService {
             }
         }
     }
-    private void sendInvitation(){
-
-    }
-
 }
+

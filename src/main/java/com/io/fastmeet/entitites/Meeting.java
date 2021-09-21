@@ -1,6 +1,7 @@
 package com.io.fastmeet.entitites;
 
 import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -8,8 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-
-public class Meeting {
+@Entity
+public class Meeting extends BaseEntity {
 
     @NotBlank
     private UUID icsuid;
@@ -37,6 +38,7 @@ public class Meeting {
 
     @ElementCollection
     private List<String> participants;
+
 
 
 }

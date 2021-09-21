@@ -8,7 +8,6 @@ import java.io.IOException;
 
 public interface IcsService {
 
-    byte[] writeIcsFileToByteArray(MeetingRequest request , String filePath) throws IOException;
+    byte[] writeIcsFileToByteArray(MeetingRequest request) throws IOException;
 
-    MeetingRequest createMeetingRequest(Calendar calendar, Meeting meeting);
 }

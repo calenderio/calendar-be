@@ -19,3 +19,4 @@ public interface MailService {
     @Async
     void sendInvitationMail(GenericMailRequest requestDto);
 }
+
