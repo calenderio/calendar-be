@@ -17,6 +17,7 @@ import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -34,14 +35,14 @@ public class Invitation extends BaseEntity {
     @JsonManagedReference
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
     @JsonManagedReference
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

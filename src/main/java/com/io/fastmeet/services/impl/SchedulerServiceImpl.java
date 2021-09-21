@@ -22,9 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,7 +49,6 @@ public class SchedulerServiceImpl implements SchedulerService {
         scheduler.setFri(defaultSchedulerTimeSet());
         scheduler.setName(name);
         scheduler.setUserId(user.getId());
-        scheduler.setUnavailable(Collections.singletonList(LocalDate.now().toString()));
         schedulerRepository.save(scheduler);
         return schedulerRepository.findByUserIdAndForCalendarIsFalse(user.getId()).orElse(new ArrayList<>());
     }
@@ -64,6 +61,7 @@ public class SchedulerServiceImpl implements SchedulerService {
                         GeneralMessageConstants.USR_NOT_FOUND));
         request.getScheduler().setId(scheduleObject.getId());
         request.getScheduler().setName(scheduleObject.getName());
+        request.getScheduler().setUserId(user.getId());
         schedulerRepository.save(request.getScheduler());
         return schedulerRepository.findByUserIdAndForCalendarIsFalse(user.getId()).orElse(new ArrayList<>());
     }
