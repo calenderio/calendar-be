@@ -358,7 +358,7 @@ public class UserServiceImpl implements UserService {
      * @param user    details of user
      */
     private void addCalendar(SocialUser request, User user) {
-        LinkedCalendar calendar = getCalendar(request.getEmail(), request.getType());
+        LinkedCalendar calendar = getCalendar(request.getSocialMediaMail(), request.getType());
         if (request.getRefreshToken() != null) {
             calendar.setAccessToken(request.getToken());
             calendar.setRefreshToken(request.getRefreshToken());

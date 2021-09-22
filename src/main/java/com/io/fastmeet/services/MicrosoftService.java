@@ -7,10 +7,11 @@
 package com.io.fastmeet.services;
 
 import com.io.fastmeet.models.remotes.google.TokenRefreshResponse;
+import com.io.fastmeet.models.remotes.microsoft.CalendarResponse;
 import com.io.fastmeet.models.remotes.microsoft.MicrosoftCalendarEventsRequest;
 
 public interface MicrosoftService {
-    void getCalendarEvents(MicrosoftCalendarEventsRequest request);
+    CalendarResponse getCalendarEvents(MicrosoftCalendarEventsRequest request);
 
     TokenRefreshResponse getNewAccessToken(String refreshToken);
 }

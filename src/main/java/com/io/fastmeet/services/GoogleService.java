@@ -6,11 +6,12 @@
  **/
 package com.io.fastmeet.services;
 
+import com.io.fastmeet.models.remotes.google.GoogleCalendarEventResponse;
 import com.io.fastmeet.models.remotes.google.GoogleCalendarEventsRequest;
 import com.io.fastmeet.models.remotes.google.TokenRefreshResponse;
 
 public interface GoogleService {
-    void getCalendarEvents(GoogleCalendarEventsRequest request);
+    GoogleCalendarEventResponse getCalendarEvents(GoogleCalendarEventsRequest request);
 
     TokenRefreshResponse getNewAccessToken(String refreshToken);
 

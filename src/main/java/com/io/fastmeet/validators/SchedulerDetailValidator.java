@@ -85,6 +85,9 @@ public class SchedulerDetailValidator implements ConstraintValidator<SchedulerDe
     }
 
     private boolean checkHours(Set<SchedulerTime> set, ConstraintValidatorContext context, String fieldName) {
+        if (set == null) {
+            return false;
+        }
         List<SchedulerTime> sorted = set.stream().sorted(Comparator.comparing(SchedulerTime::getStart))
                 .collect(Collectors.toList());
         int i = 0;
