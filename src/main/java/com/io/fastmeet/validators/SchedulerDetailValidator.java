@@ -60,25 +60,27 @@ public class SchedulerDetailValidator implements ConstraintValidator<SchedulerDe
     }
 
     private boolean additionalTimeCheck(SchedulerDetails field, ConstraintValidatorContext context) {
-        List<AdditionalTime> sorted = field.getAdditional().stream().sorted(Comparator.comparing(AdditionalTime::getDate))
-                .collect(Collectors.toList());
-        if (checkHours(sorted.get(sorted.size() - 1).getTime(), context, DayValues.ADDITIONAL)) {
-            return true;
-        }
-        for (int i = 0; i < sorted.size() - 1; i++) {
-            if (checkHours(sorted.get(i).getTime(), context, DayValues.ADDITIONAL)) {
+        if (field.getAdditional() != null) {
+            List<AdditionalTime> sorted = field.getAdditional().stream().sorted(Comparator.comparing(AdditionalTime::getDate))
+                    .collect(Collectors.toList());
+            if (checkHours(sorted.get(sorted.size() - 1).getTime(), context, DayValues.ADDITIONAL)) {
                 return true;
             }
-            if (sorted.get(i).getDate().equals(sorted.get(i + 1).getDate())) {
-                context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate("{scheduler.additional.duplicate}")
-                        .addPropertyNode(DayValues.ADDITIONAL).addConstraintViolation();
-                return true;
+            for (int i = 0; i < sorted.size() - 1; i++) {
+                if (checkHours(sorted.get(i).getTime(), context, DayValues.ADDITIONAL)) {
+                    return true;
+                }
+                if (sorted.get(i).getDate().equals(sorted.get(i + 1).getDate())) {
+                    context.disableDefaultConstraintViolation();
+                    context.buildConstraintViolationWithTemplate("{scheduler.additional.duplicate}")
+                            .addPropertyNode(DayValues.ADDITIONAL).addConstraintViolation();
+                    return true;
+                }
             }
-        }
-        for (AdditionalTime time : field.getAdditional()) {
-            if (checkHours(time.getTime(), context, DayValues.ADDITIONAL)) {
-                return true;
+            for (AdditionalTime time : field.getAdditional()) {
+                if (checkHours(time.getTime(), context, DayValues.ADDITIONAL)) {
+                    return true;
+                }
             }
         }
         return false;
