@@ -12,6 +12,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -52,7 +53,7 @@ public class MeetingRequest {
 
     @Schema(description = "uid of meeting")
     @NotNull
-    private String icsUid;
+    private UUID uuid;
 
     @Schema(description = "Timezone of meeting", example = "UTC +3")
     @NotEmpty

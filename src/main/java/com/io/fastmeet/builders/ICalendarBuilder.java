@@ -14,9 +14,9 @@ import net.fortuna.ical4j.model.property.Version;
 public class ICalendarBuilder {
 
 
-    private String fastMeetProdId = "-//Fastmeet//2.0//TR";
+    private final String fastMeetProdId = "-//Fastmeet//2.0//TR";
 
-    private Calendar iCalendar;
+    private final Calendar iCalendar;
 
     public ICalendarBuilder(MeetingRequest meetingRequest) {
         iCalendar = new Calendar();
@@ -37,7 +37,7 @@ public class ICalendarBuilder {
                     .addOrganizer(meeting.getOrganizer())
                     .addParticipants(meeting.getParticipants())
                     .addDescription(meeting.getDescription())
-                    .addIcsUid(meeting.getIcsUid())
+                    .addIcsUid(meeting.getUuid().toString())
                     .addTimeZone(meeting.getTimeZone())
                     .addLocation(meeting.getLocation());
 

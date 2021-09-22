@@ -52,9 +52,5 @@ public class Meeting extends BaseEntity {
 
     @Type(type = "list-array")
     private List<String> participants = new ArrayList<>();
-    @Type(type = "list-array")
-    private List<String> cc = new ArrayList<>();
-    @Type(type = "list-array")
-    private List<String> bcc = new ArrayList<>();
 
 }

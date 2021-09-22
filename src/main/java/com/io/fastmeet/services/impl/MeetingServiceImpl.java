@@ -18,31 +18,30 @@ import java.io.IOException;
 public class MeetingServiceImpl implements MeetingService {
 
     @Autowired
-    IcsService icsService;
+    private IcsService icsService;
 
     @Autowired
-    MailService mailService;
+    private MailService mailService;
 
     @Autowired
-    MeetingMapper meetingMapper;
+    private MeetingMapper meetingMapper;
 
     @Autowired
-    MeetingRepository meetingRepository;
+    private MeetingRepository meetingRepository;
 
 
     @Override
-    public void sendInvitationMailandSaveMeeting(MeetingRequest request) {
+    public void sendInvitationMailAndSaveMeeting(MeetingRequest request) {
         GenericMailRequest toInvitationMail = meetingMapper.request(request);
         try {
             toInvitationMail.setMeetingDetails(icsService.writeIcsFileToByteArray(request));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        meetingRepository.save(meetingRequestToMeeeting(request));
+        meetingRepository.save(meetingRequestToMeeting(request));
     }
 
-    private Meeting meetingRequestToMeeeting(MeetingRequest request){
-        Meeting detachedMeeting = meetingMapper.mapToMeeting(request);
-        return detachedMeeting;
+    private Meeting meetingRequestToMeeting(MeetingRequest request) {
+        return meetingMapper.mapToMeeting(request);
     }
 }
