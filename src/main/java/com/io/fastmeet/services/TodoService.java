@@ -9,8 +9,8 @@ public interface TodoService {
 
     List<Todo> findTodosByUserId(Integer pageNo , Integer pageSize , String sortBy);
 
-    void saveTodo(Long id);
+    void saveTodo(Long id, String token);
 
-    void deleteTodo(Long id);
+    void deleteTodo(Long id, String token);
 
 }
