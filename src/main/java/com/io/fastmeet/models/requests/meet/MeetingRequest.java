@@ -18,7 +18,6 @@ import java.util.List;
 @NoArgsConstructor
 public class MeetingRequest {
 
-
     @Schema(description = "Request.Method of Email" , example = "Method.Request", required = true)
     @NotNull
     private Method method;
@@ -46,7 +45,6 @@ public class MeetingRequest {
     @NotNull
     private long duration;
 
-
     @Email
     @Schema(description = "Email of organizer" , example = "abc@abc.com", required = true)
     @NotNull
@@ -62,6 +60,5 @@ public class MeetingRequest {
 
     @Schema(description = "Description of Meeting" , example = "This meeting occures by changes in bussines logic")
     private String description;
-
 
 }

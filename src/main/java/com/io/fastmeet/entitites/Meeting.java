@@ -1,44 +1,60 @@
 package com.io.fastmeet.entitites;
 
-import javax.persistence.ElementCollection;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.io.fastmeet.enums.DurationType;
+import com.vladmihalcea.hibernate.type.array.ListArrayType;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
+@Table(name = "meetings")
+@NoArgsConstructor
+@TypeDef(name = "list-array", typeClass = ListArrayType.class)
 @Entity
 public class Meeting extends BaseEntity {
 
-    @NotBlank
-    private UUID icsuid;
+    private UUID uuid;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private int duration;
+    private String description;
+    @Enumerated(EnumType.STRING)
+    private DurationType durationType;
+    private String timeZone;
 
-    @Email
     private String organizer;
-
     private String location;
-
-    @NotNull
     private String meetingTitle;
 
-    @NotNull
-    private Date startDate;
+    @JsonManagedReference
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "invitation_id", nullable = false)
+    private Invitation invitation;
 
-    private Date endDate;
-
-    @NotNull
-    private long duration;
-
-    private String description;
-
-    @NotNull
-    private String timeZoneRegion;
-
-    @ElementCollection
-    private List<String> participants;
-
-
+    @Type(type = "list-array")
+    private List<String> participants = new ArrayList<>();
+    @Type(type = "list-array")
+    private List<String> cc = new ArrayList<>();
+    @Type(type = "list-array")
+    private List<String> bcc = new ArrayList<>();
 
 }

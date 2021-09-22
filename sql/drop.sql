@@ -10,5 +10,6 @@ drop table IF EXISTS
     events,
     answers,
     invitations,
+    meetings,
     caches
 ;

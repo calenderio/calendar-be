@@ -48,6 +48,7 @@ public class Invitation extends BaseEntity {
 
     private String userEmail;
     private String name;
+    private String title;
     private String invitationId;
     private Boolean scheduled = Boolean.FALSE;
     @Type(type = "list-array")
