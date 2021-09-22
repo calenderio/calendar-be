@@ -89,8 +89,7 @@ public class MailServiceImpl implements MailService {
     public void sendInvitationMail(GenericMailRequest requestDto) {
         try {
             Context context = new Context(Translator.getLanguage());
-            String header = Translator.getMessage("mail.event.header", requestDto.getLanguage());
-            genericMessage(new MailValidation("invitation", header), requestDto, context);
+            genericMessage(new MailValidation("invitation", requestDto.getHeader()), requestDto, context);
         } catch (Exception e) {
             log.info(MAIL_SENDING_ERROR_TO_USER, requestDto.getEmails(), e.getMessage());
         }
@@ -110,6 +109,7 @@ public class MailServiceImpl implements MailService {
         context.setVariable("code", requestDto.getCode());
         context.setVariable("name", WordUtils.capitalize(requestDto.getName()));
         context.setVariable("inviter", WordUtils.capitalize(requestDto.getInviter()));
+        context.setVariable("description", WordUtils.capitalize(requestDto.getDescription()));
         helper.setTo(requestDto.getEmails().toArray(new String[0]));
         helper.setSubject(dto.getHeader());
         helper.setFrom(from, "Collige");

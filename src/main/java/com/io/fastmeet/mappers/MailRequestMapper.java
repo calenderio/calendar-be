@@ -19,11 +19,13 @@ import java.util.Collections;
 @Mapper(componentModel = "spring")
 public interface MailRequestMapper {
 
+    @Mapping(source = "title", target = "header")
     GenericMailRequest meetingRequestToMail(MeetInvitationDetailRequest request);
 
     @Mapping(source = "ccList", target = "cc")
     @Mapping(source = "bccList", target = "bcc")
     @Mapping(source = "invitationId", target = "code")
+    @Mapping(source = "title", target = "header")
     GenericMailRequest meetingRequestToMail(Invitation request);
 
     @AfterMapping

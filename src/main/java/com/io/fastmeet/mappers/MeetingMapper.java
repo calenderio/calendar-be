@@ -10,10 +10,10 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface MeetingMapper {
 
-
-    @Mapping(target = "organizer", source = "inviter")
-    @Mapping(target = "participants", source = "email")
+    @Mapping(target = "inviter", source = "organizer")
+    @Mapping(target = "emails", source = "participants")
     GenericMailRequest request(MeetingRequest meetingRequest);
 
     Meeting mapToMeeting(MeetingRequest meetingRequest);
+
 }

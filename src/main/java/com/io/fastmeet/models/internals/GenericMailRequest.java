@@ -22,6 +22,8 @@ public class GenericMailRequest {
     private List<String> bcc;
     private Locale language;
     private String name;
+    private String header;
+    private String description;
     private String code;
     private String inviter;
     private List<AttachmentModel> attachments = new ArrayList<>();

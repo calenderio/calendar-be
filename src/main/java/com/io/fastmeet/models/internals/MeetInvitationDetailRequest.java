@@ -17,6 +17,8 @@ public class MeetInvitationDetailRequest {
 
     private String userMail;
     private String name;
+    private String title;
+    private String description;
     private Long eventId;
     private List<AttachmentModel> attachments;
     private List<String> cc;

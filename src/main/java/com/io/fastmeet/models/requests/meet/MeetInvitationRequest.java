@@ -27,6 +27,14 @@ public class MeetInvitationRequest {
     @NotEmpty
     private String name;
 
+    @Schema(description = "Title of invitation", example = "Example User", required = true)
+    @NotEmpty
+    private String title;
+
+    @Schema(description = "Description of invitation", example = "Example User", required = true)
+    @NotEmpty
+    private String description;
+
     @Schema(description = "Id of event", example = "1", required = true)
     @NotNull
     private Long eventId;

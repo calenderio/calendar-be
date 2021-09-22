@@ -54,8 +54,8 @@ public class MeetControllerImpl implements MeetController {
     @Override
     public ResponseEntity<Void> sendMeetingInvite(MeetInvitationRequest request, List<MultipartFile> files) {
         List<AttachmentModel> modelList = checkAttachments(files);
-        eventService.sendEventInvitation(new MeetInvitationDetailRequest(request.getUserMail(), request.getName(), request.getEventId(), modelList,
-                request.getCcUsers(), request.getBccUsers()));
+        eventService.sendEventInvitation(new MeetInvitationDetailRequest(request.getUserMail(), request.getName(), request.getTitle(), request.getDescription()
+                , request.getEventId(), modelList, request.getCcUsers(), request.getBccUsers()));
         return ResponseEntity.noContent().build();
     }
 
