@@ -4,6 +4,6 @@ import com.io.fastmeet.models.requests.meet.MeetingRequest;
 
 public interface MeetingService {
 
-    void  sendInvitationMail (MeetingRequest request);
+    void  sendInvitationMailandSaveMeeting (MeetingRequest request);
 
 }

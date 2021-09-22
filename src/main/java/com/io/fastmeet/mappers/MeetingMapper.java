@@ -1,6 +1,7 @@
 package com.io.fastmeet.mappers;
 
 
+import com.io.fastmeet.entitites.Meeting;
 import com.io.fastmeet.models.internals.GenericMailRequest;
 import com.io.fastmeet.models.requests.meet.MeetingRequest;
 import org.mapstruct.Mapper;
@@ -13,4 +14,6 @@ public interface MeetingMapper {
     @Mapping(target = "organizer", source = "inviter")
     @Mapping(target = "participants", source = "email")
     GenericMailRequest request(MeetingRequest meetingRequest);
+
+    Meeting mapToMeeting(MeetingRequest meetingRequest);
 }
