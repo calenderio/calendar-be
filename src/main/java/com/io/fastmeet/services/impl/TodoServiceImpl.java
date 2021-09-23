@@ -13,11 +13,14 @@ import com.io.fastmeet.repositories.TodoRepository;
 import com.io.fastmeet.repositories.UserRepository;
 import com.io.fastmeet.services.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 
-
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class TodoServiceImpl implements TodoService {
 
@@ -32,8 +35,18 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public List<Todo> findTodosByUserId(Integer pageNo, Integer pageSize, String sortBy) {
+        User user = jwtService.getLoggedUser();
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 
-        return null;
+        Page<Todo> pagedResult = todoRepository.findTodosByUserId(user,paging);
+
+        if (pagedResult.hasContent()) {
+            return pagedResult.getContent();
+        } else {
+
+            return new ArrayList<Todo>();
+        }
+
     }
 
     @Override
@@ -52,9 +65,9 @@ public class TodoServiceImpl implements TodoService {
     public void deleteTodo(String token, TodoDeleteRequest request) {
         User user = jwtService.getLoggedUser();
 
-        Todo todo = todoRepository.findByUserIdAndId(user , request.getId()).orElseThrow(() ->
-        new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.TODO_NOT_FOUND),
-                GeneralMessageConstants.USR_NOT_FOUND));
+        Todo todo = todoRepository.findByUserIdAndId(user, request.getId()).orElseThrow(() ->
+                new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.TODO_NOT_FOUND),
+                        GeneralMessageConstants.USR_NOT_FOUND));
         todoRepository.delete(todo);
     }
 }
