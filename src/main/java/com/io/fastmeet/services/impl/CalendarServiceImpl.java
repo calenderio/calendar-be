@@ -76,22 +76,23 @@ public class CalendarServiceImpl implements CalendarService {
         int month;
         if (localDate == null) {
             checkForNow(event);
-            year = ZonedDateTime.now().withZoneSameInstant(ZoneId.of(timeZone)).getYear();
-            month = ZonedDateTime.now().withZoneSameInstant(ZoneId.of(timeZone)).getMonthValue();
+            year = ZonedDateTime.now(ZoneId.of(timeZone)).getYear();
+            month = ZonedDateTime.now(ZoneId.of(timeZone)).getMonthValue();
         } else {
             year = localDate.getYear();
             month = localDate.getMonthValue();
         }
-        LocalDateTime starDate = getMinDate(year, month, event);
-        LocalDateTime endDate = getMaxDate(year, month, event);
+        LocalDateTime starDate = getMinDate(year, month, event, timeZone);
+        LocalDateTime endDate = getMaxDate(year, month, event, timeZone);
         Map<LocalDate, Set<LocalTime>> availableDates = getAvailableHours(starDate, endDate, event);
         Set<LinkedCalendar> linkedCalendarSet = invitation.getUser().getCalendars();
         List<LinkedCalendar> filteredMicrosoft = linkedCalendarSet.stream().filter(item -> AppProviderType.MICROSOFT.equals(item.getType())).collect(Collectors.toList());
         List<LinkedCalendar> filteredGoogle = linkedCalendarSet.stream().filter(item -> AppProviderType.GOOGLE.equals(item.getType())).collect(Collectors.toList());
-        microsoftCalendarMap(timeZone, event, starDate, endDate, availableDates, filteredMicrosoft);
-        googleCalendarMap(timeZone, event, starDate, endDate, availableDates, filteredGoogle);
-        if (availableDates.containsKey(LocalDate.now())) {
-            availableDates.get(LocalDate.now()).removeIf(time -> time.isBefore(LocalTime.now()));
+        microsoftCalendarMap(event.getTimeZone(), event, starDate, endDate, availableDates, filteredMicrosoft);
+        googleCalendarMap(event.getTimeZone(), event, starDate, endDate, availableDates, filteredGoogle);
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of(event.getTimeZone()));
+        if (availableDates.containsKey(now.toLocalDate())) {
+            availableDates.get(now.toLocalDate()).removeIf(time -> time.isBefore(now.toLocalTime()));
         }
         availableDates.entrySet().removeIf(time -> time.getValue().isEmpty());
         details.setAvailableDates(availableDates);
@@ -192,28 +193,15 @@ public class CalendarServiceImpl implements CalendarService {
         }
     }
 
-    private LocalDateTime getMinDate(Integer year, Integer month, Event event) {
-        if (event.getStartDate().getMonthValue() == month && event.getStartDate().getYear() == year) {
-            return event.getStartDate().atTime(0, 0, 0);
-        }
-        LocalDateTime localDateTime = LocalDateTime.of(year, month, 1, 0, 0, 0);
-        if (localDateTime.toLocalDate().isBefore(event.getStartDate()) ||
-                localDateTime.toLocalDate().isAfter(event.getEndDate())) {
-            throw new CalendarAppException(HttpStatus.BAD_REQUEST, TIME_RANGE_NOT_AVAILABLE, RANGE_NOT_AVAILABLE);
-        }
-        return localDateTime;
+    private LocalDateTime getMaxDate(Integer year, Integer month, Event event, String timeZone) {
+        return ZonedDateTime.of(LocalDate.of(year, month, YearMonth.of(year, month).atEndOfMonth().getDayOfMonth()),
+                LocalTime.MAX, ZoneId.of(timeZone))
+                .withZoneSameInstant(ZoneId.of(event.getTimeZone())).toLocalDateTime();
     }
 
-    private LocalDateTime getMaxDate(Integer year, Integer month, Event event) {
-        if (event.getEndDate().getMonthValue() == month && event.getEndDate().getYear() == year) {
-            return event.getEndDate().atTime(23, 59, 59);
-        }
-        LocalDateTime localDateTime = LocalDateTime.of(year, month, YearMonth.of(year, month).atEndOfMonth().getDayOfMonth(), 23, 59, 59);
-        if (localDateTime.toLocalDate().isBefore(event.getStartDate()) ||
-                localDateTime.toLocalDate().isAfter(event.getEndDate())) {
-            throw new CalendarAppException(HttpStatus.BAD_REQUEST, TIME_RANGE_NOT_AVAILABLE, RANGE_NOT_AVAILABLE);
-        }
-        return localDateTime;
+    private LocalDateTime getMinDate(Integer year, Integer month, Event event, String timeZone) {
+        return ZonedDateTime.of(LocalDate.of(year, month, 1), LocalTime.MIN, ZoneId.of(timeZone))
+                .withZoneSameInstant(ZoneId.of(event.getTimeZone())).toLocalDateTime();
     }
 
     private Map<LocalDate, Set<LocalTime>> getAvailableHours(LocalDateTime startDate, LocalDateTime endDate, Event event) {

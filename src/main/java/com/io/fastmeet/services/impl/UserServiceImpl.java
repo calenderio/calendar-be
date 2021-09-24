@@ -37,7 +37,7 @@ import com.io.fastmeet.services.MailService;
 import com.io.fastmeet.services.UserService;
 import com.io.fastmeet.services.ValidationService;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.text.RandomStringGenerator;
 import org.apache.commons.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -59,6 +59,9 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
+
+    private final RandomStringGenerator pwdGenerator = new RandomStringGenerator.Builder().withinRange(50, 50).build();
+
 
     @Autowired
     private UserRepository userRepository;
@@ -221,7 +224,7 @@ public class UserServiceImpl implements UserService {
     public String createValidationInfo(User user, ValidationType type) {
         Validation validation = validationRepository.findByMailAndType(user.getEmail(), ValidationType.EMAIL).orElse(new Validation());
         validation.setUserId(user.getId());
-        validation.setCode(RandomStringUtils.randomAlphabetic(50));
+        validation.setCode(pwdGenerator.generate(50));
         validation.setMail(user.getEmail());
         validation.setDate(LocalDateTime.now());
         validation.setType(type);
