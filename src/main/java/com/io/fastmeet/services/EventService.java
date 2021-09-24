@@ -9,13 +9,10 @@ package com.io.fastmeet.services;
 import com.io.fastmeet.entitites.Event;
 import com.io.fastmeet.models.internals.AttachmentModel;
 import com.io.fastmeet.models.internals.MeetInvitationDetailRequest;
-import com.io.fastmeet.models.requests.calendar.CalendarEventsRequest;
 
 import java.util.List;
 
 public interface EventService {
-    //TODO multi calendar support
-    void getCalendars(CalendarEventsRequest request, String userToken);
 
     Event createEvent(Event event);
 
@@ -24,4 +21,5 @@ public interface EventService {
     void sendEventInvitation(MeetInvitationDetailRequest request);
 
     void resendInvitation(Long invitationId, List<AttachmentModel> attachments);
+
 }

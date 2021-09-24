@@ -9,7 +9,6 @@ package com.io.fastmeet.services.impl;
 import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.entitites.Event;
 import com.io.fastmeet.entitites.Invitation;
-import com.io.fastmeet.entitites.LinkedCalendar;
 import com.io.fastmeet.entitites.Question;
 import com.io.fastmeet.entitites.Scheduler;
 import com.io.fastmeet.entitites.User;
@@ -17,7 +16,6 @@ import com.io.fastmeet.mappers.MailRequestMapper;
 import com.io.fastmeet.models.internals.AttachmentModel;
 import com.io.fastmeet.models.internals.GenericMailRequest;
 import com.io.fastmeet.models.internals.MeetInvitationDetailRequest;
-import com.io.fastmeet.models.requests.calendar.CalendarEventsRequest;
 import com.io.fastmeet.repositories.EventRepository;
 import com.io.fastmeet.services.EventService;
 import com.io.fastmeet.services.InvitationService;
@@ -28,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional
@@ -51,13 +48,6 @@ public class EventServiceImpl implements EventService {
 
     @Autowired
     private MailService mailService;
-
-    //TODO multi calendar support
-    @Override
-    public void getCalendars(CalendarEventsRequest request, String userToken) {
-        User user = jwtService.getLoggedUser();
-        Set<LinkedCalendar> calendars = user.getCalendars();
-    }
 
     @Override
     public Event createEvent(Event event) {
@@ -91,6 +81,7 @@ public class EventServiceImpl implements EventService {
         genericMailRequest.setCode(id);
         genericMailRequest.setCc(null);
         genericMailRequest.setBcc(null);
+        genericMailRequest.setHeader(request.getTitle());
         mailService.sendInvitationMail(genericMailRequest);
     }
 
@@ -103,6 +94,7 @@ public class EventServiceImpl implements EventService {
         genericMailRequest.setAttachments(attachments);
         genericMailRequest.setCc(null);
         genericMailRequest.setBcc(null);
+        genericMailRequest.setHeader(invitation.getTitle());
         mailService.sendInvitationMail(genericMailRequest);
     }
 

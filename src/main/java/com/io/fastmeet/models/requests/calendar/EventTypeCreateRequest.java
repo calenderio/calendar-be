@@ -6,6 +6,7 @@
  **/
 package com.io.fastmeet.models.requests.calendar;
 
+import com.io.fastmeet.enums.EventLocation;
 import com.io.fastmeet.models.internals.CalendarDuration;
 import com.io.fastmeet.models.internals.QuestionModel;
 import com.io.fastmeet.models.internals.SchedulerDetails;
@@ -36,6 +37,9 @@ public class EventTypeCreateRequest {
     @Schema(description = "Calendar timezone", example = "Europe/Istanbul", required = true)
     @NotBlank
     private String timezone;
+
+    @Schema(description = "Event Location", example = "MEET")
+    private EventLocation location;
 
     @Schema(description = "Is this type calendar needs a file", example = "false")
     private Boolean isFileRequired;

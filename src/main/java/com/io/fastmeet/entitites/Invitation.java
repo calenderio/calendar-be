@@ -6,6 +6,7 @@
  **/
 package com.io.fastmeet.entitites;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import lombok.Data;
@@ -20,6 +21,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +48,14 @@ public class Invitation extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @JsonBackReference
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Answer> answers;
+
     private String userEmail;
     private String name;
     private String title;
+    private String description;
     private String invitationId;
     private Boolean scheduled = Boolean.FALSE;
     @Type(type = "list-array")

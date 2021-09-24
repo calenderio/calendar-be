@@ -19,8 +19,6 @@ import com.io.fastmeet.models.responses.user.UserResponse;
 import com.io.fastmeet.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -77,17 +75,5 @@ public class UserControllerImpl implements UserController {
     public ResponseEntity<UserResponse> updateUser(UserUpdateRequest request) {
         return ResponseEntity.ok(userService.updateUser(request));
     }
-
-    @RequestMapping(value = "/userping", method = RequestMethod.GET)
-    public String userPing() {
-        return "Any User Can Read This";
-    }
-
-    @RequestMapping(value = "/noone", method = RequestMethod.GET)
-    @SkipSecurity
-    public String usernoone() {
-        return "Not accessible";
-    }
-
 
 }

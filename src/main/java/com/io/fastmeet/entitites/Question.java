@@ -38,6 +38,7 @@ public class Question extends BaseEntity {
     private String values;
     private Integer lengthMin;
     private Integer lengthMax;
+    private Boolean required;
 
     @JsonManagedReference
     @EqualsAndHashCode.Exclude

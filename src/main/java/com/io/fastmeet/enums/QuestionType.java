@@ -13,6 +13,7 @@ public enum QuestionType {
 
     NUMERIC,
     TEXT,
+    MULTI,
     BOOL
 
 }

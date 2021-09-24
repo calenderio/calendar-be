@@ -12,6 +12,7 @@ public interface MeetingMapper {
 
     @Mapping(target = "inviter", source = "organizer")
     @Mapping(target = "emails", source = "participants")
+    @Mapping(target = "header", source = "title")
     GenericMailRequest request(MeetingRequest meetingRequest);
 
     Meeting mapToMeeting(MeetingRequest meetingRequest);

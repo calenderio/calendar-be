@@ -8,6 +8,7 @@ package com.io.fastmeet.models.responses.calendar;
 
 import com.io.fastmeet.models.internals.CalendarDuration;
 import com.io.fastmeet.models.internals.QuestionModel;
+import com.io.fastmeet.models.internals.QuestionModelResponse;
 import com.io.fastmeet.models.internals.SchedulerObject;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -47,7 +48,7 @@ public class EventTypeResponse {
     private SchedulerObject schedule;
 
     @ArraySchema(schema = @Schema(description = "Additional questionModels for meeting request", implementation = QuestionModel.class), uniqueItems = true)
-    private Set<QuestionModel> questions;
+    private Set<QuestionModelResponse> questions;
 
     @Schema(description = "Is mail required for meeting", example = "true")
     private Boolean mailRequired;

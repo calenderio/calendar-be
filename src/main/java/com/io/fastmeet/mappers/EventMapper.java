@@ -7,9 +7,6 @@
 package com.io.fastmeet.mappers;
 
 import com.io.fastmeet.entitites.Event;
-import com.io.fastmeet.models.remotes.google.GoogleCalendarEventsRequest;
-import com.io.fastmeet.models.remotes.microsoft.MicrosoftCalendarEventsRequest;
-import com.io.fastmeet.models.requests.calendar.CalendarEventsRequest;
 import com.io.fastmeet.models.requests.calendar.EventTypeCreateRequest;
 import com.io.fastmeet.models.responses.calendar.EventTypeResponse;
 import org.mapstruct.Mapper;
@@ -17,10 +14,6 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface EventMapper {
-
-    GoogleCalendarEventsRequest mapToGoogle(CalendarEventsRequest request);
-
-    MicrosoftCalendarEventsRequest mapToMicrosoft(CalendarEventsRequest request);
 
     @Mapping(source = "isFileRequired", target = "fileRequired")
     @Mapping(source = "type.duration", target = "duration")

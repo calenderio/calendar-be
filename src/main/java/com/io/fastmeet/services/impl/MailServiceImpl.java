@@ -12,7 +12,7 @@ import com.io.fastmeet.models.internals.GenericMailRequest;
 import com.io.fastmeet.models.internals.MailValidation;
 import com.io.fastmeet.services.MailService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -24,8 +24,12 @@ import org.thymeleaf.context.Context;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
+import javax.mail.BodyPart;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -96,10 +100,26 @@ public class MailServiceImpl implements MailService {
     }
 
     /**
+     * Sends scheduled mail to user
+     *
+     * @param requestDto invitation mail send request
+     */
+    @Override
+    @Async
+    public void sendScheduledInvitation(GenericMailRequest requestDto) {
+        try {
+            Context context = new Context(Translator.getLanguage());
+            genericMessage(new MailValidation("scheduled", requestDto.getHeader()), requestDto, context);
+        } catch (Exception e) {
+            log.info(MAIL_SENDING_ERROR_TO_USER, requestDto.getEmails(), e.getMessage());
+        }
+    }
+
+    /**
      * Send mail for all types
      *
      * @param dto request object
-     * @throws MessagingException
+     * @throws MessagingException mail sending error
      */
     private void genericMessage(MailValidation dto, GenericMailRequest requestDto, Context context) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = emailSender.createMimeMessage();
@@ -113,15 +133,22 @@ public class MailServiceImpl implements MailService {
         helper.setTo(requestDto.getEmails().toArray(new String[0]));
         helper.setSubject(dto.getHeader());
         helper.setFrom(from, "Collige");
+        String html = templateEngine.process("emails/" + dto.getTemplateName(), context);
+        Multipart multipart = new MimeMultipart();
+
+        BodyPart htmlBodyPart = new MimeBodyPart();
+        htmlBodyPart.setContent(html, "text/html");
+        multipart.addBodyPart(htmlBodyPart);
+
         addCCAndBCC(requestDto, helper);
         if (requestDto.getMeetingDetails() != null) {
             DataSource iCalData = new ByteArrayDataSource(requestDto.getMeetingDetails(), "text/calendar; charset=UTF-8");
             message.setDataHandler(new DataHandler(iCalData));
             message.setHeader("Content-Type", "text/calendar; charset=UTF-8; method=REQUEST");
+        } else {
+            addAttachments(requestDto, helper);
+            helper.setText(html, true);
         }
-        addAttachments(requestDto, helper);
-        String html = templateEngine.process("emails/" + dto.getTemplateName(), context);
-        helper.setText(html, true);
         emailSender.send(message);
     }
 

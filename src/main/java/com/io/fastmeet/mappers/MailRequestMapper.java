@@ -30,11 +30,11 @@ public interface MailRequestMapper {
 
     @AfterMapping
     default void setEmails(MeetInvitationDetailRequest from, @MappingTarget GenericMailRequest to) {
-        to.setEmails(Collections.singletonList(from.getUserMail()));
+        to.setEmails(Collections.singleton(from.getUserMail()));
     }
 
     @AfterMapping
     default void setEmails(Invitation from, @MappingTarget GenericMailRequest to) {
-        to.setEmails(Collections.singletonList(from.getUserEmail()));
+        to.setEmails(Collections.singleton(from.getUserEmail()));
     }
 }

@@ -12,12 +12,15 @@ import com.io.fastmeet.entitites.Invitation;
 import com.io.fastmeet.mappers.InvitationMapper;
 import com.io.fastmeet.models.internals.AttachmentModel;
 import com.io.fastmeet.models.internals.MeetInvitationDetailRequest;
+import com.io.fastmeet.models.internals.ScheduleMeetingDetails;
+import com.io.fastmeet.models.requests.calendar.ScheduleMeetingRequest;
 import com.io.fastmeet.models.requests.meet.MeetInvitationRequest;
 import com.io.fastmeet.models.requests.meet.MeetingDateRequest;
 import com.io.fastmeet.models.responses.InvitationResponse;
 import com.io.fastmeet.services.CalendarService;
 import com.io.fastmeet.services.EventService;
 import com.io.fastmeet.services.InvitationService;
+import com.io.fastmeet.services.MeetingService;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,6 +48,9 @@ public class MeetControllerImpl implements MeetController {
 
     @Autowired
     private CalendarService calendarService;
+
+    @Autowired
+    private MeetingService meetingService;
 
     @Autowired
     private InvitationMapper mapper;
@@ -80,7 +87,20 @@ public class MeetControllerImpl implements MeetController {
 
     @Override
     public ResponseEntity<Map<LocalDate, Set<LocalTime>>> getAvailableDates(MeetingDateRequest request) {
-        return ResponseEntity.ok(calendarService.getAllCalendars(request.getLocalDate(), request.getInvitationId()));
+        return ResponseEntity.ok(calendarService.getAvailableDates(request.getLocalDate(), request.getInvitationId(), request.getTimeZone()).getAvailableDates());
+    }
+
+    @Override
+    public ResponseEntity<Void> scheduleMeeting(ScheduleMeetingRequest request, String invitationId, MultipartFile files) {
+        ScheduleMeetingDetails details = new ScheduleMeetingDetails();
+        details.setRequest(request);
+        details.setInvitationId(invitationId);
+        if (files != null) {
+            List<AttachmentModel> modelList = checkAttachments(Collections.singletonList(files));
+            details.setModel(modelList.get(0));
+        }
+        meetingService.validateAndScheduleMeeting(details);
+        return ResponseEntity.noContent().build();
     }
 
     private List<AttachmentModel> checkAttachments(List<MultipartFile> files) {

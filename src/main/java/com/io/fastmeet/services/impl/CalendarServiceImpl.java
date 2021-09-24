@@ -14,6 +14,7 @@ import com.io.fastmeet.entitites.LinkedCalendar;
 import com.io.fastmeet.enums.AppProviderType;
 import com.io.fastmeet.enums.DurationType;
 import com.io.fastmeet.models.internals.AdditionalTime;
+import com.io.fastmeet.models.internals.AvailableDatesDetails;
 import com.io.fastmeet.models.internals.SchedulerTime;
 import com.io.fastmeet.models.remotes.google.GoogleCalendarEventItem;
 import com.io.fastmeet.models.remotes.google.GoogleCalendarEventResponse;
@@ -66,21 +67,21 @@ public class CalendarServiceImpl implements CalendarService {
     private LinkedCalendarRepository linkedCalendarRepository;
 
     @Override
-    public Map<LocalDate, Set<LocalTime>> getAllCalendars(LocalDate localDate, String invitationId) {
+    public AvailableDatesDetails getAvailableDates(LocalDate localDate, String invitationId, String timeZone) {
         Invitation invitation = invitationRepository.findByInvitationIdAndScheduledIsFalse(invitationId).orElseThrow(() ->
                 new CalendarAppException(HttpStatus.BAD_REQUEST, "No event found", "NO_EVENT"));
+        AvailableDatesDetails details = new AvailableDatesDetails();
         Event event = invitation.getEvent();
         int year;
         int month;
         if (localDate == null) {
             checkForNow(event);
-            year = LocalDate.now().getYear();
-            month = LocalDate.now().getMonthValue();
+            year = ZonedDateTime.now().withZoneSameInstant(ZoneId.of(timeZone)).getYear();
+            month = ZonedDateTime.now().withZoneSameInstant(ZoneId.of(timeZone)).getMonthValue();
         } else {
             year = localDate.getYear();
             month = localDate.getMonthValue();
         }
-        String timeZone = event.getTimeZone();
         LocalDateTime starDate = getMinDate(year, month, event);
         LocalDateTime endDate = getMaxDate(year, month, event);
         Map<LocalDate, Set<LocalTime>> availableDates = getAvailableHours(starDate, endDate, event);
@@ -93,7 +94,9 @@ public class CalendarServiceImpl implements CalendarService {
             availableDates.get(LocalDate.now()).removeIf(time -> time.isBefore(LocalTime.now()));
         }
         availableDates.entrySet().removeIf(time -> time.getValue().isEmpty());
-        return availableDates;
+        details.setAvailableDates(availableDates);
+        details.setInvitation(invitation);
+        return details;
     }
 
     private void googleCalendarMap(String timeZone, Event event, LocalDateTime starDate, LocalDateTime endDate, Map<LocalDate, Set<LocalTime>> availableDates, List<LinkedCalendar> filteredGoogle) {

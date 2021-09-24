@@ -1,7 +1,6 @@
 package com.io.fastmeet.entitites;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.io.fastmeet.enums.DurationType;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,8 +11,6 @@ import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -33,15 +30,11 @@ public class Meeting extends BaseEntity {
     private UUID uuid;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private int duration;
     private String description;
-    @Enumerated(EnumType.STRING)
-    private DurationType durationType;
+    private String title;
     private String timeZone;
-
     private String organizer;
     private String location;
-    private String meetingTitle;
 
     @JsonManagedReference
     @EqualsAndHashCode.Exclude
@@ -52,5 +45,8 @@ public class Meeting extends BaseEntity {
 
     @Type(type = "list-array")
     private List<String> participants = new ArrayList<>();
+
+    @Type(type = "list-array")
+    private List<String> bcc = new ArrayList<>();
 
 }

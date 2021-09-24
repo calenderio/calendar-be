@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encodePassword(request.getPassword(), request.getEmail().toLowerCase()));
         user.setLicence(licenceService.generateFreeTrial());
         userRepository.save(user);
-        mailService.sendMailValidation(new GenericMailRequest(Collections.singletonList(user.getEmail()), user.getName(),
+        mailService.sendMailValidation(new GenericMailRequest(Collections.singleton(user.getEmail()), user.getName(),
                 createValidationInfo(user, ValidationType.EMAIL), Translator.getLanguage()));
         UserResponse response = userMapper.mapToModel(user);
         response.setToken(jwtService.createToken(user));
@@ -254,7 +254,7 @@ public class UserServiceImpl implements UserService {
         User user = jwtService.getLoggedUser();
         if (!userUpdateRequest.getEmail().equals(user.getEmail())) {
             user.setVerified(false);
-            mailService.sendMailValidation(new GenericMailRequest(Collections.singletonList(user.getEmail()), user.getName(),
+            mailService.sendMailValidation(new GenericMailRequest(Collections.singleton(user.getEmail()), user.getName(),
                     createValidationInfo(user, ValidationType.EMAIL), Translator.getLanguage()));
         }
         user.setEmail(userUpdateRequest.getEmail());
@@ -296,7 +296,7 @@ public class UserServiceImpl implements UserService {
         GenericMailRequest mailRequest = new GenericMailRequest();
         mailRequest.setName(user.getName());
         mailRequest.setCode(createValidationInfo(user, ValidationType.PASSWORD));
-        mailRequest.setEmails(Collections.singletonList(request.getEmail()));
+        mailRequest.setEmails(Collections.singleton(request.getEmail()));
         mailService.sendPasswordResetMail(mailRequest);
     }
 
@@ -329,10 +329,10 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
                         GeneralMessageConstants.USR_NOT_FOUND));
         if (ValidationType.EMAIL.equals(request.getType())) {
-            mailService.sendMailValidation(new GenericMailRequest(Collections.singletonList(request.getEmail()), user.getName(),
+            mailService.sendMailValidation(new GenericMailRequest(Collections.singleton(request.getEmail()), user.getName(),
                     validation.getCode(), Translator.getLanguage()));
         } else {
-            mailService.sendPasswordResetMail(new GenericMailRequest(Collections.singletonList(request.getEmail()), user.getName(),
+            mailService.sendPasswordResetMail(new GenericMailRequest(Collections.singleton(request.getEmail()), user.getName(),
                     validation.getCode(), Translator.getLanguage()));
         }
     }

@@ -17,10 +17,10 @@ import javax.validation.constraints.NotNull;
 @Duration
 public class CalendarDuration {
 
-    @Schema(description = "Meeting duration", example = "24", required = true)
+    @Schema(description = "Meeting duration", example = "45", required = true)
     @NotNull
     private Integer duration;
-    @Schema(description = "Duration type", example = "HOUR", required = true)
+    @Schema(description = "Duration type", example = "MIN", required = true)
     @NotNull
     private DurationType durationType;
 

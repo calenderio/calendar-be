@@ -67,6 +67,8 @@ public class InvitationServiceImpl implements InvitationService {
         invitation.setUserEmail(request.getUserMail());
         invitation.setCcList(request.getCc());
         invitation.setBccList(request.getBcc());
+        invitation.setTitle(request.getTitle());
+        invitation.setDescription(request.getDescription());
         invitationRepository.save(invitation);
         return id;
     }

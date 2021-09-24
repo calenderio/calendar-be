@@ -6,6 +6,7 @@ create table events
     user_id       bigint      not null,
     name          varchar(50) not null,
     description   text        not null,
+    location      text        not null,
     time_zone     varchar(35) not null,
     file_required bool        not null default false,
     start_date    date        not null,

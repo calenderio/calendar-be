@@ -1,12 +1,19 @@
 package com.io.fastmeet.builders;
 
 import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.ParameterList;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VTimeZone;
+import net.fortuna.ical4j.model.parameter.Cn;
+import net.fortuna.ical4j.model.parameter.Encoding;
+import net.fortuna.ical4j.model.parameter.FmtType;
 import net.fortuna.ical4j.model.parameter.Role;
+import net.fortuna.ical4j.model.parameter.Value;
+import net.fortuna.ical4j.model.parameter.XParameter;
+import net.fortuna.ical4j.model.property.Attach;
 import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.Description;
 import net.fortuna.ical4j.model.property.Location;
@@ -63,8 +70,20 @@ public class VEventBuilder {
         return this;
     }
 
-    public VEventBuilder addOrganizer(String organizer) throws URISyntaxException {
-        addProperty(new Organizer(organizer));
+    public VEventBuilder addAttachment(byte[] bytes, String fileName, String type) {
+        ParameterList parameters = new ParameterList();
+        parameters.add(new FmtType(type));
+        parameters.add(new XParameter("X-FILENAME", fileName));
+        parameters.add(Encoding.BASE64);
+        parameters.add(Value.BINARY);
+        addProperty(new Attach(parameters, bytes));
+        return this;
+    }
+
+    public VEventBuilder addOrganizer(String organizer, String organizerName) throws URISyntaxException {
+        ParameterList parameters = new ParameterList();
+        parameters.add(new Cn(organizerName));
+        addProperty(new Organizer(parameters, organizer));
         return this;
     }
 

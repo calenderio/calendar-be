@@ -29,5 +29,8 @@ public class QuestionModel {
     private Integer lengthMin;
     @Schema(description = "If text max length, if number max number", example = "2", required = true)
     private Integer lengthMax;
+    @Schema(description = "Question is required", example = "true", required = true)
+    @NotNull
+    private Boolean required;
 
 }

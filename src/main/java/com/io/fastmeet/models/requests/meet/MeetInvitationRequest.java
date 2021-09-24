@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -19,20 +19,20 @@ import java.util.List;
 public class MeetInvitationRequest {
 
     @Schema(description = "Mail address of invited user", example = "test@test.com", required = true)
-    @NotEmpty
+    @NotBlank
     @Email
     private String userMail;
 
     @Schema(description = "Name of invited user", example = "Example User", required = true)
-    @NotEmpty
+    @NotBlank
     private String name;
 
     @Schema(description = "Title of invitation", example = "Example User", required = true)
-    @NotEmpty
+    @NotBlank
     private String title;
 
     @Schema(description = "Description of invitation", example = "Example User", required = true)
-    @NotEmpty
+    @NotBlank
     private String description;
 
     @Schema(description = "Id of event", example = "1", required = true)

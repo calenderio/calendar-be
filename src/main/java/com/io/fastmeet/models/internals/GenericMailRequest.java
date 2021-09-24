@@ -12,24 +12,26 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
 public class GenericMailRequest {
 
-    private List<String> emails;
-    private List<String> cc;
-    private List<String> bcc;
+    private Set<String> emails;
+    private Set<String> cc;
+    private Set<String> bcc;
     private Locale language;
     private String name;
     private String header;
     private String description;
     private String code;
     private String inviter;
+    private String location;
     private List<AttachmentModel> attachments = new ArrayList<>();
     private byte[] meetingDetails;
 
-    public GenericMailRequest(List<String> emails, String name, String code, Locale language) {
+    public GenericMailRequest(Set<String> emails, String name, String code, Locale language) {
         this.emails = emails;
         this.name = name;
         this.code = code;

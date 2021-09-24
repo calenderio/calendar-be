@@ -6,12 +6,15 @@
  **/
 package com.io.fastmeet.utils;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DateUtil {
 
     public static Date localDateTimeToDate(LocalDateTime localDateTime, String timeZone) {

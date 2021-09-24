@@ -7,6 +7,7 @@
 package com.io.fastmeet.controllers;
 
 import com.io.fastmeet.core.exception.ErrorData;
+import com.io.fastmeet.models.requests.calendar.ScheduleMeetingRequest;
 import com.io.fastmeet.models.requests.meet.MeetInvitationRequest;
 import com.io.fastmeet.models.requests.meet.MeetingDateRequest;
 import com.io.fastmeet.models.responses.InvitationResponse;
@@ -98,5 +99,19 @@ public interface MeetController {
     })
     @GetMapping(path = "/meets/availability")
     ResponseEntity<Map<LocalDate, Set<LocalTime>>> getAvailableDates(MeetingDateRequest request);
+
+    @Operation(summary = "Send new meeting")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Scheduled meeting", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ScheduleMeetingRequest.class))}),
+            @ApiResponse(responseCode = "400", description = "Schedule meeting error", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorData.class))}),
+            @ApiResponse(responseCode = "403", description = "Not allowed for given parameters", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorData.class))})
+    })
+    @PostMapping(path = "/meets/schedule/{invitationId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    ResponseEntity<Void> scheduleMeeting(@RequestPart ScheduleMeetingRequest request,
+                                         @PathVariable String invitationId,
+                                         @RequestPart(name = "file", required = false) MultipartFile files);
 
 }

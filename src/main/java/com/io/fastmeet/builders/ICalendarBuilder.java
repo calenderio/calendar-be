@@ -1,5 +1,6 @@
 package com.io.fastmeet.builders;
 
+import com.io.fastmeet.models.internals.AttachmentModel;
 import com.io.fastmeet.models.requests.meet.MeetingRequest;
 import com.io.fastmeet.utils.DateUtil;
 import net.fortuna.ical4j.model.Calendar;
@@ -11,35 +12,43 @@ import net.fortuna.ical4j.model.property.Method;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Version;
 
+import java.util.ArrayList;
+
 public class ICalendarBuilder {
 
 
-    private final String fastMeetProdId = "-//Fastmeet//2.0//TR";
+    private static final String FASST_MEET_ID = "-//Fastmeet//2.0//TR";
 
     private final Calendar iCalendar;
 
-    public ICalendarBuilder(MeetingRequest meetingRequest) {
+    public ICalendarBuilder(MeetingRequest meetingRequest, String html) {
         iCalendar = new Calendar();
-        addProperty(new ProdId(fastMeetProdId));
+        addProperty(new ProdId(FASST_MEET_ID));
         addProperty(Version.VERSION_2_0);
         addProperty(CalScale.GREGORIAN);
         addMethod(Method.REQUEST);
-        addEvent(meetingRequest);
+        addEvent(meetingRequest, html);
     }
 
 
-    private void addEvent(MeetingRequest meeting) {
+    private void addEvent(MeetingRequest meeting, String html) {
         VEventBuilder vEventBuilder = new VEventBuilder(DateUtil.localDateTimeToDate(meeting.getStartDate(), meeting.getTimeZone()),
                 DateUtil.localDateTimeToDate(meeting.getEndDate(), meeting.getTimeZone()),
-                meeting.getMeetingTitle(), meeting.getTimeZone());
+                meeting.getTitle(), meeting.getTimeZone());
         try {
             vEventBuilder
-                    .addOrganizer(meeting.getOrganizer())
-                    .addParticipants(meeting.getParticipants())
-                    .addDescription(meeting.getDescription())
+                    .addOrganizer(meeting.getOrganizer(), meeting.getOrganizerName())
+                    .addParticipants(new ArrayList<>(meeting.getParticipants()))
+                    .addDescription(html)
                     .addIcsUid(meeting.getUuid().toString())
                     .addTimeZone(meeting.getTimeZone())
                     .addLocation(meeting.getLocation());
+
+            if (!meeting.getAttachmentModels().isEmpty()) {
+                for (AttachmentModel model : meeting.getAttachmentModels()) {
+                    vEventBuilder.addAttachment(model.getData(), model.getName(), model.getType());
+                }
+            }
 
         } catch (Exception exc) {
             throw new CalendarException("Invalid Meeting");

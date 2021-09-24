@@ -30,10 +30,7 @@ public class EventValidator implements ConstraintValidator<Event, EventTypeCreat
 
     @Override
     public boolean isValid(EventTypeCreateRequest field, ConstraintValidatorContext context) {
-        if (!checkScheduler(field, context) && !checkRolePermission(field, context)) {
-            return false;
-        }
-        return true;
+        return checkScheduler(field, context) || checkRolePermission(field, context);
 
     }
 

@@ -56,6 +56,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/login",
                         "/resendVerification",
                         "/meets/availability",
+                        "//meets/schedule/**",
                         "/resetPassword"
                 )
                 .pathMatcher(new AntPathMatcher());
@@ -66,6 +67,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         ResourceBundleMessageSource rs = new ResourceBundleMessageSource();
         rs.addBasenames("messages/error/error_messages",
                 "messages/app/app_messages",
+                "messages/app/meeting_messages",
                 "messages/validation/validation_messages",
                 "org/hibernate/validator/ValidationMessages");
         rs.setDefaultEncoding("UTF-8");

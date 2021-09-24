@@ -9,6 +9,7 @@ package com.io.fastmeet.entitites;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.io.fastmeet.enums.DurationType;
+import com.io.fastmeet.enums.EventLocation;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -43,6 +44,8 @@ public class Event extends BaseEntity {
     private int duration;
     @Enumerated(EnumType.STRING)
     private DurationType durationType;
+    @Enumerated(EnumType.STRING)
+    private EventLocation location;
 
     @JsonManagedReference
     @EqualsAndHashCode.Exclude

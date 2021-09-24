@@ -24,5 +24,8 @@ public class MeetingDateRequest {
     @NotNull
     @Length(min = 50, max = 50)
     private String invitationId;
+    @Schema(description = "TimeZone", example = "UTC")
+    @NotNull
+    private String timeZone;
 
 }

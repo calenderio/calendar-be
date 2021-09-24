@@ -6,11 +6,10 @@
  **/
 package com.io.fastmeet.services;
 
+import com.io.fastmeet.models.internals.AvailableDatesDetails;
+
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Map;
-import java.util.Set;
 
 public interface CalendarService {
-    Map<LocalDate, Set<LocalTime>> getAllCalendars(LocalDate localDate, String invitationId);
+    AvailableDatesDetails getAvailableDates(LocalDate localDate, String invitationId, String timeZone);
 }
