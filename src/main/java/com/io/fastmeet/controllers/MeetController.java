@@ -11,10 +11,10 @@ import com.io.fastmeet.models.requests.calendar.ScheduleMeetingRequest;
 import com.io.fastmeet.models.requests.meet.MeetInvitationRequest;
 import com.io.fastmeet.models.requests.meet.MeetingDateRequest;
 import com.io.fastmeet.models.responses.InvitationResponse;
+import com.io.fastmeet.models.responses.meeting.ScheduledMeetingResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -28,11 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Tag(name = "User Meeting Operations", description = "This endpoint performs user meeting scheduling operations")
 public interface MeetController {
@@ -85,20 +81,12 @@ public interface MeetController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Returns meeting request",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Map.class),
-                            examples = {@ExampleObject(value = """
-                                    {
-                                      "2021-09-30": [
-                                        "11:30:00",
-                                        "13:00:00"
-                                      ]
-                                    }
-                                    """)})}),
+                            schema = @Schema(implementation = ScheduledMeetingResponse.class))}),
             @ApiResponse(responseCode = "400", description = "Getting error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})
     })
     @GetMapping(path = "/meets/availability")
-    ResponseEntity<Map<LocalDate, Set<LocalTime>>> getAvailableDates(MeetingDateRequest request);
+    ResponseEntity<ScheduledMeetingResponse> getAvailableDates(MeetingDateRequest request);
 
     @Operation(summary = "Send new meeting")
     @ApiResponses(value = {

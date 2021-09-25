@@ -17,7 +17,7 @@ import java.util.Set;
 @Data
 public class AvailableDatesDetails {
 
-   private Map<LocalDate, Set<LocalTime>> availableDates;
-   private Invitation invitation;
+    private Map<LocalDate, Set<LocalTime>> availableDates;
+    private Invitation invitation;
 
 }

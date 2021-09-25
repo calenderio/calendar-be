@@ -10,13 +10,16 @@ import com.io.fastmeet.controllers.MeetController;
 import com.io.fastmeet.core.exception.CalendarAppException;
 import com.io.fastmeet.entitites.Invitation;
 import com.io.fastmeet.mappers.InvitationMapper;
+import com.io.fastmeet.mappers.MeetingMapper;
 import com.io.fastmeet.models.internals.AttachmentModel;
+import com.io.fastmeet.models.internals.AvailableDatesDetails;
 import com.io.fastmeet.models.internals.MeetInvitationDetailRequest;
 import com.io.fastmeet.models.internals.ScheduleMeetingDetails;
 import com.io.fastmeet.models.requests.calendar.ScheduleMeetingRequest;
 import com.io.fastmeet.models.requests.meet.MeetInvitationRequest;
 import com.io.fastmeet.models.requests.meet.MeetingDateRequest;
 import com.io.fastmeet.models.responses.InvitationResponse;
+import com.io.fastmeet.models.responses.meeting.ScheduledMeetingResponse;
 import com.io.fastmeet.services.CalendarService;
 import com.io.fastmeet.services.EventService;
 import com.io.fastmeet.services.InvitationService;
@@ -29,13 +32,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @RestController
 public class MeetControllerImpl implements MeetController {
@@ -54,6 +53,9 @@ public class MeetControllerImpl implements MeetController {
 
     @Autowired
     private InvitationMapper mapper;
+
+    @Autowired
+    private MeetingMapper meetingMapper;
 
     @Value("${spring.allowed.file.extensions}")
     private List<String> allowedFileTypes;
@@ -86,8 +88,9 @@ public class MeetControllerImpl implements MeetController {
     }
 
     @Override
-    public ResponseEntity<Map<LocalDate, Set<LocalTime>>> getAvailableDates(MeetingDateRequest request) {
-        return ResponseEntity.ok(calendarService.getAvailableDates(request.getLocalDate(), request.getInvitationId(), request.getTimeZone()).getAvailableDates());
+    public ResponseEntity<ScheduledMeetingResponse> getAvailableDates(MeetingDateRequest request) {
+        AvailableDatesDetails details = calendarService.getAvailableDates(request.getLocalDate(), request.getInvitationId(), request.getTimeZone());
+        return ResponseEntity.ok(meetingMapper.detailsToModel(details));
     }
 
     @Override

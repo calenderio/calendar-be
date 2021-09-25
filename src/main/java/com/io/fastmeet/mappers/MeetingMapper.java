@@ -2,8 +2,10 @@ package com.io.fastmeet.mappers;
 
 
 import com.io.fastmeet.entitites.Meeting;
+import com.io.fastmeet.models.internals.AvailableDatesDetails;
 import com.io.fastmeet.models.internals.GenericMailRequest;
 import com.io.fastmeet.models.requests.meet.MeetingRequest;
+import com.io.fastmeet.models.responses.meeting.ScheduledMeetingResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -17,4 +19,12 @@ public interface MeetingMapper {
 
     Meeting mapToMeeting(MeetingRequest meetingRequest);
 
+    @Mapping(source = "invitation.event.timeZone", target = "timeZone")
+    @Mapping(source = "invitation.event.description", target = "description")
+    @Mapping(source = "invitation.event.duration", target = "duration.duration")
+    @Mapping(source = "invitation.event.durationType", target = "duration.durationType")
+    @Mapping(source = "invitation.user.name", target = "name")
+    @Mapping(source = "invitation.user.email", target = "email")
+    @Mapping(source = "invitation.user.picture", target = "picture")
+    ScheduledMeetingResponse detailsToModel(AvailableDatesDetails details);
 }
