@@ -19,6 +19,7 @@ import com.io.fastmeet.models.internals.MeetInvitationDetailRequest;
 import com.io.fastmeet.repositories.EventRepository;
 import com.io.fastmeet.repositories.InvitationRepository;
 import com.io.fastmeet.services.InvitationService;
+import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
 import org.apache.commons.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,9 @@ public class InvitationServiceImpl implements InvitationService {
     private static final String ATTACHMENT_LIMIT = "ATTACHMENT_LIMIT";
     private static final String CC_LIMIT = "CC_LIMIT";
     private static final String CC_LIMIT_MESSAGE = "Free users can not send cc and bcc";
-    private final RandomStringGenerator pwdGenerator = new RandomStringGenerator.Builder().withinRange(18, 18).build();
+    private final RandomStringGenerator pwdGenerator = new RandomStringGenerator.Builder().withinRange('0', 'z')
+            .filteredBy(CharacterPredicates.DIGITS, CharacterPredicates.LETTERS)
+            .build();
 
     @Autowired
     private JWTService jwtService;

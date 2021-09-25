@@ -37,6 +37,7 @@ import com.io.fastmeet.services.MailService;
 import com.io.fastmeet.services.UserService;
 import com.io.fastmeet.services.ValidationService;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
 import org.apache.commons.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,8 +61,9 @@ import java.util.stream.Collectors;
 @Transactional
 public class UserServiceImpl implements UserService {
 
-    private final RandomStringGenerator pwdGenerator = new RandomStringGenerator.Builder().withinRange(50, 50).build();
-
+    private final RandomStringGenerator pwdGenerator = new RandomStringGenerator.Builder().withinRange('0', 'z')
+            .filteredBy(CharacterPredicates.DIGITS, CharacterPredicates.LETTERS)
+            .build();
 
     @Autowired
     private UserRepository userRepository;
