@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -88,6 +89,9 @@ public class CalendarServiceImpl implements CalendarService {
         List<LinkedCalendar> filteredGoogle = linkedCalendarSet.stream().filter(item -> AppProviderType.GOOGLE.equals(item.getType())).collect(Collectors.toList());
         microsoftCalendarMap(timeZone, event, starDate, endDate, availableDates, filteredMicrosoft);
         googleCalendarMap(timeZone, event, starDate, endDate, availableDates, filteredGoogle);
+        if (availableDates.containsKey(LocalDate.now())) {
+            availableDates.get(LocalDate.now()).removeIf(time -> time.isBefore(LocalTime.now()));
+        }
         availableDates.entrySet().removeIf(time -> time.getValue().isEmpty());
         return availableDates;
     }
@@ -201,7 +205,7 @@ public class CalendarServiceImpl implements CalendarService {
         if (event.getEndDate().getMonthValue() == month && event.getEndDate().getYear() == year) {
             return event.getEndDate().atTime(23, 59, 59);
         }
-        LocalDateTime localDateTime = LocalDateTime.of(year, month, 31, 23, 59, 59);
+        LocalDateTime localDateTime = LocalDateTime.of(year, month, YearMonth.of(year, month).atEndOfMonth().getDayOfMonth(), 23, 59, 59);
         if (localDateTime.toLocalDate().isBefore(event.getStartDate()) ||
                 localDateTime.toLocalDate().isAfter(event.getEndDate())) {
             throw new CalendarAppException(HttpStatus.BAD_REQUEST, TIME_RANGE_NOT_AVAILABLE, RANGE_NOT_AVAILABLE);
