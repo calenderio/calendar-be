@@ -35,7 +35,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     private Cloudinary cloudinary = null;
 
     @PostConstruct
-    private void initialize() {
+    public void initialize() {
         Map<String, String> cloudinaryMap = new HashMap<>();
         cloudinaryMap.put("api_key", apiKey);
         cloudinaryMap.put("api_secret", apiSecret);

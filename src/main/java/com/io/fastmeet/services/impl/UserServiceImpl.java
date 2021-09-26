@@ -43,8 +43,6 @@ import org.apache.commons.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -243,8 +241,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserResponse getUserDetailsFromToken() {
-        UserResponse response = userMapper.mapToModel(jwtService.getLoggedUser());
-        response.setToken("token");
+        User user = jwtService.getLoggedUser();
+        UserResponse response = userMapper.mapToModel(user);
+        response.setToken(jwtService.createToken(user));
         return response;
     }
 
@@ -277,8 +276,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void changePassword(ChangePasswordRequest request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
+        User user = jwtService.getLoggedUser();
         if (!encodePassword(request.getOldPassword(), user.getEmail().toLowerCase()).equals(user.getPassword())) {
             throw new CalendarAppException(HttpStatus.FORBIDDEN, Translator.getMessage(GeneralMessageConstants.WRONG_INFO),
                     GeneralMessageConstants.WRONG_INFO_ERR);
@@ -295,7 +293,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void resetPasswordRequest(ResetPasswordMailRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmail(request.getEmail().toLowerCase())
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
                         GeneralMessageConstants.USR_NOT_FOUND));
         GenericMailRequest mailRequest = new GenericMailRequest();
@@ -349,7 +347,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void updateToken(SocialUser request) {
-        User user = userRepository.findByEmail(request.getEmail().toLowerCase())
+        User user = userRepository.findByEmail(request.getSocialMediaMail().toLowerCase())
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
                         GeneralMessageConstants.USR_NOT_FOUND));
         addCalendar(request, user);

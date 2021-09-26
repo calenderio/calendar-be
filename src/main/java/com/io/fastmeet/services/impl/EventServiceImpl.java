@@ -90,8 +90,8 @@ public class EventServiceImpl implements EventService {
     public void sendEventInvitation(MeetInvitationDetailRequest request) {
         User user = jwtService.getLoggedUser();
         GenericMailRequest genericMailRequest = mapper.meetingRequestToMail(request);
-        genericMailRequest.setInviter(user.getName());
         String id = invitationService.saveInvitation(request);
+        genericMailRequest.setInviter(user.getName());
         genericMailRequest.setCode(id);
         genericMailRequest.setCc(null);
         genericMailRequest.setBcc(null);
@@ -103,7 +103,7 @@ public class EventServiceImpl implements EventService {
     public void resendInvitation(Long invitationId, List<AttachmentModel> attachments) {
         User user = jwtService.getLoggedUser();
         Invitation invitation = invitationService.findInvitationByUserId(invitationId, attachments);
-        GenericMailRequest genericMailRequest = mapper.meetingRequestToMail(invitation);
+        GenericMailRequest genericMailRequest = mapper.invitationToMail(invitation);
         genericMailRequest.setInviter(user.getName());
         genericMailRequest.setAttachments(attachments);
         genericMailRequest.setCc(null);

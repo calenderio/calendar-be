@@ -53,6 +53,7 @@ public class CalendarServiceImpl implements CalendarService {
 
     private static final String TIME_RANGE_NOT_AVAILABLE = "Time range not available";
     private static final String RANGE_NOT_AVAILABLE = "RANGE_NOT_AVAILABLE";
+
     @Autowired
     private GoogleService googleService;
 
@@ -228,8 +229,8 @@ public class CalendarServiceImpl implements CalendarService {
         int multiply = DurationType.HOUR.equals(event.getDurationType()) ? 60 : 1;
         int minutes = event.getDuration() * multiply;
         addDailyTimes(startDate, endDate, event, availableDates, minutes);
-        addAdditional(startDate, endDate, event, availableDates, minutes);
         deleteUnavailableDates(startDate, endDate, event, availableDates);
+        addAdditional(startDate, endDate, event, availableDates, minutes);
         return availableDates;
     }
 

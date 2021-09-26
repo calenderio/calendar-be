@@ -22,7 +22,10 @@
         </sonar.coverage.jacoco.xmlReportPaths>
         <sonar.language>java</sonar.language>
         <sonar.exclusions>src/main/java/com/io/fastmeet/core/**,
-            src/main/java/com/io/fastmeet/models/**
+            src/main/java/com/io/fastmeet/models/**,
+            src/main/java/com/io/fastmeet/utils/**
+            src/main/java/com/io/fastmeet/mappers/**
+            src/main/java/com/io/fastmeet/CalendarApplication**
         </sonar.exclusions>
     </properties>
     <profiles>

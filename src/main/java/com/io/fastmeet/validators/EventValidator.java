@@ -11,6 +11,7 @@ import com.io.fastmeet.constants.RoleConstants;
 import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.core.services.CacheService;
 import com.io.fastmeet.models.requests.calendar.EventTypeCreateRequest;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -60,23 +61,23 @@ public class EventValidator implements ConstraintValidator<Event, EventTypeCreat
     }
 
     private boolean checkRolePermission(EventTypeCreateRequest field, ConstraintValidatorContext context) {
-        if (field.getQuestions() != null) {
-            if (field.getQuestions().size() > cacheService.getIntegerCacheValue(CacheConstants.QUESTION_LIMIT_FREE)) {
-                Set<String> roles = jwtService.getUserRoles();
-                if (roles.contains(RoleConstants.COMMERCIAL)) {
-                    if (field.getQuestions().size() > cacheService.getIntegerCacheValue(CacheConstants.QUESTION_LIMIT_COMMERCIAL)) {
-                        return overSize(context, EVENT_QUESTION_OVERSIZE, QUESTIONS);
-                    }
-                    return true;
-                } else if (roles.contains(RoleConstants.INDIVIDUAL)) {
-                    if (field.getQuestions().size() > cacheService.getIntegerCacheValue(CacheConstants.QUESTION_LIMIT_IND)) {
-                        return overSize(context, EVENT_QUESTION_OVERSIZE, QUESTIONS);
-                    }
-                    return true;
-                } else {
-                    return overSize(context, EVENT_QUESTION_OVERSIZE, QUESTIONS);
-                }
+        if (CollectionUtils.isNotEmpty(field.getQuestions())
+                && field.getQuestions().size() > cacheService.getIntegerCacheValue(CacheConstants.QUESTION_LIMIT_FREE)) {
+            Set<String> roles = jwtService.getUserRoles();
+            if (roles.contains(RoleConstants.COMMERCIAL)) {
+                return checkSizeByRole(field, context, CacheConstants.QUESTION_LIMIT_COMMERCIAL);
+            } else if (roles.contains(RoleConstants.INDIVIDUAL)) {
+                return checkSizeByRole(field, context, CacheConstants.QUESTION_LIMIT_IND);
+            } else {
+                return overSize(context, EVENT_QUESTION_OVERSIZE, QUESTIONS);
             }
+        }
+        return true;
+    }
+
+    private boolean checkSizeByRole(EventTypeCreateRequest field, ConstraintValidatorContext context, String questionLimitCommercial) {
+        if (field.getQuestions().size() > cacheService.getIntegerCacheValue(questionLimitCommercial)) {
+            return overSize(context, EVENT_QUESTION_OVERSIZE, QUESTIONS);
         }
         return true;
     }

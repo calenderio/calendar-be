@@ -26,7 +26,7 @@ public interface MailRequestMapper {
     @Mapping(source = "bccList", target = "bcc")
     @Mapping(source = "invitationId", target = "code")
     @Mapping(source = "title", target = "header")
-    GenericMailRequest meetingRequestToMail(Invitation request);
+    GenericMailRequest invitationToMail(Invitation request);
 
     @AfterMapping
     default void setEmails(MeetInvitationDetailRequest from, @MappingTarget GenericMailRequest to) {
