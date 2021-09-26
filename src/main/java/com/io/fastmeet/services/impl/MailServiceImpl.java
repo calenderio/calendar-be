@@ -144,7 +144,7 @@ public class MailServiceImpl implements MailService {
         if (requestDto.getMeetingDetails() != null) {
             DataSource iCalData = new ByteArrayDataSource(requestDto.getMeetingDetails(), "text/calendar; charset=UTF-8");
             message.setDataHandler(new DataHandler(iCalData));
-            message.setHeader("Content-Type", "text/calendar; charset=UTF-8; method=REQUEST");
+            message.setHeader("Content-Type", "text/calendar; charset=UTF-8; method=" + requestDto.getMethod());
         } else {
             addAttachments(requestDto, helper);
             helper.setText(html, true);

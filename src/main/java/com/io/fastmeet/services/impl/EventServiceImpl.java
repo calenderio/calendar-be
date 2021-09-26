@@ -6,6 +6,7 @@
  **/
 package com.io.fastmeet.services.impl;
 
+import com.io.fastmeet.core.exception.CalendarAppException;
 import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.entitites.Event;
 import com.io.fastmeet.entitites.Invitation;
@@ -22,13 +23,13 @@ import com.io.fastmeet.services.InvitationService;
 import com.io.fastmeet.services.MailService;
 import com.io.fastmeet.services.SchedulerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
 public class EventServiceImpl implements EventService {
 
     @Autowired
@@ -50,20 +51,32 @@ public class EventServiceImpl implements EventService {
     private MailService mailService;
 
     @Override
+    @Transactional
     public Event createEvent(Event event) {
         User user = jwtService.getLoggedUser();
         event.setUserId(user.getId());
-        if (event.getPreDefinedSchedulerId() != null) {
-            event.setScheduler(schedulerService.getUserSchedulerById(event.getPreDefinedSchedulerId(), user.getId()));
-        } else {
-            Scheduler scheduler = event.getScheduler();
-            scheduler.setName(event.getName());
-            event.setScheduler(schedulerService.saveCalendarTypeScheduler(scheduler, user.getId()));
-        }
-        for (Question question : event.getQuestions()) {
-            question.setEvent(event);
-        }
-        return eventRepository.save(event);
+        return createEventDetails(event, user);
+    }
+
+    @Override
+    @Transactional
+    public Event updateEvent(Event event, Long eventId) {
+        User user = jwtService.getLoggedUser();
+        Event exOne = eventRepository.findByUserIdAndId(user.getId(), eventId)
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, "Not valid event id", "EVENT_ID"));
+        event.setId(exOne.getId());
+        event.setAnswers(exOne.getAnswers());
+        return createEventDetails(event, user);
+    }
+
+    @Override
+    @Transactional
+    public void deleteEvent(Long eventId) {
+        User user = jwtService.getLoggedUser();
+        Event exOne = eventRepository.findByUserIdAndId(user.getId(), eventId)
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, "Not valid event id", "EVENT_ID"));
+        invitationService.deleteInvitationByEvent(eventId);
+        eventRepository.delete(exOne);
     }
 
     @Override
@@ -96,6 +109,22 @@ public class EventServiceImpl implements EventService {
         genericMailRequest.setBcc(null);
         genericMailRequest.setHeader(invitation.getTitle());
         mailService.sendInvitationMail(genericMailRequest);
+    }
+
+    private Event createEventDetails(Event event, User user) {
+        if (event.getPreDefinedSchedulerId() != null) {
+            event.setScheduler(schedulerService.getUserSchedulerById(event.getPreDefinedSchedulerId(), user.getId()));
+        } else {
+            Scheduler scheduler = event.getScheduler();
+            scheduler.setName(event.getName());
+            event.setScheduler(schedulerService.saveCalendarTypeScheduler(scheduler, user.getId()));
+        }
+        if (event.getQuestions() != null) {
+            for (Question question : event.getQuestions()) {
+                question.setEvent(event);
+            }
+        }
+        return eventRepository.save(event);
     }
 
 }

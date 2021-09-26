@@ -50,7 +50,7 @@ public class Event extends BaseEntity {
     @JsonManagedReference
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "scheduler_id", referencedColumnName = "id")
     private Scheduler scheduler;
 

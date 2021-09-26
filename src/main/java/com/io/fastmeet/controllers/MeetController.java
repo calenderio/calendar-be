@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -102,4 +103,28 @@ public interface MeetController {
                                          @PathVariable String invitationId,
                                          @RequestPart(name = "file", required = false) MultipartFile files);
 
+    @Operation(summary = "Update existing meeting")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Updated meeting", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ScheduleMeetingRequest.class))}),
+            @ApiResponse(responseCode = "400", description = "Updating meeting error", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorData.class))}),
+            @ApiResponse(responseCode = "403", description = "Not allowed for given parameters", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorData.class))})
+    })
+    @PutMapping(path = "/meets/schedule/{invitationId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    ResponseEntity<Void> updateMeeting(@RequestPart ScheduleMeetingRequest request,
+                                       @PathVariable String invitationId,
+                                       @RequestPart(name = "file", required = false) MultipartFile files);
+
+    @Operation(summary = "Delete meeting")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Deleted meeting"),
+            @ApiResponse(responseCode = "400", description = "Deleting meeting error", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorData.class))}),
+            @ApiResponse(responseCode = "403", description = "Not allowed for given parameters", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorData.class))})
+    })
+    @DeleteMapping(path = "/meets/schedule/{invitationId}")
+    ResponseEntity<Void> deleteMeeting(@PathVariable String invitationId);
 }

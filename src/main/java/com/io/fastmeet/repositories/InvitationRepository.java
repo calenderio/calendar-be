@@ -21,10 +21,16 @@ public interface InvitationRepository extends CrudRepository<Invitation, Long> {
 
     List<Invitation> findByUserAndEvent_Id(User user, Long eventId);
 
-    Optional<Invitation> findByInvitationIdAndScheduledIsFalse(String invitationId);
+    Optional<Invitation> findByInvitationId(String invitationId);
+
+    Optional<Invitation> findByInvitationIdAndScheduledIsTrue(String invitationId);
 
     @Query("delete from Invitation i where i.user.id = :userId and i.id = :id and i.scheduled = false ")
     @Modifying
     int deleteInvitation(Long userId, Long id);
+
+    @Query("delete from Invitation i where i.user.id = :userId and i.event.id = :eventId")
+    @Modifying
+    int deleteInvitationByEvent(Long userId, Long eventId);
 
 }

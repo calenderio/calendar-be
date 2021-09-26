@@ -11,7 +11,8 @@ create table meetings
     time_zone     text         not null,
     organizer     varchar(255) not null,
     location      text         not null,
-    invitation_id varchar(50)  not null,
+    invitation_id bigint       not null,
+    sequence      int          not null,
     participants  text[]       not null,
     bcc           text[]
 

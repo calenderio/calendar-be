@@ -98,6 +98,12 @@ public class InvitationServiceImpl implements InvitationService {
         invitationRepository.deleteInvitation(user.getId(), meetingId);
     }
 
+    @Override
+    public void deleteInvitationByEvent(Long eventId) {
+        User user = jwtService.getLoggedUser();
+        invitationRepository.deleteInvitationByEvent(user.getId(), eventId);
+    }
+
     private void ccBccLimit(MeetInvitationDetailRequest request, User user) {
         if (request.getBcc() != null && !request.getBcc().isEmpty() &&
                 LicenceTypes.FREE.equals(user.getLicence().getLicenceType())) {

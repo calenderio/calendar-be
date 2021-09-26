@@ -20,4 +20,6 @@ public interface InvitationService {
     List<Invitation> findInvitations(Long eventId);
 
     void deleteInvitation(Long meetingId);
+
+    void deleteInvitationByEvent(Long eventId);
 }

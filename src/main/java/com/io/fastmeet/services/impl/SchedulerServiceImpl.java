@@ -92,7 +92,6 @@ public class SchedulerServiceImpl implements SchedulerService {
         return schedulerRepository.save(scheduler);
     }
 
-
     private Set<SchedulerTime> defaultSchedulerTimeSet() {
         Set<SchedulerTime> times = new HashSet<>();
         times.add(new SchedulerTime("09:00", "12:00"));

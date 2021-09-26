@@ -31,17 +31,20 @@ public class ScheduledMeetingResponse {
     @Schema(description = "Event time zone information", example = "UTC")
     private String timeZone;
 
-    @Schema(description = "Event description", example = "UTC")
+    @Schema(description = "Event description", example = "Example Event")
     private String description;
 
-    @Schema(description = "Name of user", example = "UTC")
+    @Schema(description = "Name of user", example = "Example Surname")
     private String name;
 
-    @Schema(description = "Mail address of user", example = "UTC")
+    @Schema(description = "Mail address of user", example = "example@example.com")
     private String email;
 
-    @Schema(description = "Profile picture address", example = "UTC")
+    @Schema(description = "Profile picture address", example = "example.png")
     private String picture;
+
+    @Schema(description = "Incitation is scheduled", example = "false")
+    private Boolean scheduled;
 
     @Schema(description = "Meeting duration", implementation = CalendarDuration.class)
     private CalendarDuration duration;

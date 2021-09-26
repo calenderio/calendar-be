@@ -9,11 +9,14 @@ package com.io.fastmeet.models.internals;
 import com.io.fastmeet.models.requests.calendar.ScheduleMeetingRequest;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 public class ScheduleMeetingDetails {
 
     private ScheduleMeetingRequest request;
     private String invitationId;
-    private AttachmentModel model;
+    private List<AttachmentModel> models = new ArrayList<>();
 
 }

@@ -28,6 +28,7 @@ public class GenericMailRequest {
     private String code;
     private String inviter;
     private String location;
+    private String method;
     private List<AttachmentModel> attachments = new ArrayList<>();
     private byte[] meetingDetails;
 

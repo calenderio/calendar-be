@@ -10,6 +10,7 @@ import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.Method;
 import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Status;
 import net.fortuna.ical4j.model.property.Version;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class ICalendarBuilder {
         addProperty(new ProdId(FASST_MEET_ID));
         addProperty(Version.VERSION_2_0);
         addProperty(CalScale.GREGORIAN);
-        addMethod(Method.REQUEST);
+        addMethod(meetingRequest.getMethod());
         addEvent(meetingRequest, html);
     }
 
@@ -42,7 +43,8 @@ public class ICalendarBuilder {
                     .addDescription(html)
                     .addIcsUid(meeting.getUuid().toString())
                     .addTimeZone(meeting.getTimeZone())
-                    .addLocation(meeting.getLocation());
+                    .addLocation(meeting.getLocation())
+                    .setSequence(meeting.getSequence());
 
             if (!meeting.getAttachmentModels().isEmpty()) {
                 for (AttachmentModel model : meeting.getAttachmentModels()) {
@@ -57,6 +59,9 @@ public class ICalendarBuilder {
     }
 
     public void addMethod(Method method) {
+        if (Method.CANCEL.equals(method)) {
+            addProperty(new Status("CANCELED"));
+        }
         addProperty(method);
     }
 

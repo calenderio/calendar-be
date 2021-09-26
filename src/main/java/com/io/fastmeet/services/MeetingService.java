@@ -6,4 +6,7 @@ public interface MeetingService {
 
     void validateAndScheduleMeeting(ScheduleMeetingDetails details);
 
+    void updateMeetingRequest(ScheduleMeetingDetails details);
+
+    void deleteMeetingRequest(ScheduleMeetingDetails details);
 }

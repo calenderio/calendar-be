@@ -15,9 +15,12 @@ public interface MeetingMapper {
     @Mapping(target = "inviter", source = "organizer")
     @Mapping(target = "emails", source = "participants")
     @Mapping(target = "header", source = "title")
+    @Mapping(target = "method", source = "method.value")
     GenericMailRequest request(MeetingRequest meetingRequest);
 
     Meeting mapToMeeting(MeetingRequest meetingRequest);
+
+    MeetingRequest mapEntityToRequest(Meeting meetingRequest);
 
     @Mapping(source = "invitation.event.timeZone", target = "timeZone")
     @Mapping(source = "invitation.event.description", target = "description")
@@ -26,5 +29,6 @@ public interface MeetingMapper {
     @Mapping(source = "invitation.user.name", target = "name")
     @Mapping(source = "invitation.user.email", target = "email")
     @Mapping(source = "invitation.user.picture", target = "picture")
+    @Mapping(source = "invitation.scheduled", target = "scheduled")
     ScheduledMeetingResponse detailsToModel(AvailableDatesDetails details);
 }

@@ -35,7 +35,7 @@ public interface SchedulerController {
                             schema = @Schema(implementation = SchedulerResponse.class))}),
             @ApiResponse(responseCode = "400", description = "Creating scheduler error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
-    @PostMapping(value = "/scheduler")
+    @PostMapping(value = "/schedulers")
     ResponseEntity<SchedulerResponse> createScheduler(@Parameter(name = "name", example = "Example") @RequestParam String name);
 
     @Operation(summary = "Gets User Schedulers")
@@ -45,7 +45,7 @@ public interface SchedulerController {
                             schema = @Schema(implementation = SchedulerResponse.class))}),
             @ApiResponse(responseCode = "400", description = "Getting scheduler error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
-    @GetMapping(value = "/scheduler")
+    @GetMapping(value = "/schedulers")
     ResponseEntity<SchedulerResponse> getSchedulers();
 
     @Operation(summary = "Change Scheduler Name")
@@ -53,7 +53,7 @@ public interface SchedulerController {
             @ApiResponse(responseCode = "204", description = "Changed scheduler name"),
             @ApiResponse(responseCode = "400", description = "Changing scheduler name error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
-    @PutMapping(value = "/scheduler/{schedulerId}")
+    @PatchMapping(value = "/schedulers/{schedulerId}")
     ResponseEntity<Void> changeName(@Parameter(name = "name", example = "Example", description = "New name of scheduler") @RequestParam String name,
                                     @Parameter(name = "schedulerId", example = "1", description = "Id of scheduler") @PathVariable Long schedulerId);
 
@@ -65,7 +65,7 @@ public interface SchedulerController {
                             schema = @Schema(implementation = SchedulerResponse.class))}),
             @ApiResponse(responseCode = "400", description = "Updating scheduler error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
-    @PatchMapping(value = "/scheduler/{schedulerId}")
+    @PutMapping(value = "/schedulers/{schedulerId}")
     ResponseEntity<SchedulerResponse> updateScheduler(@RequestBody SchedulerUpdateRequest request,
                                                       @Parameter(name = "schedulerId", example = "1", description = "Id of scheduler") @PathVariable Long schedulerId);
 

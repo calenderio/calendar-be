@@ -32,6 +32,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -61,7 +62,7 @@ public class MeetControllerImpl implements MeetController {
     private List<String> allowedFileTypes;
 
     @Override
-    public ResponseEntity<Void> sendMeetingInvite(MeetInvitationRequest request, List<MultipartFile> files) {
+    public ResponseEntity<Void> sendMeetingInvite(@Valid MeetInvitationRequest request, List<MultipartFile> files) {
         List<AttachmentModel> modelList = checkAttachments(files);
         eventService.sendEventInvitation(new MeetInvitationDetailRequest(request.getUserMail(), request.getName(), request.getTitle(), request.getDescription()
                 , request.getEventId(), modelList, request.getCcUsers(), request.getBccUsers()));
@@ -88,22 +89,42 @@ public class MeetControllerImpl implements MeetController {
     }
 
     @Override
-    public ResponseEntity<ScheduledMeetingResponse> getAvailableDates(MeetingDateRequest request) {
+    public ResponseEntity<ScheduledMeetingResponse> getAvailableDates(@Valid MeetingDateRequest request) {
         AvailableDatesDetails details = calendarService.getAvailableDates(request.getLocalDate(), request.getInvitationId(), request.getTimeZone());
         return ResponseEntity.ok(meetingMapper.detailsToModel(details));
     }
 
     @Override
-    public ResponseEntity<Void> scheduleMeeting(ScheduleMeetingRequest request, String invitationId, MultipartFile files) {
+    public ResponseEntity<Void> scheduleMeeting(@Valid ScheduleMeetingRequest request, String invitationId, MultipartFile files) {
+        ScheduleMeetingDetails details = setDetails(request, invitationId, files);
+        meetingService.validateAndScheduleMeeting(details);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> updateMeeting(@Valid ScheduleMeetingRequest request, String invitationId, MultipartFile files) {
+        ScheduleMeetingDetails details = setDetails(request, invitationId, files);
+        meetingService.updateMeetingRequest(details);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteMeeting(String invitationId) {
+        ScheduleMeetingDetails details = new ScheduleMeetingDetails();
+        details.setInvitationId(invitationId);
+        meetingService.deleteMeetingRequest(details);
+        return ResponseEntity.noContent().build();
+    }
+
+    private ScheduleMeetingDetails setDetails(ScheduleMeetingRequest request, String invitationId, MultipartFile files) {
         ScheduleMeetingDetails details = new ScheduleMeetingDetails();
         details.setRequest(request);
         details.setInvitationId(invitationId);
         if (files != null) {
             List<AttachmentModel> modelList = checkAttachments(Collections.singletonList(files));
-            details.setModel(modelList.get(0));
+            details.getModels().add(modelList.get(0));
         }
-        meetingService.validateAndScheduleMeeting(details);
-        return ResponseEntity.noContent().build();
+        return details;
     }
 
     private List<AttachmentModel> checkAttachments(List<MultipartFile> files) {

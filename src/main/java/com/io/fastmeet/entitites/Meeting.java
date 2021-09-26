@@ -35,11 +35,12 @@ public class Meeting extends BaseEntity {
     private String timeZone;
     private String organizer;
     private String location;
+    private Integer sequence;
 
     @JsonManagedReference
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "invitation_id", nullable = false)
     private Invitation invitation;
 

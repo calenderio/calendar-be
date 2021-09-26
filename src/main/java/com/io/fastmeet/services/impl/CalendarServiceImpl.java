@@ -68,7 +68,7 @@ public class CalendarServiceImpl implements CalendarService {
 
     @Override
     public AvailableDatesDetails getAvailableDates(LocalDate localDate, String invitationId, String timeZone) {
-        Invitation invitation = invitationRepository.findByInvitationIdAndScheduledIsFalse(invitationId).orElseThrow(() ->
+        Invitation invitation = invitationRepository.findByInvitationId(invitationId).orElseThrow(() ->
                 new CalendarAppException(HttpStatus.BAD_REQUEST, "No event found", "NO_EVENT"));
         AvailableDatesDetails details = new AvailableDatesDetails();
         Event event = invitation.getEvent();

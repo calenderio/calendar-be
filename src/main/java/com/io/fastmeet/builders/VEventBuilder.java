@@ -18,6 +18,7 @@ import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.Description;
 import net.fortuna.ical4j.model.property.Location;
 import net.fortuna.ical4j.model.property.Organizer;
+import net.fortuna.ical4j.model.property.Sequence;
 import net.fortuna.ical4j.model.property.TzId;
 import net.fortuna.ical4j.model.property.Uid;
 
@@ -67,6 +68,11 @@ public class VEventBuilder {
 
     public VEventBuilder addLocation(String location) {
         addProperty(new Location(location));
+        return this;
+    }
+
+    public VEventBuilder setSequence(Integer sequence) {
+        addProperty(new Sequence(sequence));
         return this;
     }
 

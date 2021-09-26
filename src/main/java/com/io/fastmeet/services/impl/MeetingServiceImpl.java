@@ -4,6 +4,7 @@ package com.io.fastmeet.services.impl;
 import com.io.fastmeet.core.exception.CalendarAppException;
 import com.io.fastmeet.core.i18n.Translator;
 import com.io.fastmeet.entitites.Answer;
+import com.io.fastmeet.entitites.Event;
 import com.io.fastmeet.entitites.Invitation;
 import com.io.fastmeet.entitites.Meeting;
 import com.io.fastmeet.entitites.Question;
@@ -17,6 +18,7 @@ import com.io.fastmeet.models.internals.ScheduleMeetingDetails;
 import com.io.fastmeet.models.requests.calendar.QuestionData;
 import com.io.fastmeet.models.requests.calendar.ScheduleMeetingRequest;
 import com.io.fastmeet.models.requests.meet.MeetingRequest;
+import com.io.fastmeet.repositories.InvitationRepository;
 import com.io.fastmeet.repositories.MeetingRepository;
 import com.io.fastmeet.services.CalendarService;
 import com.io.fastmeet.services.IcsService;
@@ -72,55 +74,120 @@ public class MeetingServiceImpl implements MeetingService {
     @Autowired
     private MeetingRepository meetingRepository;
 
+    @Autowired
+    private InvitationRepository invitationRepository;
+
+
     @Override
     public void validateAndScheduleMeeting(ScheduleMeetingDetails details) {
-        String invitationId = details.getInvitationId();
         ScheduleMeetingRequest request = details.getRequest();
-        AvailableDatesDetails dateDetails = calendarService.getAvailableDates(request.getDate(), invitationId, request.getTimeZone());
+        AvailableDatesDetails dateDetails = calendarService.getAvailableDates(request.getDate(), details.getInvitationId(), request.getTimeZone());
         Map<LocalDate, Set<LocalTime>> availableDates = dateDetails.getAvailableDates();
         Invitation invitation = dateDetails.getInvitation();
-        if (!availableDates.containsKey(request.getDate())) {
-            throw new CalendarAppException(HttpStatus.BAD_REQUEST, "Selected date not valid", "NIT_VALID_DATE");
-        } else {
-            Set<LocalTime> times = availableDates.get(request.getDate());
-            if (!times.contains(request.getTime())) {
-                throw new CalendarAppException(HttpStatus.BAD_REQUEST, "Selected date not valid", "NIT_VALID_DATE");
-            }
-        }
-        List<QuestionAnswerModel> questionAnswerModels = new ArrayList<>();
-        if (invitation.getEvent().getQuestions() != null) {
-            Map<Long, Question> questionMap = invitation.getEvent().getQuestions().stream().collect(Collectors.toMap(Question::getId, Function.identity()));
-            List<Answer> answers = validateAnswers(questionMap, request.getAnswers(), invitation, questionAnswerModels);
-            invitation.getAnswers().addAll(answers);
-        }
+        checkDates(request, availableDates, invitation.getEvent());
+        List<QuestionAnswerModel> questionAnswerModels = generateQAModel(request, invitation);
+
         MeetingRequest meetingRequest = new MeetingRequest();
         meetingRequest.setTitle(invitation.getName() + " " + invitation.getTitle());
         meetingRequest.setLocation(invitation.getEvent().getLocation().name());
+        meetingRequest.setUuid(UUID.randomUUID());
+        meetingRequest.setTimeZone(request.getTimeZone());
         meetingRequest.setDescription(invitation.getDescription());
+        meetingRequest.setOrganizer("info@collige.io");
         meetingRequest.getParticipants().add(invitation.getUser().getEmail());
         if (invitation.getCcList() != null) {
             meetingRequest.getParticipants().addAll(invitation.getCcList());
         }
-        meetingRequest.setOrganizer("info@collige.io");
+        meetingRequest.getParticipants().add(invitation.getUserEmail());
+
+        setDates(request, invitation, meetingRequest);
+        meetingRequest.setSequence(1);
+        generateAttachment(questionAnswerModels, meetingRequest);
+        invitation.setScheduled(true);
+        Meeting meeting = meetingMapper.mapToMeeting(meetingRequest);
+        sendInvitationMailAndSaveMeeting(details.getModels(), meetingRequest, invitation, meeting);
+    }
+
+    @Override
+    public void updateMeetingRequest(ScheduleMeetingDetails details) {
+        AvailableDatesDetails dateDetails = calendarService.getAvailableDates(details.getRequest().getDate(), details.getInvitationId(),
+                details.getRequest().getTimeZone());
+        Map<LocalDate, Set<LocalTime>> availableDates = dateDetails.getAvailableDates();
+        Invitation invitation = dateDetails.getInvitation();
+        if (Boolean.FALSE.equals(invitation.getScheduled())) {
+            throw new CalendarAppException(HttpStatus.BAD_REQUEST, "Invitation couldn't scheduled", "NOT_SCHEDULED");
+        }
+        checkDates(details.getRequest(), availableDates, invitation.getEvent());
+        List<QuestionAnswerModel> questionAnswerModels = generateQAModel(details.getRequest(), invitation);
+
+        Meeting meeting = meetingRepository.findByInvitationId(invitation.getId()).orElseThrow(() ->
+                new CalendarAppException(HttpStatus.BAD_REQUEST, "Meeting couldn't find", "MEET_NOT_VALID"));
+        MeetingRequest meetingRequest = meetingMapper.mapEntityToRequest(meeting);
+        meetingRequest.setSequence(meeting.getSequence() + 1);
+        setDates(details.getRequest(), invitation, meetingRequest);
+        generateAttachment(questionAnswerModels, meetingRequest);
+        Meeting newOne = meetingMapper.mapToMeeting(meetingRequest);
+        newOne.setId(meeting.getId());
+        sendInvitationMailAndSaveMeeting(details.getModels(), meetingRequest, invitation, meeting);
+    }
+
+    @Override
+    public void deleteMeetingRequest(ScheduleMeetingDetails details) {
+        Invitation invitation = invitationRepository.findByInvitationIdAndScheduledIsTrue(details.getInvitationId()).orElseThrow(() ->
+                new CalendarAppException(HttpStatus.BAD_REQUEST, "Invitation couldn't scheduled", "NOT_SCHEDULED"));
+
+        Meeting meeting = meetingRepository.findByInvitationId(invitation.getId()).orElseThrow(() ->
+                new CalendarAppException(HttpStatus.BAD_REQUEST, "Meeting couldn't find", "MEET_NOT_VALID"));
+        MeetingRequest meetingRequest = meetingMapper.mapEntityToRequest(meeting);
+        meetingRequest.setSequence(meeting.getSequence() + 1);
+        meetingRequest.setMethod(Method.CANCEL);
+        Meeting newOne = meetingMapper.mapToMeeting(meetingRequest);
+        newOne.setId(meeting.getId());
+        invitation.setScheduled(false);
+        invitation.getAnswers().clear();
         meetingRequest.setOrganizerName(invitation.getName());
         meetingRequest.setOrganizerMail(invitation.getUserEmail());
-        meetingRequest.getParticipants().add(invitation.getUserEmail());
-        meetingRequest.setTimeZone(request.getTimeZone());
+        sendInvitationMailAndSaveMeeting(details.getModels(), meetingRequest, invitation, meeting);
+        meetingRepository.delete(meeting);
+    }
+
+    private List<QuestionAnswerModel> generateQAModel(ScheduleMeetingRequest request, Invitation invitation) {
+        List<QuestionAnswerModel> questionAnswerModels = new ArrayList<>();
+        if (invitation.getEvent().getQuestions() != null && !invitation.getEvent().getQuestions().isEmpty()) {
+            Map<Long, Question> questionMap = invitation.getEvent().getQuestions().stream().collect(Collectors.toMap(Question::getId, Function.identity()));
+            List<Answer> answers = validateAnswers(questionMap, request.getAnswers(), invitation, questionAnswerModels);
+            invitation.setAnswers(answers);
+        } else {
+            invitation.getAnswers().clear();
+        }
+        return questionAnswerModels;
+    }
+
+    private void checkDates(ScheduleMeetingRequest request, Map<LocalDate, Set<LocalTime>> availableDates, Event event) {
+        ZonedDateTime zonedDateTime = ZonedDateTime.of(request.getDate(), request.getTime(), ZoneId.of(request.getTimeZone()))
+                .withZoneSameInstant(ZoneId.of(event.getTimeZone()));
+        if (!availableDates.containsKey(zonedDateTime.toLocalDate())) {
+            throw new CalendarAppException(HttpStatus.BAD_REQUEST, "Selected date not valid", "NOT_VALID_DATE");
+        } else {
+            Set<LocalTime> times = availableDates.get(zonedDateTime.toLocalDate());
+            if (!times.contains(zonedDateTime.toLocalTime())) {
+                throw new CalendarAppException(HttpStatus.BAD_REQUEST, "Selected date not valid", "NOT_VALID_DATE");
+            }
+        }
+    }
+
+    private void setDates(ScheduleMeetingRequest request, Invitation invitation, MeetingRequest meetingRequest) {
+        meetingRequest.setOrganizerName(invitation.getName());
+        meetingRequest.setOrganizerMail(invitation.getUserEmail());
         meetingRequest.setStartDate(ZonedDateTime.of(request.getDate(), request.getTime(), ZoneId.of(request.getTimeZone())).toLocalDateTime());
         int duration = DurationType.HOUR.equals(invitation.getEvent().getDurationType()) ?
                 60 * invitation.getEvent().getDuration() : invitation.getEvent().getDuration();
         meetingRequest.setEndDate(ZonedDateTime.of(request.getDate(), request.getTime(),
                 ZoneId.of(request.getTimeZone())).toLocalDateTime().plusMinutes(duration));
-        meetingRequest.setMethod(Method.ADD);
-        meetingRequest.setUuid(UUID.randomUUID());
-
-        generateAttachment(questionAnswerModels, meetingRequest);
-
-        invitation.setScheduled(true);
-        sendInvitationMailAndSaveMeeting(details.getModel(), meetingRequest, invitation);
+        meetingRequest.setMethod(Method.REQUEST);
     }
 
-    public void sendInvitationMailAndSaveMeeting(AttachmentModel file, MeetingRequest request, Invitation invitation) {
+    private void sendInvitationMailAndSaveMeeting(List<AttachmentModel> files, MeetingRequest request, Invitation invitation, Meeting meeting) {
         GenericMailRequest toInvitationMail = meetingMapper.request(request);
         try {
             toInvitationMail.setMeetingDetails(icsService.writeIcsFileToByteArray(request));
@@ -130,13 +197,12 @@ public class MeetingServiceImpl implements MeetingService {
             toInvitationMail.setLanguage(Translator.getLanguage());
             toInvitationMail.setName(invitation.getName());
             if (invitation.getEvent().isFileRequired()) {
-                if (file == null) {
+                if (files == null) {
                     throw new CalendarAppException(HttpStatus.BAD_REQUEST, "File can not be null", "NULL_FILE");
                 } else {
-                    toInvitationMail.getAttachments().add(file);
+                    toInvitationMail.getAttachments().addAll(files);
                 }
             }
-            Meeting meeting = meetingMapper.mapToMeeting(request);
             meeting.setInvitation(invitation);
             meeting.setDescription(invitation.getDescription());
             meeting.setTitle(invitation.getTitle());
