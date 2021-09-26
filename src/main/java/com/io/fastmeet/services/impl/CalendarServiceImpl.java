@@ -11,6 +11,7 @@ import com.io.fastmeet.core.security.encrypt.TokenEncryptor;
 import com.io.fastmeet.entitites.Event;
 import com.io.fastmeet.entitites.Invitation;
 import com.io.fastmeet.entitites.LinkedCalendar;
+import com.io.fastmeet.entitites.Meeting;
 import com.io.fastmeet.enums.AppProviderType;
 import com.io.fastmeet.enums.DurationType;
 import com.io.fastmeet.models.internals.AdditionalTime;
@@ -25,6 +26,7 @@ import com.io.fastmeet.models.remotes.microsoft.CalendarResponse;
 import com.io.fastmeet.models.remotes.microsoft.MicrosoftCalendarEventsRequest;
 import com.io.fastmeet.repositories.InvitationRepository;
 import com.io.fastmeet.repositories.LinkedCalendarRepository;
+import com.io.fastmeet.repositories.MeetingRepository;
 import com.io.fastmeet.services.CalendarService;
 import com.io.fastmeet.services.GoogleService;
 import com.io.fastmeet.services.MicrosoftService;
@@ -66,6 +68,9 @@ public class CalendarServiceImpl implements CalendarService {
     @Autowired
     private LinkedCalendarRepository linkedCalendarRepository;
 
+    @Autowired
+    private MeetingRepository meetingRepository;
+
     @Override
     public AvailableDatesDetails getAvailableDates(LocalDate localDate, String invitationId, String timeZone) {
         Invitation invitation = invitationRepository.findByInvitationId(invitationId).orElseThrow(() ->
@@ -90,6 +95,7 @@ public class CalendarServiceImpl implements CalendarService {
         List<LinkedCalendar> filteredGoogle = linkedCalendarSet.stream().filter(item -> AppProviderType.GOOGLE.equals(item.getType())).collect(Collectors.toList());
         microsoftCalendarMap(event.getTimeZone(), event, starDate, endDate, availableDates, filteredMicrosoft);
         googleCalendarMap(event.getTimeZone(), event, starDate, endDate, availableDates, filteredGoogle);
+        meetingMap(event, starDate, endDate, availableDates);
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of(event.getTimeZone()));
         if (availableDates.containsKey(now.toLocalDate())) {
             availableDates.get(now.toLocalDate()).removeIf(time -> time.isBefore(now.toLocalTime()));
@@ -121,6 +127,19 @@ public class CalendarServiceImpl implements CalendarService {
                     genericFilter(availableDates, minutes, startTime, endTime);
                 }
             }
+        }
+    }
+
+    private void meetingMap(Event event, LocalDateTime starDate, LocalDateTime endDate, Map<LocalDate, Set<LocalTime>> availableDates) {
+        List<Meeting> meetings = meetingRepository.findUserEventMeetings(event.getId(), starDate, endDate);
+        for (Meeting item : meetings) {
+            int multiply = DurationType.HOUR.equals(event.getDurationType()) ? 60 : 1;
+            int minutes = event.getDuration() * multiply;
+            ZonedDateTime startTime = ZonedDateTime.of(item.getStartDate(), ZoneId.of(item.getTimeZone()))
+                    .withZoneSameInstant(ZoneId.of(event.getTimeZone()));
+            ZonedDateTime endTime = ZonedDateTime.of(item.getEndDate(), ZoneId.of(item.getTimeZone()))
+                    .withZoneSameInstant(ZoneId.of(event.getTimeZone()));
+            genericFilter(availableDates, minutes, startTime, endTime);
         }
     }
 

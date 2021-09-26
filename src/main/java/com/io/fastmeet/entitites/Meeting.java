@@ -36,6 +36,7 @@ public class Meeting extends BaseEntity {
     private String organizer;
     private String location;
     private Integer sequence;
+    private Long eventId;
 
     @JsonManagedReference
     @EqualsAndHashCode.Exclude

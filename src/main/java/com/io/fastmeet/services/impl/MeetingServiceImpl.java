@@ -98,7 +98,6 @@ public class MeetingServiceImpl implements MeetingService {
         meetingRequest.setTitle(invitation.getName() + " " + invitation.getTitle());
         meetingRequest.setLocation(invitation.getEvent().getLocation().name());
         meetingRequest.setUuid(UUID.randomUUID());
-        meetingRequest.setTimeZone(request.getTimeZone());
         meetingRequest.setDescription(invitation.getDescription());
         meetingRequest.setOrganizer("info@collige.io");
         meetingRequest.getParticipants().add(invitation.getUser().getEmail());
@@ -112,6 +111,7 @@ public class MeetingServiceImpl implements MeetingService {
         generateAttachment(questionAnswerModels, meetingRequest);
         invitation.setScheduled(true);
         Meeting meeting = meetingMapper.mapToMeeting(meetingRequest);
+        meeting.setEventId(invitation.getEvent().getId());
         sendInvitationMailAndSaveMeeting(details.getModels(), meetingRequest, invitation, meeting);
     }
 
@@ -142,7 +142,8 @@ public class MeetingServiceImpl implements MeetingService {
         generateAttachment(questionAnswerModels, meetingRequest);
         Meeting newOne = meetingMapper.mapToMeeting(meetingRequest);
         newOne.setId(meeting.getId());
-        sendInvitationMailAndSaveMeeting(details.getModels(), meetingRequest, invitation, meeting);
+        newOne.setEventId(invitation.getEvent().getId());
+        sendInvitationMailAndSaveMeeting(details.getModels(), meetingRequest, invitation, newOne);
     }
 
     @Override
@@ -194,12 +195,14 @@ public class MeetingServiceImpl implements MeetingService {
     private void setDates(ScheduleMeetingRequest request, Invitation invitation, MeetingRequest meetingRequest) {
         meetingRequest.setOrganizerName(invitation.getName());
         meetingRequest.setOrganizerMail(invitation.getUserEmail());
-        meetingRequest.setStartDate(ZonedDateTime.of(request.getDate(), request.getTime(), ZoneId.of(request.getTimeZone())).toLocalDateTime());
+        meetingRequest.setStartDate(ZonedDateTime.of(request.getDate(), request.getTime(), ZoneId.of(request.getTimeZone()))
+                .withZoneSameInstant(ZoneId.of(invitation.getEvent().getTimeZone())).toLocalDateTime());
         int duration = DurationType.HOUR.equals(invitation.getEvent().getDurationType()) ?
                 60 * invitation.getEvent().getDuration() : invitation.getEvent().getDuration();
-        meetingRequest.setEndDate(ZonedDateTime.of(request.getDate(), request.getTime(),
-                ZoneId.of(request.getTimeZone())).toLocalDateTime().plusMinutes(duration));
+        meetingRequest.setEndDate(ZonedDateTime.of(request.getDate(), request.getTime(), ZoneId.of(request.getTimeZone()))
+                .withZoneSameInstant(ZoneId.of(invitation.getEvent().getTimeZone())).toLocalDateTime().plusMinutes(duration));
         meetingRequest.setMethod(Method.REQUEST);
+        meetingRequest.setTimeZone(invitation.getEvent().getTimeZone());
     }
 
     private void sendInvitationMailAndSaveMeeting(List<AttachmentModel> files, MeetingRequest request, Invitation invitation, Meeting meeting) {

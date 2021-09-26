@@ -1,9 +1,12 @@
 package com.io.fastmeet.repositories;
 
 import com.io.fastmeet.entitites.Meeting;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -11,4 +14,7 @@ import java.util.Optional;
 public interface MeetingRepository extends CrudRepository<Meeting, String> {
 
     Optional<Meeting> findByInvitationId(Long invitationId);
+
+    @Query("select m from Meeting  m where m.eventId = :eventId and :startDate <= m.startDate and :endDate >= m.endDate")
+    List<Meeting> findUserEventMeetings(Long eventId, LocalDateTime startDate, LocalDateTime endDate);
 }
