@@ -310,7 +310,7 @@
 																		    role='presentation'
 																		    style='background-color:#1c5c96;border:none;border-radius:5px;cursor:auto;padding:10px 25px;'
 																		    valign='middle'>
-																			<a href='#'
+																			<a th:href="@{${linkUtil.getValidationUrl()}(code=${code},email=${mail})}"
 																			   style='color:#7db0de;font-family:Oxygen, Helvetica neue, sans-serif;font-size:14px;font-weight:400;line-height:21px;margin:0;text-decoration:none;text-transform:none;'
 																			   target='_blank'
 																			   th:text="#{mail.pls.click}">

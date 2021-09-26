@@ -11,6 +11,7 @@ import com.io.fastmeet.models.internals.AttachmentModel;
 import com.io.fastmeet.models.internals.GenericMailRequest;
 import com.io.fastmeet.models.internals.MailValidation;
 import com.io.fastmeet.services.MailService;
+import com.io.fastmeet.utils.LinkUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,9 @@ public class MailServiceImpl implements MailService {
 
     @Autowired
     private TemplateEngine templateEngine;
+
+    @Autowired
+    private LinkUtil linkUtil;
 
     @Value("${system.from}")
     private String from;
@@ -126,11 +130,13 @@ public class MailServiceImpl implements MailService {
         MimeMessageHelper helper = new MimeMessageHelper(message,
                 MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
                 StandardCharsets.UTF_8.name());
+        helper.setTo(requestDto.getEmails().toArray(new String[0]));
         context.setVariable("code", requestDto.getCode());
         context.setVariable("name", WordUtils.capitalize(requestDto.getName()));
         context.setVariable("inviter", WordUtils.capitalize(requestDto.getInviter()));
         context.setVariable("description", WordUtils.capitalize(requestDto.getDescription()));
-        helper.setTo(requestDto.getEmails().toArray(new String[0]));
+        context.setVariable("mail", requestDto.getEmails().iterator().next());
+        context.setVariable("linkUtil", linkUtil);
         helper.setSubject(dto.getHeader());
         helper.setFrom(from, "Collige");
         String html = templateEngine.process("emails/" + dto.getTemplateName(), context);
