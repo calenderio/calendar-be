@@ -70,10 +70,10 @@ public class JWTService {
      */
     public String createToken(User user) {
         return util.getTokenPrefix() + Jwts.builder()
-                .setIssuer("FastMeet API")
+                .setIssuer("Collige API")
                 .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
                 .setSubject(user.getEmail())
-                .setAudience("FastMeet")
+                .setAudience("Collige")
                 .setExpiration(Timestamp.valueOf(LocalDateTime.now().plusDays(1)))
                 .claim("username", user.getEmail().toLowerCase())
                 .claim("id", user.getId())
