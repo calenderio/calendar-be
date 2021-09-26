@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.io</groupId>
-    <artifactId>fastmeet</artifactId>
+    <artifactId>collige</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Calendar Java API</name>
-    <description>Calendar Project REST API Application Deployment</description>
+    <name>Collige Java API</name>
+    <description>Collige Project REST API Application Deployment</description>
     <properties>
         <java.version>16</java.version>
         <jacoco.version>0.8.7</jacoco.version>
@@ -21,11 +21,12 @@
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/**/target/site/**/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
         <sonar.language>java</sonar.language>
-        <sonar.exclusions>src/main/java/com/io/fastmeet/core/**,
-            src/main/java/com/io/fastmeet/models/**,
-            src/main/java/com/io/fastmeet/utils/**
-            src/main/java/com/io/fastmeet/mappers/**
-            src/main/java/com/io/fastmeet/CalendarApplication**
+        <sonar.exclusions>src/main/java/com/io/collige/core/**,
+            src/main/java/com/io/collige/models/**,
+            src/main/java/com/io/collige/utils/**,
+            src/main/java/com/io/collige/mappers/**,
+            src/main/java/com/io/collige/entitites/**,
+            src/main/java/com/io/collige/CalendarApplication**
         </sonar.exclusions>
     </properties>
     <profiles>
@@ -266,6 +267,14 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.heroku.sdk</groupId>
+                <artifactId>heroku-maven-plugin</artifactId>
+                <version>3.0.3</version>
+                <configuration>
+                    <appName>fastmeet</appName>
+                </configuration>
             </plugin>
         </plugins>
     </build>
