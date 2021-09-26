@@ -92,6 +92,12 @@ public class SchedulerServiceImpl implements SchedulerService {
         return schedulerRepository.save(scheduler);
     }
 
+    @Override
+    public void deleteEeventScheduler(Long schedulerId) {
+        User user = jwtService.getLoggedUser();
+        schedulerRepository.deleteEventScheduler(schedulerId, user.getId());
+    }
+
     private Set<SchedulerTime> defaultSchedulerTimeSet() {
         Set<SchedulerTime> times = new HashSet<>();
         times.add(new SchedulerTime("09:00", "12:00"));

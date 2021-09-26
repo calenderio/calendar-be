@@ -76,6 +76,7 @@ public class EventServiceImpl implements EventService {
         Event exOne = eventRepository.findByUserIdAndId(user.getId(), eventId)
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, "Not valid event id", "EVENT_ID"));
         invitationService.deleteInvitationByEvent(eventId);
+        schedulerService.deleteEeventScheduler(exOne.getScheduler().getId());
         eventRepository.delete(exOne);
     }
 

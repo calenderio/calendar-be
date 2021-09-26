@@ -20,10 +20,12 @@ public interface SchedulerRepository extends CrudRepository<Scheduler, Long> {
 
     Optional<Scheduler> findByUserIdAndId(Long userId, Long id);
 
-    boolean existsByIdAndUserId(Long id, Long userId);
-
     @Query("update Scheduler s set s.name = :name where s.id = :id and s.userId = :userId")
     @Modifying
     int changeSchedulerName(String name, Long id, Long userId);
+
+    @Query("delete from Scheduler s where s.id = :id and s.userId = :userId and s.forCalendar = true")
+    @Modifying
+    int deleteEventScheduler(Long id, Long userId);
 
 }

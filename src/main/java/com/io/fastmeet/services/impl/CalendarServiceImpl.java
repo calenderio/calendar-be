@@ -270,7 +270,7 @@ public class CalendarServiceImpl implements CalendarService {
                 case 7 -> event.getScheduler().getSun();
                 default -> new HashSet<>();
             };
-            if (selected != null) {
+            if (selected != null && !selected.isEmpty()) {
                 Set<LocalTime> availableTimes = new TreeSet<>();
                 for (SchedulerTime time : selected) {
                     setTimes(minutes, availableTimes, time);
