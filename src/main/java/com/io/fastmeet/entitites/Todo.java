@@ -1,14 +1,16 @@
 package com.io.fastmeet.entitites;
 
 import com.io.fastmeet.enums.Priority;
+import jdk.jfr.BooleanFlag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import net.fortuna.ical4j.model.DateTime;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import java.lang.reflect.Type;
+import java.time.LocalDateTime;
+
 
 @Entity
 @NoArgsConstructor
@@ -26,7 +28,10 @@ public class Todo extends BaseEntity{
     @Column(name = "priority")
     private Priority priority;
 
+    @BooleanFlag
     private boolean isDone;
+
+    private LocalDateTime createDateTime;
 
 
 }

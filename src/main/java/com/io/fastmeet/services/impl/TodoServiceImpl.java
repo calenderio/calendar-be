@@ -7,8 +7,10 @@ import com.io.fastmeet.core.i18n.Translator;
 import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.entitites.Todo;
 import com.io.fastmeet.entitites.User;
+import com.io.fastmeet.mappers.TodoMapper;
 import com.io.fastmeet.models.requests.todo.TodoCreateRequest;
-import com.io.fastmeet.models.requests.todo.TodoDeleteRequest;
+import com.io.fastmeet.models.requests.todo.TodoUpdateRequest;
+import com.io.fastmeet.models.responses.TodoCreateResponse;
 import com.io.fastmeet.repositories.TodoRepository;
 import com.io.fastmeet.repositories.UserRepository;
 import com.io.fastmeet.services.TodoService;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +36,8 @@ public class TodoServiceImpl implements TodoService {
     @Autowired
     JWTService jwtService;
 
+    TodoMapper todoMapper;
+
     @Override
     public List<Todo> findTodosByUserId(Integer pageNo, Integer pageSize, String sortBy) {
         User user = jwtService.getLoggedUser();
@@ -44,25 +49,30 @@ public class TodoServiceImpl implements TodoService {
             return pagedResult.getContent();
         } else {
 
-            return new ArrayList<Todo>();
+            return new ArrayList<>();
         }
 
     }
 
     @Override
-    public void saveTodo(TodoCreateRequest todoCreateRequest, String token) {
+    public TodoCreateResponse saveTodo(TodoCreateRequest todoCreateRequest, String token) {
         User user = jwtService.getLoggedUser();
+
 
         Todo todo = new Todo();
         todo.setUserId(user);
         todo.setDescription(todoCreateRequest.getDescription());
         todo.setPriority(todoCreateRequest.getPriority());
         todo.setDone(false);
+        todo.setCreateDateTime(LocalDateTime.now());
         todoRepository.save(todo);
+
+        return todoMapper.mapToEntityModel(todo);
     }
 
+
     @Override
-    public void deleteTodo(String token, TodoDeleteRequest request) {
+    public void deleteTodo( TodoUpdateRequest request) {
         User user = jwtService.getLoggedUser();
 
         Todo todo = todoRepository.findByUserIdAndId(user, request.getId()).orElseThrow(() ->
@@ -70,4 +80,16 @@ public class TodoServiceImpl implements TodoService {
                         GeneralMessageConstants.USR_NOT_FOUND));
         todoRepository.delete(todo);
     }
+
+    @Override
+    public void setDone(TodoUpdateRequest request) {
+        User user = jwtService.getLoggedUser();
+
+        Todo todo = todoRepository.findByUserIdAndId(user, request.getId()).orElseThrow(() ->
+                new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.TODO_NOT_FOUND),
+                        GeneralMessageConstants.USR_NOT_FOUND));
+        todo.setDone(true);
+        deleteTodo(todoMapper.entityToModel(todo));
+    }
+
 }
