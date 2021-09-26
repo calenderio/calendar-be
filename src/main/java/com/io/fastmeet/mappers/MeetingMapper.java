@@ -26,6 +26,8 @@ public interface MeetingMapper {
     @Mapping(source = "invitation.event.description", target = "description")
     @Mapping(source = "invitation.event.duration", target = "duration.duration")
     @Mapping(source = "invitation.event.durationType", target = "duration.durationType")
+    @Mapping(source = "invitation.event.fileRequired", target = "fileRequired")
+    @Mapping(source = "invitation.event.fileDescription", target = "fileDescription")
     @Mapping(source = "invitation.user.name", target = "name")
     @Mapping(source = "invitation.user.email", target = "email")
     @Mapping(source = "invitation.user.picture", target = "picture")

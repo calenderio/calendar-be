@@ -44,12 +44,15 @@ public class EventTypeCreateRequest {
     @Schema(description = "Is this type calendar needs a file", example = "false")
     private Boolean isFileRequired;
 
-    @Schema(description = "Event start date", implementation = LocalDate.class)
+    @Schema(description = "Description of file", example = "false")
+    private String fileDescription;
+
+    @Schema(description = "Event start date", implementation = LocalDate.class, required = true)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @NotNull
     private LocalDate startDate;
 
-    @Schema(description = "Event end date", implementation = LocalDate.class)
+    @Schema(description = "Event end date", implementation = LocalDate.class, required = true)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @NotNull
     private LocalDate endDate;
@@ -66,7 +69,7 @@ public class EventTypeCreateRequest {
     @Schema(description = "Schedule id for predefined schedulers", example = "1")
     private Long preDefinedSchedulerId;
 
-    @Schema(description = "Selected date details", implementation = SchedulerDetails.class, required = true)
+    @Schema(description = "Selected date details", implementation = SchedulerDetails.class)
     @Valid
     private SchedulerDetails schedule;
 

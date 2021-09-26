@@ -35,6 +35,9 @@ public class EventTypeResponse {
     @Schema(description = "Is this type calendar needs a file", example = "false")
     private Boolean isFileRequired;
 
+    @Schema(description = "Description of file", example = "false")
+    private String fileDescription;
+
     @Schema(description = "Event start date", implementation = LocalDate.class)
     private LocalDate startDate;
 

@@ -46,6 +46,12 @@ public class ScheduledMeetingResponse {
     @Schema(description = "Incitation is scheduled", example = "false")
     private Boolean scheduled;
 
+    @Schema(description = "Is this type calendar needs a file", example = "false")
+    private Boolean fileRequired;
+
+    @Schema(description = "Description of file", example = "false")
+    private String fileDescription;
+
     @Schema(description = "Meeting duration", implementation = CalendarDuration.class)
     private CalendarDuration duration;
 

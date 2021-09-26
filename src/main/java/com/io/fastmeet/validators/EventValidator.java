@@ -11,6 +11,7 @@ import com.io.fastmeet.constants.RoleConstants;
 import com.io.fastmeet.core.security.jwt.JWTService;
 import com.io.fastmeet.core.services.CacheService;
 import com.io.fastmeet.models.requests.calendar.EventTypeCreateRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
@@ -30,7 +31,7 @@ public class EventValidator implements ConstraintValidator<Event, EventTypeCreat
 
     @Override
     public boolean isValid(EventTypeCreateRequest field, ConstraintValidatorContext context) {
-        return checkScheduler(field, context) || checkRolePermission(field, context);
+        return checkScheduler(field, context) && checkRolePermission(field, context) && checkFile(field, context);
 
     }
 
@@ -51,21 +52,30 @@ public class EventValidator implements ConstraintValidator<Event, EventTypeCreat
         return true;
     }
 
+    private boolean checkFile(EventTypeCreateRequest field, ConstraintValidatorContext context) {
+        if (Boolean.TRUE.equals(field.getIsFileRequired()) && StringUtils.isBlank(field.getFileDescription())) {
+            return overSize(context, "{event.filedescription.null}", "fileDescription");
+        }
+        return true;
+    }
+
     private boolean checkRolePermission(EventTypeCreateRequest field, ConstraintValidatorContext context) {
-        if (field.getQuestions().size() > cacheService.getIntegerCacheValue(CacheConstants.QUESTION_LIMIT_FREE)) {
-            Set<String> roles = jwtService.getUserRoles();
-            if (roles.contains(RoleConstants.COMMERCIAL)) {
-                if (field.getQuestions().size() > cacheService.getIntegerCacheValue(CacheConstants.QUESTION_LIMIT_COMMERCIAL)) {
+        if (field.getQuestions() != null) {
+            if (field.getQuestions().size() > cacheService.getIntegerCacheValue(CacheConstants.QUESTION_LIMIT_FREE)) {
+                Set<String> roles = jwtService.getUserRoles();
+                if (roles.contains(RoleConstants.COMMERCIAL)) {
+                    if (field.getQuestions().size() > cacheService.getIntegerCacheValue(CacheConstants.QUESTION_LIMIT_COMMERCIAL)) {
+                        return overSize(context, EVENT_QUESTION_OVERSIZE, QUESTIONS);
+                    }
+                    return true;
+                } else if (roles.contains(RoleConstants.INDIVIDUAL)) {
+                    if (field.getQuestions().size() > cacheService.getIntegerCacheValue(CacheConstants.QUESTION_LIMIT_IND)) {
+                        return overSize(context, EVENT_QUESTION_OVERSIZE, QUESTIONS);
+                    }
+                    return true;
+                } else {
                     return overSize(context, EVENT_QUESTION_OVERSIZE, QUESTIONS);
                 }
-                return true;
-            } else if (roles.contains(RoleConstants.INDIVIDUAL)) {
-                if (field.getQuestions().size() > cacheService.getIntegerCacheValue(CacheConstants.QUESTION_LIMIT_IND)) {
-                    return overSize(context, EVENT_QUESTION_OVERSIZE, QUESTIONS);
-                }
-                return true;
-            } else {
-                return overSize(context, EVENT_QUESTION_OVERSIZE, QUESTIONS);
             }
         }
         return true;
