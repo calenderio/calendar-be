@@ -24,6 +24,7 @@ public class ValidationServiceImpl implements ValidationService {
 
     private static final String VAL_ERR = "VAL_ERR";
     private static final String VALIDATION_NOT_VALID = "validation_not_valid";
+
     @Autowired
     private ValidationRepository validationRepository;
 

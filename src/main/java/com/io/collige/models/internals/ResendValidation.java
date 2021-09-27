@@ -9,9 +9,11 @@ package com.io.collige.models.internals;
 import com.io.collige.enums.ValidationType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ResendValidation {
 
     private String mail;
