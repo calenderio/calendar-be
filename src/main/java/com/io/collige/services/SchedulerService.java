@@ -21,9 +21,9 @@ public interface SchedulerService {
 
     void updateName(SchedulerNameUpdateRequest request);
 
-    Scheduler getUserSchedulerById(Long id, Long userId);
+    Scheduler getUserSchedulerById(Long id);
 
-    Scheduler saveCalendarTypeScheduler(Scheduler scheduler, Long userId);
+    Scheduler saveCalendarTypeScheduler(Scheduler scheduler);
 
-    void deleteEeventScheduler(Long schedulerId);
+    void deleteEventScheduler(Long schedulerId);
 }

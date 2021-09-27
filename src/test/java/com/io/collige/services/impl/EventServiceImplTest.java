@@ -106,7 +106,7 @@ class EventServiceImplTest {
         eventService.deleteEvent(1L);
         verify(eventRepository, times(1)).delete(any());
         verify(invitationService, times(1)).deleteInvitationByEvent(1L);
-        verify(schedulerService, times(1)).deleteEeventScheduler(1L);
+        verify(schedulerService, times(1)).deleteEventScheduler(1L);
         verify(eventRepository, times(1)).delete(any());
     }
 

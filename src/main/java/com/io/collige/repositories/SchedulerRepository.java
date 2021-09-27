@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public interface SchedulerRepository extends CrudRepository<Scheduler, Long> {
 
-    Optional<List<Scheduler>> findByUserIdAndForCalendarIsFalse(Long userId);
+    List<Scheduler> findByUserIdAndForCalendarIsFalse(Long userId);
 
     Optional<Scheduler> findByUserIdAndId(Long userId, Long id);
 

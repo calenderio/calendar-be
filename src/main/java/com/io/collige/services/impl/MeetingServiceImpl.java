@@ -34,6 +34,7 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import lombok.extern.slf4j.Slf4j;
 import net.fortuna.ical4j.model.property.Method;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -77,7 +78,6 @@ public class MeetingServiceImpl implements MeetingService {
     @Autowired
     private InvitationRepository invitationRepository;
 
-
     @Override
     public void validateAndScheduleMeeting(ScheduleMeetingDetails details) {
         ScheduleMeetingRequest request = details.getRequest();
@@ -89,7 +89,7 @@ public class MeetingServiceImpl implements MeetingService {
 
         MeetingRequest meetingRequest = new MeetingRequest();
         if (invitation.getEvent().isFileRequired()) {
-            if (details.getModels() == null || details.getModels().isEmpty()) {
+            if (CollectionUtils.isEmpty(details.getModels())) {
                 throw new CalendarAppException(HttpStatus.BAD_REQUEST, "File can not be null", "NULL_FILE");
             } else {
                 meetingRequest.getAttachmentModels().addAll(details.getModels());
@@ -131,7 +131,7 @@ public class MeetingServiceImpl implements MeetingService {
                 new CalendarAppException(HttpStatus.BAD_REQUEST, "Meeting couldn't find", "MEET_NOT_VALID"));
         MeetingRequest meetingRequest = meetingMapper.mapEntityToRequest(meeting);
         if (invitation.getEvent().isFileRequired()) {
-            if (details.getModels() == null || details.getModels().isEmpty()) {
+            if (CollectionUtils.isEmpty(details.getModels())) {
                 throw new CalendarAppException(HttpStatus.BAD_REQUEST, "File can not be null", "NULL_FILE");
             } else {
                 meetingRequest.getAttachmentModels().addAll(details.getModels());
@@ -160,7 +160,9 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting newOne = meetingMapper.mapToMeeting(meetingRequest);
         newOne.setId(meeting.getId());
         invitation.setScheduled(false);
-        invitation.getAnswers().clear();
+        if (invitation.getAnswers() != null) {
+            invitation.getAnswers().clear();
+        }
         meetingRequest.setOrganizerName(invitation.getName());
         meetingRequest.setOrganizerMail(invitation.getUserEmail());
         sendInvitationMailAndSaveMeeting(details.getModels(), meetingRequest, invitation, meeting);
@@ -173,7 +175,7 @@ public class MeetingServiceImpl implements MeetingService {
             Map<Long, Question> questionMap = invitation.getEvent().getQuestions().stream().collect(Collectors.toMap(Question::getId, Function.identity()));
             List<Answer> answers = validateAnswers(questionMap, request.getAnswers(), invitation, questionAnswerModels);
             invitation.setAnswers(answers);
-        } else {
+        } else if (CollectionUtils.isNotEmpty(invitation.getAnswers())) {
             invitation.getAnswers().clear();
         }
         return questionAnswerModels;

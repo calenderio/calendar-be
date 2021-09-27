@@ -65,14 +65,14 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<Void> resendVerification(ResendVerificationMailRequest request) {
+    public ResponseEntity<Void> resendVerification(@Valid ResendVerificationMailRequest request) {
         userService.resendValidationMail(request);
         return ResponseEntity.noContent().build();
 
     }
 
     @Override
-    public ResponseEntity<UserResponse> updateUser(UserUpdateRequest request) {
+    public ResponseEntity<UserResponse> updateUser(@Valid UserUpdateRequest request) {
         return ResponseEntity.ok(userService.updateUser(request));
     }
 

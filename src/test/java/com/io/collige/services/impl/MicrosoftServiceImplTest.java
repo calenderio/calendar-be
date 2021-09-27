@@ -1,14 +1,14 @@
 /*
  * @author : Oguz Kahraman
- * @since : 26.09.2021
+ * @since : 27.09.2021
  *
  * Copyright - Collige App Java API
  **/
 package com.io.collige.services.impl;
 
-import com.io.collige.models.remotes.google.GoogleCalendarEventResponse;
-import com.io.collige.models.remotes.google.GoogleCalendarEventsRequest;
 import com.io.collige.models.remotes.google.TokenRefreshResponse;
+import com.io.collige.models.remotes.microsoft.CalendarResponse;
+import com.io.collige.models.remotes.microsoft.MicrosoftCalendarEventsRequest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,6 @@ import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -35,10 +34,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class GoogleServiceImplTest {
+class MicrosoftServiceImplTest {
 
     @InjectMocks
-    private GoogleServiceImpl googleService;
+    private MicrosoftServiceImpl microsoftService;
 
     private HttpClient client = mock(HttpClient.class);
     private HttpRequest.Builder builder = mock(HttpRequest.Builder.class);
@@ -62,9 +61,11 @@ class GoogleServiceImplTest {
 
     @Test
     void getCalendarEvents() throws IOException, InterruptedException {
-        ReflectionTestUtils.setField(googleService, "clientId", "value");
-        ReflectionTestUtils.setField(googleService, "clientSecret", "value");
-        GoogleCalendarEventsRequest request = new GoogleCalendarEventsRequest();
+        ReflectionTestUtils.setField(microsoftService, "clientId", "value");
+        ReflectionTestUtils.setField(microsoftService, "clientSecret", "value");
+        ReflectionTestUtils.setField(microsoftService, "scopes", "value");
+        ReflectionTestUtils.setField(microsoftService, "redirectUri", "value");
+        MicrosoftCalendarEventsRequest request = new MicrosoftCalendarEventsRequest();
         request.setTimeMax(LocalDateTime.MAX);
         request.setTimeMin(LocalDateTime.MIN);
         request.setTimeZone("UTC");
@@ -74,32 +75,27 @@ class GoogleServiceImplTest {
         when(builder.header(anyString(), anyString())).thenReturn(builder);
         when(builder.GET()).thenReturn(builder);
         when(builder.build()).thenReturn(mock(HttpRequest.class));
-        GoogleCalendarEventResponse response = googleService.getCalendarEvents(request);
+        CalendarResponse response = microsoftService.getCalendarEvents(request);
         assertNull(response);
     }
 
     @Test
     void getNewAccessToken() throws IOException, InterruptedException {
-        ReflectionTestUtils.setField(googleService, "clientId", "value");
-        ReflectionTestUtils.setField(googleService, "clientSecret", "value");
+        ReflectionTestUtils.setField(microsoftService, "clientId", "value");
+        ReflectionTestUtils.setField(microsoftService, "clientSecret", "value");
+        ReflectionTestUtils.setField(microsoftService, "scopes", "value");
+        ReflectionTestUtils.setField(microsoftService, "redirectUri", "value");
+        MicrosoftCalendarEventsRequest request = new MicrosoftCalendarEventsRequest();
+        request.setTimeMax(LocalDateTime.MAX);
+        request.setTimeMin(LocalDateTime.MIN);
+        request.setTimeZone("UTC");
+        request.setAccessToken("123");
         when(client.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenReturn(mock(HttpResponse.class));
         when(builder.uri(any())).thenReturn(builder);
         when(builder.header(anyString(), anyString())).thenReturn(builder);
         when(builder.POST(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(HttpRequest.class));
-        TokenRefreshResponse response = googleService.getNewAccessToken("request");
+        TokenRefreshResponse response = microsoftService.getNewAccessToken("1L");
         assertNull(response);
-    }
-
-    @Test
-    void revokeToken() {
-        ReflectionTestUtils.setField(googleService, "clientId", "value");
-        ReflectionTestUtils.setField(googleService, "clientSecret", "value");
-        when(builder.uri(any())).thenReturn(builder);
-        when(builder.header(anyString(), anyString())).thenReturn(builder);
-        when(builder.POST(any())).thenReturn(builder);
-        when(builder.build()).thenReturn(mock(HttpRequest.class));
-        googleService.revokeToken("request");
-        assertTrue(Boolean.TRUE);
     }
 }

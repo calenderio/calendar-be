@@ -22,7 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +49,7 @@ public class SchedulerServiceImpl implements SchedulerService {
         scheduler.setName(name);
         scheduler.setUserId(user.getId());
         schedulerRepository.save(scheduler);
-        return schedulerRepository.findByUserIdAndForCalendarIsFalse(user.getId()).orElse(new ArrayList<>());
+        return schedulerRepository.findByUserIdAndForCalendarIsFalse(user.getId());
     }
 
     @Override
@@ -63,13 +62,13 @@ public class SchedulerServiceImpl implements SchedulerService {
         request.getScheduler().setName(scheduleObject.getName());
         request.getScheduler().setUserId(user.getId());
         schedulerRepository.save(request.getScheduler());
-        return schedulerRepository.findByUserIdAndForCalendarIsFalse(user.getId()).orElse(new ArrayList<>());
+        return schedulerRepository.findByUserIdAndForCalendarIsFalse(user.getId());
     }
 
     @Override
     public List<Scheduler> getUserSchedulers() {
         User user = jwtService.getLoggedUser();
-        return schedulerRepository.findByUserIdAndForCalendarIsFalse(user.getId()).orElse(new ArrayList<>());
+        return schedulerRepository.findByUserIdAndForCalendarIsFalse(user.getId());
     }
 
     @Override
@@ -79,21 +78,23 @@ public class SchedulerServiceImpl implements SchedulerService {
     }
 
     @Override
-    public Scheduler getUserSchedulerById(Long id, Long userId) {
-        return schedulerRepository.findByUserIdAndId(userId, id).orElseThrow(() ->
+    public Scheduler getUserSchedulerById(Long id) {
+        User user = jwtService.getLoggedUser();
+        return schedulerRepository.findByUserIdAndId(user.getId(), id).orElseThrow(() ->
                 new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.SCH_NOT_FOUND),
                         GeneralMessageConstants.USR_NOT_FOUND));
     }
 
     @Override
-    public Scheduler saveCalendarTypeScheduler(Scheduler scheduler, Long userId) {
+    public Scheduler saveCalendarTypeScheduler(Scheduler scheduler) {
+        User user = jwtService.getLoggedUser();
         scheduler.setForCalendar(true);
-        scheduler.setUserId(userId);
+        scheduler.setUserId(user.getId());
         return schedulerRepository.save(scheduler);
     }
 
     @Override
-    public void deleteEeventScheduler(Long schedulerId) {
+    public void deleteEventScheduler(Long schedulerId) {
         User user = jwtService.getLoggedUser();
         schedulerRepository.deleteEventScheduler(schedulerId, user.getId());
     }

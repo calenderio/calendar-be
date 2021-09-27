@@ -102,10 +102,13 @@ public class SchedulerDetailValidator implements ConstraintValidator<SchedulerDe
         if (set == null) {
             return false;
         }
+        boolean isError1 = false;
         List<SchedulerTime> sorted = set.stream().sorted(Comparator.comparing(SchedulerTime::getStart))
                 .collect(Collectors.toList());
+        if (set.size() == 1) {
+            isError1 = checkStartEnd(sorted.get(0));
+        }
         int i = 0;
-        boolean isError1 = false;
         boolean isError2 = false;
         boolean isError3 = false;
         while (!isError1 && !isError2 && !isError3 && i < sorted.size() - 1) {

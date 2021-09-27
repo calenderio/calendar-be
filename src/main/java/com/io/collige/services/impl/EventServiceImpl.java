@@ -55,7 +55,7 @@ public class EventServiceImpl implements EventService {
     public Event createEvent(Event event) {
         User user = jwtService.getLoggedUser();
         event.setUserId(user.getId());
-        return createEventDetails(event, user);
+        return createEventDetails(event);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, "Not valid event id", "EVENT_ID"));
         event.setId(exOne.getId());
         event.setAnswers(exOne.getAnswers());
-        return createEventDetails(event, user);
+        return createEventDetails(event);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class EventServiceImpl implements EventService {
         Event exOne = eventRepository.findByUserIdAndId(user.getId(), eventId)
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, "Not valid event id", "EVENT_ID"));
         invitationService.deleteInvitationByEvent(eventId);
-        schedulerService.deleteEeventScheduler(exOne.getScheduler().getId());
+        schedulerService.deleteEventScheduler(exOne.getScheduler().getId());
         eventRepository.delete(exOne);
     }
 
@@ -112,13 +112,13 @@ public class EventServiceImpl implements EventService {
         mailService.sendInvitationMail(genericMailRequest);
     }
 
-    private Event createEventDetails(Event event, User user) {
+    private Event createEventDetails(Event event) {
         if (event.getPreDefinedSchedulerId() != null) {
-            event.setScheduler(schedulerService.getUserSchedulerById(event.getPreDefinedSchedulerId(), user.getId()));
+            event.setScheduler(schedulerService.getUserSchedulerById(event.getPreDefinedSchedulerId()));
         } else {
             Scheduler scheduler = event.getScheduler();
             scheduler.setName(event.getName());
-            event.setScheduler(schedulerService.saveCalendarTypeScheduler(scheduler, user.getId()));
+            event.setScheduler(schedulerService.saveCalendarTypeScheduler(scheduler));
         }
         if (event.getQuestions() != null) {
             for (Question question : event.getQuestions()) {

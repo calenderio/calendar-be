@@ -132,11 +132,16 @@ public class MeetControllerImpl implements MeetController {
         List<AttachmentModel> modelList = new ArrayList<>();
         if (files != null) {
             for (MultipartFile file : files) {
+                String type;
                 try {
-                    String type = tika.detect(file.getBytes());
-                    if (!allowedFileTypes.contains(type)) {
-                        throw new CalendarAppException(HttpStatus.NOT_ACCEPTABLE, "Not allowed file type", "NOT_ALLOWED_FILE");
-                    }
+                    type = tika.detect(file.getBytes());
+                } catch (Exception e) {
+                    throw new CalendarAppException(HttpStatus.INTERNAL_SERVER_ERROR, "Exception", "EXCEPTION");
+                }
+                if (!allowedFileTypes.contains(type)) {
+                    throw new CalendarAppException(HttpStatus.NOT_ACCEPTABLE, "Not allowed file type", "NOT_ALLOWED_FILE");
+                }
+                try {
                     modelList.add(new AttachmentModel(file.getBytes(), file.getOriginalFilename(), type));
                 } catch (Exception e) {
                     throw new CalendarAppException(HttpStatus.INTERNAL_SERVER_ERROR, "Exception", "EXCEPTION");

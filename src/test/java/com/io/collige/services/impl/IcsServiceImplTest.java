@@ -56,5 +56,6 @@ class IcsServiceImplTest {
         request.setAttachmentModels(Collections.singletonList(model));
         byte[] response = icsService.writeIcsFileToByteArray(request);
         assertNotNull(response);
+        translatorMockedStatic.close();
     }
 }
