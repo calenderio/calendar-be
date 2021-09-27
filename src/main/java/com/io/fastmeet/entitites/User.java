@@ -18,6 +18,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.HashSet;
@@ -56,5 +57,8 @@ public class User extends BaseEntity {
             inverseJoinColumns = {@JoinColumn(name = "calendar_id")}
     )
     private Set<LinkedCalendar> calendars = new HashSet<>();
+
+    @OneToMany
+    private Set<Todo> todos = new HashSet<>();
 
 }
