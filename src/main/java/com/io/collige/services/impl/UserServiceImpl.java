@@ -347,7 +347,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void updateToken(SocialUser request) {
-        User user = userRepository.findByEmail(request.getSocialMediaMail().toLowerCase())
+        User user = userRepository.findByEmail(request.getEmail().toLowerCase())
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
                         GeneralMessageConstants.USR_NOT_FOUND));
         addCalendar(request, user);

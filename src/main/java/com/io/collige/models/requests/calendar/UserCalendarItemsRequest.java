@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 public class UserCalendarItemsRequest {
 
     @Schema(description = "Filter start time", implementation = LocalDateTime.class, required = true)
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @NotNull
     private LocalDateTime starDate;
     @Schema(description = "Filter end time", implementation = LocalDateTime.class, required = true)
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @NotNull
     private LocalDateTime endDate;
     @Schema(description = "Selected time zone", example = "UTC", required = true)

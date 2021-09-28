@@ -22,5 +22,6 @@ public class CalendarEventItem {
     private DateType start;
     private DateType end;
     private CalendarBody body;
+    private ResponseStatus responseStatus;
     private List<EmailAddressItem> attendees = new ArrayList<>();
 }

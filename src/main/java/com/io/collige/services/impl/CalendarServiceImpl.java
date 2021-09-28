@@ -15,6 +15,7 @@ import com.io.collige.entitites.LinkedCalendar;
 import com.io.collige.entitites.Meeting;
 import com.io.collige.entitites.User;
 import com.io.collige.enums.AppProviderType;
+import com.io.collige.enums.CalendarEventStatus;
 import com.io.collige.enums.DurationType;
 import com.io.collige.models.internals.AdditionalTime;
 import com.io.collige.models.internals.AvailableDatesDetails;
@@ -134,7 +135,7 @@ public class CalendarServiceImpl implements CalendarService {
                                   LocalDateTime starDate, LocalDateTime endDate, User user) {
         ZonedDateTime startTime = ZonedDateTime.of(starDate, ZoneId.of(timeZone));
         ZonedDateTime endTime = ZonedDateTime.of(endDate, ZoneId.of(timeZone));
-        List<Meeting> meetings = meetingRepository.findUserMeetings(user.getId(), startTime, endTime);
+        List<Meeting> meetings = meetingRepository.findUserMeetings(user.getId(), startTime.toLocalDateTime(), endTime.toLocalDateTime());
         for (Meeting meeting : meetings) {
             CalendarItemResponse itemResponse = new CalendarItemResponse();
             LocalDateTime start = ZonedDateTime.of(meeting.getStartDate(), ZoneId.of(meeting.getTimeZone()))
@@ -147,6 +148,7 @@ public class CalendarServiceImpl implements CalendarService {
             itemResponse.setDescription(meeting.getDescription());
             itemResponse.setTitle(meeting.getTitle());
             itemResponse.setType(AppProviderType.INTERNAL);
+            itemResponse.setStatus(CalendarEventStatus.ACCEPTED);
             itemResponse.setEmail(user.getEmail());
             list.add(itemResponse);
 
@@ -164,11 +166,12 @@ public class CalendarServiceImpl implements CalendarService {
                     LocalDateTime endTime = ZonedDateTime.parse(item.getEnd().getDateTime()).toLocalDateTime();
                     itemResponse.setEndDate(endTime);
                     itemResponse.setStartDate(startTime);
-                    itemResponse.setAccepted("confirmed".equals(item.getConfirmed()));
+                    itemResponse.setAccepted("confirmed".equals(item.getStatus()));
                     itemResponse.setDescription(item.getDescription());
                     itemResponse.setTitle(item.getSummary());
                     itemResponse.setType(AppProviderType.GOOGLE);
                     itemResponse.setEmail(selected.getSocialMail());
+                    itemResponse.setStatus(CalendarEventStatus.getForGoogle(item.getStatus()));
                     list.add(itemResponse);
                 }
             }
@@ -182,15 +185,17 @@ public class CalendarServiceImpl implements CalendarService {
                 List<CalendarEventItem> items = getMicrosoftCalendarItems(timeZone, starDate, endDate, filteredMicrosoft, selected);
                 for (CalendarEventItem item : items) {
                     CalendarItemResponse itemResponse = new CalendarItemResponse();
-                    LocalDateTime startTime = ZonedDateTime.parse(item.getStart().getDateTime()).toLocalDateTime();
-                    LocalDateTime endTime = ZonedDateTime.parse(item.getEnd().getDateTime()).toLocalDateTime();
+                    LocalDateTime startTime = LocalDateTime.parse(item.getStart().getDateTime());
+                    LocalDateTime endTime = LocalDateTime.parse(item.getEnd().getDateTime());
                     itemResponse.setEndDate(endTime);
                     itemResponse.setStartDate(startTime);
                     itemResponse.setAccepted(!Boolean.TRUE.equals(item.getIsCancelled()));
-                    itemResponse.setDescription(item.getBody().getContent());
+                    itemResponse.setDescription(item.getBody() != null ? item.getBody().getContent() : "");
                     itemResponse.setTitle(item.getSubject());
                     itemResponse.setType(AppProviderType.MICROSOFT);
                     itemResponse.setEmail(selected.getSocialMail());
+                    itemResponse.setStatus(item.getResponseStatus() != null ?
+                            CalendarEventStatus.getForMicrosoft(item.getResponseStatus().getResponse()) : CalendarEventStatus.NONE);
                     list.add(itemResponse);
                 }
             }

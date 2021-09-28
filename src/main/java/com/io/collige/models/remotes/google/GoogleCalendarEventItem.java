@@ -13,7 +13,7 @@ public class GoogleCalendarEventItem {
 
     private String summary;
     private String description;
-    private String confirmed;
+    private String status;
     private CalendarEventDateType start;
     private CalendarEventDateType end;
 

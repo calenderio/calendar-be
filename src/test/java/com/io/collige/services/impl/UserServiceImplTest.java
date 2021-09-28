@@ -367,6 +367,7 @@ class UserServiceImplTest {
     void updateToken() {
         SocialUser socialUser = new SocialUser();
         socialUser.setSocialMediaMail("example");
+        socialUser.setEmail("example");
         when(userRepository.findByEmail("example")).thenReturn(Optional.of(new User()));
         userService.updateToken(socialUser);
         verify(userRepository, times(1)).save(any());
@@ -379,6 +380,7 @@ class UserServiceImplTest {
         linkedCalendar.setId(1L);
         socialUser.setSocialMediaMail("example");
         socialUser.setRefreshToken("123");
+        socialUser.setEmail("example");
         when(userRepository.findByEmail("example")).thenReturn(Optional.of(new User()));
         when(calendarRepository.findBySocialMailAndType(any(), any())).thenReturn(Optional.of(linkedCalendar));
         userService.updateToken(socialUser);

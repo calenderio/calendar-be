@@ -6,6 +6,7 @@
  **/
 package com.io.collige.core.security.handler;
 
+import com.io.collige.core.exception.CalendarAppException;
 import com.io.collige.core.exception.UnknownException;
 import com.io.collige.core.security.encrypt.TokenEncryptor;
 import com.io.collige.core.security.jwt.JWTService;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -111,7 +113,7 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
             if (AppProviderType.GOOGLE.equals(type)) {
                 googleService.revokeToken(Objects.requireNonNull(oauth2User.getRefreshToken()).getTokenValue());
             }
-            throw new UnknownException(StringUtils.EMPTY);
+            throw new CalendarAppException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e.getCause().getMessage());
         }
     }
 

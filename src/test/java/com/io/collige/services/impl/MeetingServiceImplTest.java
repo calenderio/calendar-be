@@ -195,6 +195,7 @@ class MeetingServiceImplTest {
         meetingRequest.setAnswers(setAnswers());
         Invitation invitation = new Invitation();
         invitation.setId(1L);
+        invitation.setUser(new User());
         Meeting meeting = new Meeting();
         meeting.setSequence(1);
         when(invitationRepository.findByInvitationIdAndScheduledIsTrue("1")).thenReturn(Optional.of(invitation));

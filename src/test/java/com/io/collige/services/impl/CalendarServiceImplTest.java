@@ -8,6 +8,7 @@ package com.io.collige.services.impl;
 
 import com.io.collige.core.exception.CalendarAppException;
 import com.io.collige.core.security.encrypt.TokenEncryptor;
+import com.io.collige.core.security.jwt.JWTService;
 import com.io.collige.entitites.Event;
 import com.io.collige.entitites.Invitation;
 import com.io.collige.entitites.LinkedCalendar;
@@ -24,8 +25,10 @@ import com.io.collige.models.remotes.google.GoogleCalendarEventItem;
 import com.io.collige.models.remotes.google.GoogleCalendarEventResponse;
 import com.io.collige.models.remotes.google.TokenRefreshResponse;
 import com.io.collige.models.remotes.microsoft.CalendarEventItem;
-import com.io.collige.models.remotes.microsoft.MicrosoftCalendarResponse;
 import com.io.collige.models.remotes.microsoft.DateType;
+import com.io.collige.models.remotes.microsoft.MicrosoftCalendarResponse;
+import com.io.collige.models.requests.calendar.UserCalendarItemsRequest;
+import com.io.collige.models.responses.calendar.CalendarResponse;
 import com.io.collige.repositories.InvitationRepository;
 import com.io.collige.repositories.LinkedCalendarRepository;
 import com.io.collige.repositories.MeetingRepository;
@@ -73,6 +76,9 @@ class CalendarServiceImplTest {
 
     @Mock
     private LinkedCalendarRepository linkedCalendarRepository;
+
+    @Mock
+    private JWTService jwtService;
 
     @Mock
     private MeetingRepository meetingRepository;
@@ -160,6 +166,30 @@ class CalendarServiceImplTest {
         when(microsoftService.getNewAccessToken(anyString())).thenReturn(response);
         AvailableDatesDetails details = calendarService.getAvailableDates(LocalDate.now().plusMonths(1), "1L", "UTC");
         assertFalse(details.getAvailableDates().isEmpty());
+    }
+
+    @Test
+    void getAllCalendars() {
+        UserCalendarItemsRequest itemsRequest = new UserCalendarItemsRequest();
+        itemsRequest.setEndDate(LocalDateTime.now());
+        itemsRequest.setStarDate(LocalDateTime.now());
+        itemsRequest.setTimeZone("UTC");
+        TokenRefreshResponse response = new TokenRefreshResponse();
+        response.setAccessToken("12313");
+        response.setExpiresIn(Integer.MAX_VALUE);
+        User user = new User();
+        user.setId(1L);
+        user.setCalendars(createLinkedCalendar());
+        when(tokenEncryptor.getDecryptedString(anyString())).thenReturn("12313");
+        when(googleService.getNewAccessToken("12313")).thenReturn(response);
+        when(microsoftService.getCalendarEvents(any())).thenReturn(microsoftResponse());
+        when(googleService.getCalendarEvents(any())).thenReturn(googleResponse());
+        when(microsoftService.getNewAccessToken(anyString())).thenReturn(response);
+        when(meetingRepository.findUserMeetings(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(getMeeting());
+        when(jwtService.getLoggedUser()).thenReturn(user);
+        CalendarResponse details = calendarService.getAllCalendars(itemsRequest);
+        assertEquals(3, details.getItems().size());
+
     }
 
     private Scheduler generateSchedulerDays() {
