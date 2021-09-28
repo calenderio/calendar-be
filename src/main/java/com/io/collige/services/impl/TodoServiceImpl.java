@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class TodoServiceImpl implements TodoService {
         todo.setDescription(todoCreateRequest.getDescription());
         todo.setPriority(todoCreateRequest.getPriority());
         todo.setDone(false);
-        todo.setCreateDateTime(LocalDateTime.now());
+        todo.setCreateDate(LocalDateTime.now());
         todoRepository.save(todo);
 
         return todoMapper.mapToEntityModel(todo);
@@ -80,6 +81,7 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
+    @Transactional
     public void setDone(TodoUpdateRequest request) {
         User user = jwtService.getLoggedUser();
         long itemNumber = todoRepository.setDone(request.getId(), user.getId());
