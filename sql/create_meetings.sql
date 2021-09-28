@@ -13,18 +13,26 @@ create table meetings
     location      text         not null,
     invitation_id bigint       not null,
     event_id      bigint       not null,
+    user_id       bigint       not null,
     sequence      int          not null,
-    participants  text[]       not null,
+    participants  text[] not null,
     bcc           text[]
 
 );
 
-create index meetings_organizer_index
+create
+index meetings_organizer_index
     on meetings (organizer);
 
-create unique index meetings_invitation_id_uindex
+create
+index meetings_user_id_index
+    on meetings (user_id);
+
+create
+unique index meetings_invitation_id_uindex
     on meetings (invitation_id);
 
-create unique index meetings_uuid_uindex
+create
+unique index meetings_uuid_uindex
     on meetings (uuid);
 

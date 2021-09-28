@@ -7,7 +7,7 @@
 package com.io.collige.services.impl;
 
 import com.io.collige.models.remotes.google.TokenRefreshResponse;
-import com.io.collige.models.remotes.microsoft.CalendarResponse;
+import com.io.collige.models.remotes.microsoft.MicrosoftCalendarResponse;
 import com.io.collige.models.remotes.microsoft.MicrosoftCalendarEventsRequest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -75,7 +75,7 @@ class MicrosoftServiceImplTest {
         when(builder.header(anyString(), anyString())).thenReturn(builder);
         when(builder.GET()).thenReturn(builder);
         when(builder.build()).thenReturn(mock(HttpRequest.class));
-        CalendarResponse response = microsoftService.getCalendarEvents(request);
+        MicrosoftCalendarResponse response = microsoftService.getCalendarEvents(request);
         assertNull(response);
     }
 

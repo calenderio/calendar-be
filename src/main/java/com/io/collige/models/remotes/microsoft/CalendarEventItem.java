@@ -17,6 +17,7 @@ public class CalendarEventItem {
     private String id;
     private String subject;
     private Boolean isReminderOn = true;
+    private Boolean isCancelled;
     private Integer reminderMinutesBeforeStart = 10;
     private DateType start;
     private DateType end;

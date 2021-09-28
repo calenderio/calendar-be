@@ -11,7 +11,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class CalendarResponse {
+public class MicrosoftCalendarResponse {
 
     private List<CalendarEventItem> value;
 

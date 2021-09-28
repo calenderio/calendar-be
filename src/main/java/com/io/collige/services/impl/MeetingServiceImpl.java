@@ -220,6 +220,7 @@ public class MeetingServiceImpl implements MeetingService {
             meeting.setInvitation(invitation);
             meeting.setDescription(invitation.getDescription());
             meeting.setTitle(invitation.getTitle());
+            meeting.setUserId(invitation.getUser().getId());
             meetingRepository.save(meeting);
             mailService.sendScheduledInvitation(toInvitationMail);
         } catch (IOException e) {

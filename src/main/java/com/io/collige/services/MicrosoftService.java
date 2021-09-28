@@ -7,11 +7,11 @@
 package com.io.collige.services;
 
 import com.io.collige.models.remotes.google.TokenRefreshResponse;
-import com.io.collige.models.remotes.microsoft.CalendarResponse;
+import com.io.collige.models.remotes.microsoft.MicrosoftCalendarResponse;
 import com.io.collige.models.remotes.microsoft.MicrosoftCalendarEventsRequest;
 
 public interface MicrosoftService {
-    CalendarResponse getCalendarEvents(MicrosoftCalendarEventsRequest request);
+    MicrosoftCalendarResponse getCalendarEvents(MicrosoftCalendarEventsRequest request);
 
     TokenRefreshResponse getNewAccessToken(String refreshToken);
 }

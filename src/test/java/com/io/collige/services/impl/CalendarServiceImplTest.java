@@ -24,7 +24,7 @@ import com.io.collige.models.remotes.google.GoogleCalendarEventItem;
 import com.io.collige.models.remotes.google.GoogleCalendarEventResponse;
 import com.io.collige.models.remotes.google.TokenRefreshResponse;
 import com.io.collige.models.remotes.microsoft.CalendarEventItem;
-import com.io.collige.models.remotes.microsoft.CalendarResponse;
+import com.io.collige.models.remotes.microsoft.MicrosoftCalendarResponse;
 import com.io.collige.models.remotes.microsoft.DateType;
 import com.io.collige.repositories.InvitationRepository;
 import com.io.collige.repositories.LinkedCalendarRepository;
@@ -191,8 +191,8 @@ class CalendarServiceImplTest {
         return calendarSet;
     }
 
-    private CalendarResponse microsoftResponse() {
-        CalendarResponse response = new CalendarResponse();
+    private MicrosoftCalendarResponse microsoftResponse() {
+        MicrosoftCalendarResponse response = new MicrosoftCalendarResponse();
         List<CalendarEventItem> items = new ArrayList<>();
         CalendarEventItem item = new CalendarEventItem();
         item.setStart(new DateType(LocalDateTime.now().plusMonths(1).toString(), "UTC"));

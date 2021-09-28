@@ -14,6 +14,7 @@ public enum AppProviderType {
     MICROSOFT("microsoft", "preferred_username"),
     GOOGLE("google", GenericConstants.EMAIL),
     ZOOM("zoom", GenericConstants.EMAIL),
+    INTERNAL("internal", GenericConstants.EMAIL),
     APPLE("apple", GenericConstants.EMAIL);
 
     public final String value;

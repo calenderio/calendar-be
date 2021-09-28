@@ -15,7 +15,7 @@ import com.io.collige.core.exception.CalendarAppException;
 import com.io.collige.core.i18n.Translator;
 import com.io.collige.enums.AppProviderType;
 import com.io.collige.models.remotes.google.TokenRefreshResponse;
-import com.io.collige.models.remotes.microsoft.CalendarResponse;
+import com.io.collige.models.remotes.microsoft.MicrosoftCalendarResponse;
 import com.io.collige.models.remotes.microsoft.MicrosoftCalendarEventsRequest;
 import com.io.collige.services.MicrosoftService;
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +52,7 @@ public class MicrosoftServiceImpl implements MicrosoftService {
     private String redirectUri;
 
     @Override
-    public CalendarResponse getCalendarEvents(MicrosoftCalendarEventsRequest request) {
+    public MicrosoftCalendarResponse getCalendarEvents(MicrosoftCalendarEventsRequest request) {
         String timeZone = StringUtils.defaultIfBlank(request.getTimeZone(), "UTC");
         UriComponentsBuilder builder;
         if (request.getTimeMin() == null || request.getTimeMax() == null) {
@@ -81,7 +81,7 @@ public class MicrosoftServiceImpl implements MicrosoftService {
                 .build();
         try {
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            return new Gson().fromJson(response.body(), CalendarResponse.class);
+            return new Gson().fromJson(response.body(), MicrosoftCalendarResponse.class);
         } catch (Exception e) {
             Thread.currentThread().interrupt();
             throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.EXTERNAL_APP_MSG, AppProviderType.GOOGLE.name()),
