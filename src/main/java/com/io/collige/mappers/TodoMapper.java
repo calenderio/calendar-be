@@ -1,14 +1,12 @@
-package com.io.fastmeet.mappers;
+package com.io.collige.mappers;
 
-import com.io.fastmeet.entitites.Todo;
-import com.io.fastmeet.models.requests.todo.TodoUpdateRequest;
-import com.io.fastmeet.models.responses.TodoCreateResponse;
+import com.io.collige.entitites.Todo;
+import com.io.collige.models.responses.todo.TodoCreateResponse;
 import org.mapstruct.Mapper;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface TodoMapper {
 
     TodoCreateResponse mapToEntityModel(Todo todo);
 
-    TodoUpdateRequest  entityToModel(Todo todo);
 }

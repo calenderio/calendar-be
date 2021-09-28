@@ -1,6 +1,6 @@
-package com.io.fastmeet.models.requests.todo;
+package com.io.collige.models.requests.todo;
 
-import com.io.fastmeet.enums.Priority;
+import com.io.collige.enums.Priority;
 import lombok.Data;
 
 @Data

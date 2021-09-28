@@ -1,4 +1,4 @@
-package com.io.fastmeet.enums;
+package com.io.collige.enums;
 
 public enum Priority {
 

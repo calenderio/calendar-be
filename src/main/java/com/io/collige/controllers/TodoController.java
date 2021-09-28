@@ -1,4 +1,4 @@
-package com.io.fastmeet.controllers;
+package com.io.collige.controllers;
 
 public interface TodoController {
 }

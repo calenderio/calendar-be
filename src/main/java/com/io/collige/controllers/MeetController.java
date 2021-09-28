@@ -10,7 +10,7 @@ import com.io.collige.core.exception.ErrorData;
 import com.io.collige.models.requests.calendar.ScheduleMeetingRequest;
 import com.io.collige.models.requests.meet.MeetInvitationRequest;
 import com.io.collige.models.requests.meet.MeetingDateRequest;
-import com.io.collige.models.responses.InvitationResponse;
+import com.io.collige.models.responses.meeting.InvitationResponse;
 import com.io.collige.models.responses.meeting.ScheduledMeetingResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

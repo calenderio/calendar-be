@@ -1,20 +1,22 @@
-package com.io.fastmeet.repositories;
+package com.io.collige.repositories;
 
-import com.io.fastmeet.entitites.Todo;
-import com.io.fastmeet.entitites.User;
+import com.io.collige.entitites.Todo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
-
 @Repository
-public interface TodoRepository extends PagingAndSortingRepository <Todo , Long>{
+public interface TodoRepository extends PagingAndSortingRepository<Todo, Long> {
 
-    Optional<Todo> findByUserIdAndId(User user, Long todoId);
+    Page<Todo> findTodosByUserId(Long userId, Pageable pageable);
 
-    Page<Todo> findTodosByUserId(User user, Pageable pageable);
+    long deleteByIdAndUserId(Long id, Long userId);
+
+    @Query("update Todo t set t.done = true where t.id = :id and t.userId = :userId")
+    @Modifying
+    int setDone(Long id, Long userId);
 
 }

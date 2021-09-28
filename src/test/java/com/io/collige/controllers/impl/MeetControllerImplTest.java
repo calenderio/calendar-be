@@ -14,7 +14,7 @@ import com.io.collige.models.internals.ScheduleMeetingDetails;
 import com.io.collige.models.requests.calendar.ScheduleMeetingRequest;
 import com.io.collige.models.requests.meet.MeetInvitationRequest;
 import com.io.collige.models.requests.meet.MeetingDateRequest;
-import com.io.collige.models.responses.InvitationResponse;
+import com.io.collige.models.responses.meeting.InvitationResponse;
 import com.io.collige.models.responses.meeting.ScheduledMeetingResponse;
 import com.io.collige.services.CalendarService;
 import com.io.collige.services.EventService;

@@ -1,14 +1,14 @@
-package com.io.fastmeet.entitites;
+package com.io.collige.entitites;
 
-import com.io.fastmeet.enums.Priority;
-import jdk.jfr.BooleanFlag;
+import com.io.collige.enums.Priority;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import net.fortuna.ical4j.model.DateTime;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
 
 
@@ -17,21 +17,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Todo extends BaseEntity{
+public class Todo extends BaseEntity {
 
-    @OneToOne
-    private User userId;
 
+    private Long userId;
     private String description;
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "priority")
     private Priority priority;
-
-    @BooleanFlag
-    private boolean isDone;
-
-    private LocalDateTime createDateTime;
+    private boolean done;
+    private LocalDateTime createDate;
 
 
 }

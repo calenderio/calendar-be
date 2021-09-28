@@ -1,9 +1,9 @@
-package com.io.fastmeet.services;
+package com.io.collige.services;
 
-import com.io.fastmeet.entitites.Todo;
-import com.io.fastmeet.models.requests.todo.TodoCreateRequest;
-import com.io.fastmeet.models.requests.todo.TodoUpdateRequest;
-import com.io.fastmeet.models.responses.TodoCreateResponse;
+import com.io.collige.entitites.Todo;
+import com.io.collige.models.requests.todo.TodoCreateRequest;
+import com.io.collige.models.requests.todo.TodoUpdateRequest;
+import com.io.collige.models.responses.todo.TodoCreateResponse;
 
 import java.util.List;
 
