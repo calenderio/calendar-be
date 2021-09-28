@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.io</groupId>
-    <artifactId>fastmeet</artifactId>
+    <artifactId>collige</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Calendar Java API</name>
-    <description>Calendar Project REST API Application Deployment</description>
+    <name>Collige Java API</name>
+    <description>Collige Project REST API Application Deployment</description>
     <properties>
         <java.version>16</java.version>
         <jacoco.version>0.8.7</jacoco.version>
@@ -21,8 +21,12 @@
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/**/target/site/**/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
         <sonar.language>java</sonar.language>
-        <sonar.exclusions>src/main/java/com/io/fastmeet/core/**,
-            src/main/java/com/io/fastmeet/models/**
+        <sonar.exclusions>src/main/java/com/io/collige/core/**,
+            src/main/java/com/io/collige/models/**,
+            src/main/java/com/io/collige/utils/**,
+            src/main/java/com/io/collige/mappers/**,
+            src/main/java/com/io/collige/entitites/**,
+            src/main/java/com/io/collige/CalendarApplication**
         </sonar.exclusions>
     </properties>
     <profiles>
@@ -175,6 +179,12 @@
             <artifactId>cloudinary-http44</artifactId>
             <version>1.29.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itext7-core</artifactId>
+            <version>7.1.16</version>
+            <type>pom</type>
+        </dependency>
     </dependencies>
 
     <build>
@@ -252,6 +262,7 @@
                                 <srcFile>sql/create_questions.sql</srcFile>
                                 <srcFile>sql/create_answers.sql</srcFile>
                                 <srcFile>sql/create_invitation.sql</srcFile>
+                                <srcFile>sql/create_meetings.sql</srcFile>
                             </srcFiles>
                         </configuration>
                     </execution>

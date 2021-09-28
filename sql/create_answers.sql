@@ -2,7 +2,7 @@ create table answers
 (
     id          bigserial not null
         constraint answers_pk primary key,
-    text        text      not null,
+    text        text[]    not null,
     event_id    bigint    not null,
     question_id bigint    not null,
     invite_id   bigint    not null
