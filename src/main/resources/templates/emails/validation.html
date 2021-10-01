@@ -160,7 +160,7 @@
 																									<img align='left'
 																									     alt='Logo'
 																									     padding='5px'
-																									     src='https://res.cloudinary.com/dkz1twyos/image/upload/v1632171646/fastmeet/profile/example2_zeleqg.png'
+																									     src='https://res.cloudinary.com/dkz1twyos/image/upload/v1632684083/collige/profile/example2_zeleqg_h6efyb.png'
 																									     width='200'/>
 																								</a>
 																							</td>
@@ -310,7 +310,7 @@
 																		    role='presentation'
 																		    style='background-color:#1c5c96;border:none;border-radius:5px;cursor:auto;padding:10px 25px;'
 																		    valign='middle'>
-																			<a href='#'
+																			<a th:href="@{${linkUtil.getValidationUrl()}(code=${code},email=${mail})}"
 																			   style='color:#7db0de;font-family:Oxygen, Helvetica neue, sans-serif;font-size:14px;font-weight:400;line-height:21px;margin:0;text-decoration:none;text-transform:none;'
 																			   target='_blank'
 																			   th:text="#{mail.pls.click}">

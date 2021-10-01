@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 public class Todo extends BaseEntity{
 
-    @ManyToOne
+    @OneToOne
     private User userId;
 
     private String description;

@@ -8,7 +8,8 @@ create table questions
     values     text,
     length_min int,
     length_max int,
-    event_id   bigint      not null
+    event_id   bigint      not null,
+    required   bool        not null
 );
 
 create index questions_event_id_index
