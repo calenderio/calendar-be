@@ -13,7 +13,7 @@ public interface TodoService {
 
     List<Todo> findTodosByUserId(Integer pageNo , Integer pageSize , String sortBy);
 
-    TodoCreateResponse saveTodo(TodoCreateRequest todoCreateRequest, String token);
+    TodoCreateResponse saveTodo(TodoCreateRequest todoCreateRequest);
 
     void deleteTodo(TodoUpdateRequest request);
 

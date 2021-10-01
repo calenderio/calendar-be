@@ -55,7 +55,7 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public TodoCreateResponse saveTodo(TodoCreateRequest todoCreateRequest, String token) {
+    public TodoCreateResponse saveTodo(TodoCreateRequest todoCreateRequest) {
         User user = jwtService.getLoggedUser();
 
         Todo todo = new Todo();
