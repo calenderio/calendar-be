@@ -45,7 +45,7 @@ public class TodoControllerImpl implements TodoController {
     public ResponseEntity<Void> setDoneTodo(Long todoId) {
         TodoUpdateRequest todoUpdateRequest = new TodoUpdateRequest();
         todoUpdateRequest.setId(todoId);
-        todoService.deleteTodo(todoUpdateRequest);
+        todoService.setDone(todoUpdateRequest);
         return ResponseEntity.noContent().build() ;
     }
 
