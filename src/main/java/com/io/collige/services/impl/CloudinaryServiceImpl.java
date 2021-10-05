@@ -94,7 +94,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             log.error("User file delete error {}", e.getMessage());
         }
         Map<String, Object> cloudinaryMap = new HashMap<>();
-        cloudinaryMap.put("folder", "collige/files/" + user.getId() + "/events/" + invitationId);
+        cloudinaryMap.put("folder", String.format(INV_LINK, user.getId(), invitationId));
         cloudinaryMap.put("overwrite", true);
         cloudinaryMap.put("use_filename", true);
         for (AttachmentModel model : attachments) {
