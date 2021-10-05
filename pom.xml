@@ -263,6 +263,7 @@
                                 <srcFile>sql/create_answers.sql</srcFile>
                                 <srcFile>sql/create_invitation.sql</srcFile>
                                 <srcFile>sql/create_meetings.sql</srcFile>
+                                <srcFile>sql/create_todo.sql</srcFile>
                             </srcFiles>
                         </configuration>
                     </execution>

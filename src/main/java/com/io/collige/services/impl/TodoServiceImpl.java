@@ -10,7 +10,7 @@ import com.io.collige.entitites.User;
 import com.io.collige.mappers.TodoMapper;
 import com.io.collige.models.requests.todo.TodoCreateRequest;
 import com.io.collige.models.requests.todo.TodoUpdateRequest;
-import com.io.collige.models.responses.todo.TodoCreateResponse;
+import com.io.collige.models.responses.todo.TodoDetails;
 import com.io.collige.repositories.TodoRepository;
 import com.io.collige.services.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +40,7 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public List<Todo> findTodosByUserId(Integer pageNo, Integer pageSize, String sortBy) {
         User user = jwtService.getLoggedUser();
-        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
 
         Page<Todo> pagedResult = todoRepository.findTodosByUserId(user.getId(), paging);
 
@@ -55,15 +54,13 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public TodoCreateResponse saveTodo(TodoCreateRequest todoCreateRequest) {
+    public TodoDetails saveTodo(TodoCreateRequest todoCreateRequest) {
         User user = jwtService.getLoggedUser();
 
         Todo todo = new Todo();
         todo.setUserId(user.getId());
         todo.setDescription(todoCreateRequest.getDescription());
         todo.setPriority(todoCreateRequest.getPriority());
-        todo.setDone(false);
-        todo.setCreateDate(LocalDateTime.now());
         todoRepository.save(todo);
 
         return todoMapper.mapToEntityModel(todo);

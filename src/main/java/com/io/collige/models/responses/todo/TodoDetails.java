@@ -7,8 +7,10 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class TodoCreateResponse {
+public class TodoDetails {
 
+    @Schema(description = "Id of todo", example = "example@example.com")
+    private Long id;
     @Schema(description = "To do description", example = "example@example.com")
     private String description;
     @Schema(description = "Priority of to do item", example = "LOW")
@@ -17,4 +19,5 @@ public class TodoCreateResponse {
     private LocalDateTime createDate;
     @Schema(description = "Is done", example = "true")
     private boolean done;
+
 }

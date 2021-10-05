@@ -11,5 +11,6 @@ drop table IF EXISTS
     answers,
     invitations,
     meetings,
+    todos,
     caches
 ;
