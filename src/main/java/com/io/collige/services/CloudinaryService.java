@@ -6,13 +6,17 @@
  **/
 package com.io.collige.services;
 
+import com.io.collige.entitites.User;
 import com.io.collige.models.internals.AttachmentModel;
 import com.io.collige.models.internals.FileDetails;
 
 import java.util.List;
+import java.util.Set;
 
 public interface CloudinaryService {
     String uploadPhoto(String photoUrl, String userMail);
 
-    List<FileDetails> uploadMeetingFiles(List<AttachmentModel> attachments, String invitationId);
+    Set<FileDetails> uploadMeetingFiles(List<AttachmentModel> attachments, String invitationId, User user);
+
+    void deleteInvitationFiles(String invitationId, User user);
 }

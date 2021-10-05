@@ -54,7 +54,7 @@ public interface TodoController {
             @ApiResponse(responseCode = "400", description = "Delete todo error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @DeleteMapping(value = "/todos/{todoId}")
-    ResponseEntity<Void> deleteTodo(@Parameter(name = "Todo Id ", example = "1") @PathVariable Long todoId);
+    ResponseEntity<Void> deleteTodo(@PathVariable Long todoId);
 
     @Operation(summary = "Set Done Todo")
     @ApiResponses(value = {
@@ -62,7 +62,7 @@ public interface TodoController {
             @ApiResponse(responseCode = "400", description = "Setting done todo error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @PatchMapping(value = "/todos/{todoId}")
-    ResponseEntity<Void> setDoneTodo(@Parameter(name = "Todo Id ", example = "1") @PathVariable Long todoId);
+    ResponseEntity<Void> setDoneTodo(@PathVariable Long todoId);
 
 }
 

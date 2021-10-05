@@ -7,28 +7,27 @@
 package com.io.collige.services.impl;
 
 import com.cloudinary.Cloudinary;
-import com.io.collige.core.security.jwt.JWTService;
+import com.cloudinary.utils.ObjectUtils;
 import com.io.collige.entitites.User;
 import com.io.collige.models.internals.AttachmentModel;
 import com.io.collige.models.internals.FileDetails;
 import com.io.collige.services.CloudinaryService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @Slf4j
 public class CloudinaryServiceImpl implements CloudinaryService {
 
-    @Autowired
-    private JWTService jwtService;
+    private static final String INV_LINK = "collige/files/%d/events/%s";
 
     @Value("${cloudinary.api_key}")
     private String apiKey;
@@ -87,9 +86,13 @@ public class CloudinaryServiceImpl implements CloudinaryService {
      * @return null url list
      */
     @Override
-    public List<FileDetails> uploadMeetingFiles(List<AttachmentModel> attachments, String invitationId) {
-        User user = jwtService.getLoggedUser();
-        List<FileDetails> fileDetails = new ArrayList<>();
+    public Set<FileDetails> uploadMeetingFiles(List<AttachmentModel> attachments, String invitationId, User user) {
+        Set<FileDetails> fileDetails = new HashSet<>();
+        try {
+            cloudinary.api().deleteResourcesByPrefix(String.format(INV_LINK, user.getId(), invitationId), ObjectUtils.emptyMap());
+        } catch (Exception e) {
+            log.error("User file delete error {}", e.getMessage());
+        }
         Map<String, Object> cloudinaryMap = new HashMap<>();
         cloudinaryMap.put("folder", "collige/files/" + user.getId() + "/events/" + invitationId);
         cloudinaryMap.put("overwrite", true);
@@ -108,5 +111,15 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             }
         }
         return fileDetails;
+    }
+
+    @Override
+    public void deleteInvitationFiles(String invitationId, User user) {
+        try {
+            cloudinary.api().deleteResourcesByPrefix(String.format(INV_LINK, user.getId(), invitationId), ObjectUtils.emptyMap());
+            cloudinary.api().deleteFolder(String.format(INV_LINK, user.getId(), invitationId), ObjectUtils.emptyMap());
+        } catch (Exception e) {
+            log.error("User file delete error {}", e.getMessage());
+        }
     }
 }
