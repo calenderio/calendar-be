@@ -28,6 +28,7 @@ public class MeetingRequest {
     private String organizerName;
     private String organizerMail;
     private Integer sequence;
+    private List<Long> alarms;
     private List<String> participants = new ArrayList<>();
     private List<AttachmentModel> attachmentModels = new ArrayList<>();
     private List<String> bcc = new ArrayList<>();

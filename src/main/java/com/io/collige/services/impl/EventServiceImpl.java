@@ -64,6 +64,7 @@ public class EventServiceImpl implements EventService {
         User user = jwtService.getLoggedUser();
         Event exOne = eventRepository.findByUserIdAndId(user.getId(), eventId)
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, "Not valid event id", "EVENT_ID"));
+        event.setUserId(user.getId());
         event.setId(exOne.getId());
         event.setAnswers(exOne.getAnswers());
         return createEventDetails(event);

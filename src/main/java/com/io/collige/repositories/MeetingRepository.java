@@ -18,6 +18,6 @@ public interface MeetingRepository extends CrudRepository<Meeting, String> {
     @Query("select m from Meeting  m where m.userId = :userId and :startDate <= m.startDate and :endDate >= m.endDate")
     List<Meeting> findUserMeetings(Long userId, LocalDateTime startDate, LocalDateTime endDate);
 
-    @Query("select m from Meeting  m where m.eventId = :eventId and :startDate <= m.startDate and :endDate >= m.endDate")
+    @Query("select m from Meeting  m where m.event.id = :eventId and :startDate <= m.startDate and :endDate >= m.endDate")
     List<Meeting> findUserEventMeetings(Long eventId, LocalDateTime startDate, LocalDateTime endDate);
 }

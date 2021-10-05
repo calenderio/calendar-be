@@ -10,6 +10,7 @@ import com.io.collige.entitites.Meeting;
 import com.io.collige.entitites.Question;
 import com.io.collige.enums.DurationType;
 import com.io.collige.mappers.MeetingMapper;
+import com.io.collige.models.internals.AlarmDuration;
 import com.io.collige.models.internals.AttachmentModel;
 import com.io.collige.models.internals.AvailableDatesDetails;
 import com.io.collige.models.internals.GenericMailRequest;
@@ -111,7 +112,7 @@ public class MeetingServiceImpl implements MeetingService {
         generateAttachment(questionAnswerModels, meetingRequest);
         invitation.setScheduled(true);
         Meeting meeting = meetingMapper.mapToMeeting(meetingRequest);
-        meeting.setEventId(invitation.getEvent().getId());
+        meeting.setEvent(invitation.getEvent());
         sendInvitationMailAndSaveMeeting(details.getModels(), meetingRequest, invitation, meeting);
     }
 
@@ -142,7 +143,7 @@ public class MeetingServiceImpl implements MeetingService {
         generateAttachment(questionAnswerModels, meetingRequest);
         Meeting newOne = meetingMapper.mapToMeeting(meetingRequest);
         newOne.setId(meeting.getId());
-        newOne.setEventId(invitation.getEvent().getId());
+        newOne.setEvent(invitation.getEvent());
         sendInvitationMailAndSaveMeeting(details.getModels(), meetingRequest, invitation, newOne);
     }
 
@@ -205,6 +206,16 @@ public class MeetingServiceImpl implements MeetingService {
                 .withZoneSameInstant(ZoneId.of(invitation.getEvent().getTimeZone())).toLocalDateTime().plusMinutes(duration));
         meetingRequest.setMethod(Method.REQUEST);
         meetingRequest.setTimeZone(invitation.getEvent().getTimeZone());
+        if (CollectionUtils.isNotEmpty(invitation.getEvent().getAlarms())) {
+            List<Long> alarms = new ArrayList<>();
+            for (AlarmDuration duration1 : invitation.getEvent().getAlarms()) {
+                DurationType drType = duration1.getDurationType();
+                int alarm = duration1.getDuration();
+                long min = DurationType.MIN.equals(drType) ? alarm : alarm * 60L;
+                alarms.add(duration1.isBefore() ? min : min * -1);
+            }
+            meetingRequest.setAlarms(alarms);
+        }
     }
 
     private void sendInvitationMailAndSaveMeeting(List<AttachmentModel> files, MeetingRequest request, Invitation invitation, Meeting meeting) {

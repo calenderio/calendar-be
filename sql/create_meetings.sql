@@ -15,24 +15,25 @@ create table meetings
     event_id      bigint       not null,
     user_id       bigint       not null,
     sequence      int          not null,
-    participants  text[] not null,
-    bcc           text[]
+    participants  text[]       not null,
+    bcc           text[],
+    file_links    jsonb
 
 );
 
 create
-index meetings_organizer_index
+    index meetings_organizer_index
     on meetings (organizer);
 
 create
-index meetings_user_id_index
+    index meetings_user_id_index
     on meetings (user_id);
 
 create
-unique index meetings_invitation_id_uindex
+    unique index meetings_invitation_id_uindex
     on meetings (invitation_id);
 
 create
-unique index meetings_uuid_uindex
+    unique index meetings_uuid_uindex
     on meetings (uuid);
 

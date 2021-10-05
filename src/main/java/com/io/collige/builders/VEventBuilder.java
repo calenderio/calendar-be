@@ -1,10 +1,12 @@
 package com.io.collige.builders;
 
+import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.ParameterList;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.TimeZone;
+import net.fortuna.ical4j.model.component.VAlarm;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.parameter.Cn;
@@ -13,11 +15,13 @@ import net.fortuna.ical4j.model.parameter.FmtType;
 import net.fortuna.ical4j.model.parameter.Role;
 import net.fortuna.ical4j.model.parameter.Value;
 import net.fortuna.ical4j.model.parameter.XParameter;
+import net.fortuna.ical4j.model.property.Action;
 import net.fortuna.ical4j.model.property.Attach;
 import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.Description;
 import net.fortuna.ical4j.model.property.Location;
 import net.fortuna.ical4j.model.property.Organizer;
+import net.fortuna.ical4j.model.property.Repeat;
 import net.fortuna.ical4j.model.property.Sequence;
 import net.fortuna.ical4j.model.property.TzId;
 import net.fortuna.ical4j.model.property.Uid;
@@ -43,6 +47,11 @@ public class VEventBuilder {
 
     private void addProperty(Property property) {
         vEvent.getProperties().add(property);
+    }
+
+
+    private void addComponent(Component property) {
+        vEvent.getComponents().add(property);
     }
 
     public VEvent build() {
@@ -73,6 +82,15 @@ public class VEventBuilder {
 
     public VEventBuilder setSequence(Integer sequence) {
         addProperty(new Sequence(sequence));
+        return this;
+    }
+
+    public VEventBuilder addAlarm(String description, long min) {
+        VAlarm alarm = new VAlarm(java.time.Duration.ofMinutes(min * -1L));
+        alarm.getProperties().add(Action.DISPLAY);
+        alarm.getProperties().add(new Description(description));
+        alarm.getProperties().add(new Repeat(1));
+        addComponent(alarm);
         return this;
     }
 

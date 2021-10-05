@@ -7,6 +7,7 @@
 package com.io.collige.models.requests.calendar;
 
 import com.io.collige.enums.EventLocation;
+import com.io.collige.models.internals.AlarmDuration;
 import com.io.collige.models.internals.CalendarDuration;
 import com.io.collige.models.internals.QuestionModel;
 import com.io.collige.models.internals.SchedulerDetails;
@@ -21,6 +22,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Event
@@ -61,6 +63,9 @@ public class EventTypeCreateRequest {
     @NotNull
     @Valid
     private CalendarDuration type;
+
+    @ArraySchema(schema = @Schema(description = "Meeting alarms", implementation = AlarmDuration.class))
+    private Set<@Valid AlarmDuration> alarms;
 
     @ArraySchema(schema = @Schema(description = "Additional questionModels for meeting request", implementation = QuestionModel.class), uniqueItems = true)
     @Valid
