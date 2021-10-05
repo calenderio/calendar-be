@@ -25,6 +25,7 @@ import com.io.collige.models.requests.meet.MeetingRequest;
 import com.io.collige.repositories.InvitationRepository;
 import com.io.collige.repositories.MeetingRepository;
 import com.io.collige.services.CalendarService;
+import com.io.collige.services.CloudinaryService;
 import com.io.collige.services.IcsService;
 import com.io.collige.services.MailService;
 import org.junit.jupiter.api.Test;
@@ -72,6 +73,9 @@ class MeetingServiceImplTest {
 
     @Mock
     private InvitationRepository invitationRepository;
+
+    @Mock
+    private CloudinaryService cloudinaryService;
 
     @InjectMocks
     private MeetingServiceImpl meetingService;
@@ -201,12 +205,11 @@ class MeetingServiceImplTest {
         when(invitationRepository.findByInvitationIdAndScheduledIsTrue("1")).thenReturn(Optional.of(invitation));
         when(meetingRepository.findByInvitationId(1L)).thenReturn(Optional.of(meeting));
         when(meetingMapper.mapEntityToRequest(any())).thenReturn(new MeetingRequest());
-        when(meetingMapper.mapToMeeting(any())).thenReturn(new Meeting());
         when(meetingMapper.request(any())).thenReturn(new GenericMailRequest());
         meetingService.deleteMeetingRequest(meetingDetails);
         verify(mailService, times(1)).sendScheduledInvitation(any());
         verify(meetingRepository, times(1)).save(any());
-        verify(meetingRepository, times(1)).delete(any());
+        verify(meetingRepository, times(1)).deleteMeeting(any());
     }
 
     private Map<LocalDate, Set<LocalTime>> generateDates() {
