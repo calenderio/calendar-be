@@ -7,7 +7,7 @@
 package com.io.collige.mappers;
 
 import com.io.collige.entitites.Invitation;
-import com.io.collige.models.responses.InvitationResponse;
+import com.io.collige.models.responses.meeting.InvitationResponse;
 import org.mapstruct.Mapper;
 
 import java.util.List;
