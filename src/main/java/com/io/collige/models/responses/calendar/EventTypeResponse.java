@@ -6,6 +6,7 @@
  **/
 package com.io.collige.models.responses.calendar;
 
+import com.io.collige.models.internals.AlarmDuration;
 import com.io.collige.models.internals.CalendarDuration;
 import com.io.collige.models.internals.QuestionModel;
 import com.io.collige.models.internals.QuestionModelResponse;
@@ -14,7 +15,9 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -46,6 +49,9 @@ public class EventTypeResponse {
 
     @Schema(description = "Meeting duration", implementation = CalendarDuration.class)
     private CalendarDuration type;
+
+    @ArraySchema(schema = @Schema(description = "Meeting alarms", implementation = AlarmDuration.class))
+    private List<@Valid AlarmDuration> alarms;
 
     @Schema(description = "Selected date details", implementation = SchedulerObject.class)
     private SchedulerObject schedule;

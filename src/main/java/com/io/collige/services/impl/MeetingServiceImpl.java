@@ -10,6 +10,7 @@ import com.io.collige.entitites.Meeting;
 import com.io.collige.entitites.Question;
 import com.io.collige.enums.DurationType;
 import com.io.collige.mappers.MeetingMapper;
+import com.io.collige.models.internals.AlarmDuration;
 import com.io.collige.models.internals.AttachmentModel;
 import com.io.collige.models.internals.AvailableDatesDetails;
 import com.io.collige.models.internals.GenericMailRequest;
@@ -21,6 +22,7 @@ import com.io.collige.models.requests.meet.MeetingRequest;
 import com.io.collige.repositories.InvitationRepository;
 import com.io.collige.repositories.MeetingRepository;
 import com.io.collige.services.CalendarService;
+import com.io.collige.services.CloudinaryService;
 import com.io.collige.services.IcsService;
 import com.io.collige.services.MailService;
 import com.io.collige.services.MeetingService;
@@ -70,6 +72,9 @@ public class MeetingServiceImpl implements MeetingService {
     private CalendarService calendarService;
 
     @Autowired
+    private CloudinaryService cloudinaryService;
+
+    @Autowired
     private MeetingMapper meetingMapper;
 
     @Autowired
@@ -77,6 +82,7 @@ public class MeetingServiceImpl implements MeetingService {
 
     @Autowired
     private InvitationRepository invitationRepository;
+
 
     @Override
     public void validateAndScheduleMeeting(ScheduleMeetingDetails details) {
@@ -88,13 +94,6 @@ public class MeetingServiceImpl implements MeetingService {
         List<QuestionAnswerModel> questionAnswerModels = generateQAModel(request, invitation);
 
         MeetingRequest meetingRequest = new MeetingRequest();
-        if (invitation.getEvent().isFileRequired()) {
-            if (CollectionUtils.isEmpty(details.getModels())) {
-                throw new CalendarAppException(HttpStatus.BAD_REQUEST, "File can not be null", "NULL_FILE");
-            } else {
-                meetingRequest.getAttachmentModels().addAll(details.getModels());
-            }
-        }
         meetingRequest.setTitle(invitation.getName() + " " + invitation.getTitle());
         meetingRequest.setLocation(invitation.getEvent().getLocation().name());
         meetingRequest.setUuid(UUID.randomUUID());
@@ -106,13 +105,14 @@ public class MeetingServiceImpl implements MeetingService {
         }
         meetingRequest.getParticipants().add(invitation.getUserEmail());
 
-        setDates(request, invitation, meetingRequest);
+        setDates(details, invitation, meetingRequest);
         meetingRequest.setSequence(1);
-        generateAttachment(questionAnswerModels, meetingRequest);
+        generateAttachmentForQuestion(questionAnswerModels, meetingRequest);
         invitation.setScheduled(true);
         Meeting meeting = meetingMapper.mapToMeeting(meetingRequest);
-        meeting.setEventId(invitation.getEvent().getId());
-        sendInvitationMailAndSaveMeeting(details.getModels(), meetingRequest, invitation, meeting);
+        meeting.setEvent(invitation.getEvent());
+        meeting.setFileLinks(cloudinaryService.uploadMeetingFiles(meetingRequest.getAttachmentModels(), details.getInvitationId(), invitation.getUser()));
+        sendInvitationMailAndSaveMeeting(meetingRequest, invitation, meeting);
     }
 
     @Override
@@ -126,24 +126,17 @@ public class MeetingServiceImpl implements MeetingService {
         }
         checkDates(details.getRequest(), availableDates, invitation.getEvent());
         List<QuestionAnswerModel> questionAnswerModels = generateQAModel(details.getRequest(), invitation);
-
         Meeting meeting = meetingRepository.findByInvitationId(invitation.getId()).orElseThrow(() ->
                 new CalendarAppException(HttpStatus.BAD_REQUEST, "Meeting couldn't find", "MEET_NOT_VALID"));
         MeetingRequest meetingRequest = meetingMapper.mapEntityToRequest(meeting);
-        if (invitation.getEvent().isFileRequired()) {
-            if (CollectionUtils.isEmpty(details.getModels())) {
-                throw new CalendarAppException(HttpStatus.BAD_REQUEST, "File can not be null", "NULL_FILE");
-            } else {
-                meetingRequest.getAttachmentModels().addAll(details.getModels());
-            }
-        }
         meetingRequest.setSequence(meeting.getSequence() + 1);
-        setDates(details.getRequest(), invitation, meetingRequest);
-        generateAttachment(questionAnswerModels, meetingRequest);
+        setDates(details, invitation, meetingRequest);
+        generateAttachmentForQuestion(questionAnswerModels, meetingRequest);
         Meeting newOne = meetingMapper.mapToMeeting(meetingRequest);
         newOne.setId(meeting.getId());
-        newOne.setEventId(invitation.getEvent().getId());
-        sendInvitationMailAndSaveMeeting(details.getModels(), meetingRequest, invitation, newOne);
+        newOne.setEvent(invitation.getEvent());
+        newOne.setFileLinks(cloudinaryService.uploadMeetingFiles(meetingRequest.getAttachmentModels(), details.getInvitationId(), invitation.getUser()));
+        sendInvitationMailAndSaveMeeting(meetingRequest, invitation, newOne);
     }
 
     @Override
@@ -157,16 +150,15 @@ public class MeetingServiceImpl implements MeetingService {
         MeetingRequest meetingRequest = meetingMapper.mapEntityToRequest(meeting);
         meetingRequest.setSequence(meeting.getSequence() + 1);
         meetingRequest.setMethod(Method.CANCEL);
-        Meeting newOne = meetingMapper.mapToMeeting(meetingRequest);
-        newOne.setId(meeting.getId());
         invitation.setScheduled(false);
         if (invitation.getAnswers() != null) {
             invitation.getAnswers().clear();
         }
         meetingRequest.setOrganizerName(invitation.getName());
         meetingRequest.setOrganizerMail(invitation.getUserEmail());
-        sendInvitationMailAndSaveMeeting(details.getModels(), meetingRequest, invitation, meeting);
-        meetingRepository.delete(meeting);
+        sendInvitationMailAndSaveMeeting(meetingRequest, invitation, meeting);
+        cloudinaryService.deleteInvitationFiles(details.getInvitationId(), invitation.getUser());
+        meetingRepository.deleteMeeting(meeting.getId());
     }
 
     private List<QuestionAnswerModel> generateQAModel(ScheduleMeetingRequest request, Invitation invitation) {
@@ -194,7 +186,8 @@ public class MeetingServiceImpl implements MeetingService {
         }
     }
 
-    private void setDates(ScheduleMeetingRequest request, Invitation invitation, MeetingRequest meetingRequest) {
+    private void setDates(ScheduleMeetingDetails details, Invitation invitation, MeetingRequest meetingRequest) {
+        ScheduleMeetingRequest request = details.getRequest();
         meetingRequest.setOrganizerName(invitation.getName());
         meetingRequest.setOrganizerMail(invitation.getUserEmail());
         meetingRequest.setStartDate(ZonedDateTime.of(request.getDate(), request.getTime(), ZoneId.of(request.getTimeZone()))
@@ -205,16 +198,33 @@ public class MeetingServiceImpl implements MeetingService {
                 .withZoneSameInstant(ZoneId.of(invitation.getEvent().getTimeZone())).toLocalDateTime().plusMinutes(duration));
         meetingRequest.setMethod(Method.REQUEST);
         meetingRequest.setTimeZone(invitation.getEvent().getTimeZone());
+        if (CollectionUtils.isNotEmpty(invitation.getEvent().getAlarms())) {
+            List<Long> alarms = new ArrayList<>();
+            for (AlarmDuration duration1 : invitation.getEvent().getAlarms()) {
+                DurationType drType = duration1.getDurationType();
+                int alarm = duration1.getDuration();
+                long min = DurationType.MIN.equals(drType) ? alarm : alarm * 60L;
+                alarms.add(duration1.isBefore() ? min : min * -1);
+            }
+            meetingRequest.setAlarms(alarms);
+        }
+        if (invitation.getEvent().isFileRequired()) {
+            if (CollectionUtils.isEmpty(details.getModels())) {
+                throw new CalendarAppException(HttpStatus.BAD_REQUEST, "File can not be null", "NULL_FILE");
+            } else {
+                meetingRequest.getAttachmentModels().addAll(details.getModels());
+            }
+        }
     }
 
-    private void sendInvitationMailAndSaveMeeting(List<AttachmentModel> files, MeetingRequest request, Invitation invitation, Meeting meeting) {
+    private void sendInvitationMailAndSaveMeeting(MeetingRequest request, Invitation invitation, Meeting meeting) {
         GenericMailRequest toInvitationMail = meetingMapper.request(request);
         try {
             toInvitationMail.setMeetingDetails(icsService.writeIcsFileToByteArray(request));
             if (invitation.getBccList() != null) {
                 toInvitationMail.setBcc(new HashSet<>(invitation.getBccList()));
             }
-            toInvitationMail.getAttachments().addAll(files);
+            toInvitationMail.getAttachments().addAll(request.getAttachmentModels());
             toInvitationMail.setLanguage(Translator.getLanguage());
             toInvitationMail.setName(invitation.getName());
             meeting.setInvitation(invitation);
@@ -278,7 +288,7 @@ public class MeetingServiceImpl implements MeetingService {
         }
     }
 
-    private void generateAttachment(List<QuestionAnswerModel> questionAnswerModels, MeetingRequest meetingRequest) {
+    private void generateAttachmentForQuestion(List<QuestionAnswerModel> questionAnswerModels, MeetingRequest meetingRequest) {
         try {
             if (!questionAnswerModels.isEmpty()) {
                 meetingRequest.getAttachmentModels().add(new AttachmentModel(generatePdfBytes(questionAnswerModels), "QA.pdf", "application/pdf"));

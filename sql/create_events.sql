@@ -8,12 +8,13 @@ create table events
     description      text        not null,
     location         text        not null,
     time_zone        varchar(35) not null,
-    file_required    bool        not null default false,
+    file_required    bool        not null,
     file_description text,
     start_date       date        not null,
     end_date         date        not null,
     duration         int         not null,
     duration_type    varchar(4)  not null,
+    alarms           jsonb       not null,
     scheduler_id     bigint      not null
 
 );

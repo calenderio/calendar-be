@@ -12,6 +12,7 @@ import net.fortuna.ical4j.model.property.Method;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Status;
 import net.fortuna.ical4j.model.property.Version;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 
@@ -45,6 +46,12 @@ public class ICalendarBuilder {
                     .addTimeZone(meeting.getTimeZone())
                     .addLocation(meeting.getLocation())
                     .setSequence(meeting.getSequence());
+
+            if (CollectionUtils.isNotEmpty(meeting.getAlarms())) {
+                for (Long alarm : meeting.getAlarms()) {
+                    vEventBuilder.addAlarm(meeting.getDescription(), alarm);
+                }
+            }
 
             if (!meeting.getAttachmentModels().isEmpty()) {
                 for (AttachmentModel model : meeting.getAttachmentModels()) {
