@@ -21,10 +21,8 @@
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/**/target/site/**/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
         <sonar.language>java</sonar.language>
-        <sonar.exclusions>src/main/java/com/io/collige/core/**,
+        <sonar.exclusions>
             src/main/java/com/io/collige/models/**,
-            src/main/java/com/io/collige/utils/**,
-            src/main/java/com/io/collige/mappers/**,
             src/main/java/com/io/collige/entitites/**,
             src/main/java/com/io/collige/CalendarApplication**
         </sonar.exclusions>
