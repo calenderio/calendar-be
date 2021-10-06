@@ -109,7 +109,7 @@ public class LoginHandler extends SimpleUrlAuthenticationSuccessHandler implemen
             }
             return createOrSaveUser(userName, oicdUser, oauth2User, type);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             if (AppProviderType.GOOGLE.equals(type)) {
                 googleService.revokeToken(Objects.requireNonNull(oauth2User.getRefreshToken()).getTokenValue());
             }

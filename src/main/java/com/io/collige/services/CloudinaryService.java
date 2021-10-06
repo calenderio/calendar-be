@@ -19,4 +19,8 @@ public interface CloudinaryService {
     Set<FileDetails> uploadMeetingFiles(List<AttachmentModel> attachments, String invitationId, User user);
 
     void deleteInvitationFiles(String invitationId, User user);
+
+    Set<FileDetails> uploadUserFiles(List<AttachmentModel> attachments, User user);
+
+    void deleteFile(String name, User user);
 }

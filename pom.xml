@@ -24,6 +24,7 @@
         <sonar.exclusions>
             src/main/java/com/io/collige/models/**,
             src/main/java/com/io/collige/entitites/**,
+            src/main/java/com/io/collige/core/**,
             src/main/java/com/io/collige/CalendarApplication**
         </sonar.exclusions>
     </properties>
@@ -262,6 +263,7 @@
                                 <srcFile>sql/create_invitation.sql</srcFile>
                                 <srcFile>sql/create_meetings.sql</srcFile>
                                 <srcFile>sql/create_todo.sql</srcFile>
+                                <srcFile>sql/create_files.sql</srcFile>
                             </srcFiles>
                         </configuration>
                     </execution>

@@ -12,5 +12,6 @@ drop table IF EXISTS
     invitations,
     meetings,
     todos,
+    file_links,
     caches
 ;

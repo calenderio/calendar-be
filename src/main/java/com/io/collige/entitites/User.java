@@ -42,9 +42,8 @@ public class User extends BaseEntity {
     @JsonManagedReference
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Licence licence;
-
 
     @JsonManagedReference
     @EqualsAndHashCode.Exclude

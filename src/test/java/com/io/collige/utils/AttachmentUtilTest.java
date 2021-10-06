@@ -18,6 +18,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -49,8 +50,9 @@ class AttachmentUtilTest {
         addTypesError();
         MockMultipartFile file = new MockMultipartFile("data", "filename.txt",
                 "application/octet-stream", "some xml".getBytes());
-        CalendarAppException exception = assertThrows(CalendarAppException.class, () ->
-                attachmentUtil.checkAttachments(Collections.singletonList(file)));
+        List<MultipartFile> models = new ArrayList<>();
+        models.add(file);
+        CalendarAppException exception = assertThrows(CalendarAppException.class, () -> attachmentUtil.checkAttachments(models));
         assertEquals(HttpStatus.NOT_ACCEPTABLE, exception.getStatus());
     }
 
@@ -59,8 +61,9 @@ class AttachmentUtilTest {
         addTypesError();
         MultipartFile file = mock(MultipartFile.class);
         when(file.getBytes()).thenThrow(new IOException());
-        CalendarAppException exception = assertThrows(CalendarAppException.class, () ->
-                attachmentUtil.checkAttachments(Collections.singletonList(file)));
+        List<MultipartFile> models = new ArrayList<>();
+        models.add(file);
+        CalendarAppException exception = assertThrows(CalendarAppException.class, () -> attachmentUtil.checkAttachments(models));
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatus());
     }
 
