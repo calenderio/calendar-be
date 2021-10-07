@@ -40,7 +40,7 @@ public class AttachmentUtil {
                 if (!allowedFileTypes.contains(type)) {
                     throw new CalendarAppException(HttpStatus.NOT_ACCEPTABLE, "Not allowed file type", "NOT_ALLOWED_FILE");
                 }
-                modelList.add(new AttachmentModel(fileBytes, file.getOriginalFilename(), type));
+                modelList.add(new AttachmentModel(fileBytes, file.getOriginalFilename(), type, file.getSize()));
             }
         }
         return modelList;

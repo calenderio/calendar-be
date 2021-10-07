@@ -6,7 +6,8 @@ create table file_links
     user_id   bigint       not null,
     name      varchar(255) not null,
     file_link text         not null,
-    file_type varchar(100)
+    file_size bigint       not null,
+    file_type varchar(100) not null
 
 );
 

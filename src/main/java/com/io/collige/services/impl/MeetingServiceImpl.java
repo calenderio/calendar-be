@@ -291,7 +291,7 @@ public class MeetingServiceImpl implements MeetingService {
     private void generateAttachmentForQuestion(List<QuestionAnswerModel> questionAnswerModels, MeetingRequest meetingRequest) {
         try {
             if (!questionAnswerModels.isEmpty()) {
-                meetingRequest.getAttachmentModels().add(new AttachmentModel(generatePdfBytes(questionAnswerModels), "QA.pdf", "application/pdf"));
+                meetingRequest.getAttachmentModels().add(new AttachmentModel(generatePdfBytes(questionAnswerModels), "QA.pdf", "application/pdf", 1L));
             }
         } catch (Exception e) {
             log.error("Attachment add error");

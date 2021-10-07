@@ -16,6 +16,7 @@ import com.io.collige.enums.LicenceTypes;
 import com.io.collige.mappers.FileMapper;
 import com.io.collige.models.internals.AttachmentModel;
 import com.io.collige.models.internals.FileDetails;
+import com.io.collige.models.responses.files.FileResponse;
 import com.io.collige.repositories.FileLinkRepository;
 import com.io.collige.services.CloudinaryService;
 import com.io.collige.services.FileService;
@@ -67,6 +68,12 @@ public class FileServiceImpl implements FileService {
         FileLink fileLink = fileLinkRepository.findByIdAndUserId(fileId, user.getId()).orElseThrow(() ->
                 new CalendarAppException(HttpStatus.BAD_REQUEST, "File couldn't find", "FILE_NOT_FOUND"));
         fileLinkRepository.delete(fileLink);
+    }
+
+    @Override
+    public List<FileResponse> getAllFiles() {
+        User user = jwtService.getLoggedUser();
+        return mapper.mapModelListToResponse(fileLinkRepository.findByUserId(user.getId()));
     }
 
     private void limitChecker(long totalSize, User user) {

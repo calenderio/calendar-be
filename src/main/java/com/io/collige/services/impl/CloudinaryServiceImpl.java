@@ -148,6 +148,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
                 details.setFileName(model.getName());
                 details.setFileType(model.getType());
                 details.setFileLink(response.get("url").toString());
+                details.setFileSize(model.getSize());
                 fileDetails.add(details);
             } catch (Exception e) {
                 log.error("User file upload error {} {}", e.getMessage(), model.getName());

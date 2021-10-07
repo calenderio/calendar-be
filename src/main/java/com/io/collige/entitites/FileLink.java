@@ -27,5 +27,7 @@ public class FileLink extends BaseEntity {
     private String link;
     @Column(name = "file_type")
     private String type;
+    @Column(name = "file_size")
+    private Long size;
 
 }

@@ -9,6 +9,7 @@ package com.io.collige.repositories;
 import com.io.collige.entitites.FileLink;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface FileLinkRepository extends CrudRepository<FileLink, Long> {
@@ -16,5 +17,7 @@ public interface FileLinkRepository extends CrudRepository<FileLink, Long> {
     Optional<FileLink> findByIdAndUserId(Long id, Long userId);
 
     long countByUserId(Long userId);
+
+    List<FileLink> findByUserId(Long userId);
 
 }

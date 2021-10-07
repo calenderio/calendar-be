@@ -14,5 +14,6 @@ public class FileDetails {
     public String fileLink;
     public String fileName;
     public String fileType;
+    public Long fileSize;
 
 }

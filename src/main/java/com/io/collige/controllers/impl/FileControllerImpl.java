@@ -8,6 +8,7 @@ package com.io.collige.controllers.impl;
 
 import com.io.collige.constants.RoleConstants;
 import com.io.collige.controllers.FileController;
+import com.io.collige.models.responses.files.FileResponse;
 import com.io.collige.services.FileService;
 import com.io.collige.utils.AttachmentUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,4 +42,10 @@ public class FileControllerImpl implements FileController {
         fileService.deleteFile(fileId);
         return ResponseEntity.noContent().build();
     }
+
+    @Override
+    public ResponseEntity<List<FileResponse>> getAllFiles() {
+        return ResponseEntity.ok(fileService.getAllFiles());
+    }
+
 }

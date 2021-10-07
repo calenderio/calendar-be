@@ -7,6 +7,7 @@
 package com.io.collige.services;
 
 import com.io.collige.models.internals.AttachmentModel;
+import com.io.collige.models.responses.files.FileResponse;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface FileService {
     void uploadFiles(List<AttachmentModel> attachments);
 
     void deleteFile(Long fileId);
+
+    List<FileResponse> getAllFiles();
 }
