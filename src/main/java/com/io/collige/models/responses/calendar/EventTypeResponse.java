@@ -11,6 +11,7 @@ import com.io.collige.models.internals.CalendarDuration;
 import com.io.collige.models.internals.QuestionModel;
 import com.io.collige.models.internals.QuestionModelResponse;
 import com.io.collige.models.internals.SchedulerObject;
+import com.io.collige.models.responses.files.FileResponse;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -59,10 +60,7 @@ public class EventTypeResponse {
     @ArraySchema(schema = @Schema(description = "Additional questionModels for meeting request", implementation = QuestionModel.class), uniqueItems = true)
     private Set<QuestionModelResponse> questions;
 
-    @Schema(description = "Is mail required for meeting", example = "true")
-    private Boolean mailRequired;
-
-    @Schema(description = "Is name required for meeting", example = "true")
-    private Boolean nameRequired;
+    @ArraySchema(schema = @Schema(description = "User File List", implementation = FileResponse.class))
+    private List<FileResponse> fileList;
 
 }

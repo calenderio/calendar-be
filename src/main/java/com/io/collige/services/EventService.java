@@ -24,6 +24,8 @@ public interface EventService {
 
     List<Event> getEvents();
 
+    Event getEvent(Long eventId);
+
     void sendEventInvitation(MeetInvitationDetailRequest request) throws IOException;
 
     void resendInvitation(Long invitationId);

@@ -18,7 +18,7 @@ import com.io.collige.mappers.FileMapper;
 import com.io.collige.models.internals.AttachmentModel;
 import com.io.collige.models.internals.FileDetails;
 import com.io.collige.repositories.FileLinkRepository;
-import com.io.collige.services.CloudinaryService;
+import com.io.collige.services.CloudService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -48,7 +48,7 @@ class FileServiceImplTest {
     private CacheService cacheService;
 
     @Mock
-    private CloudinaryService cloudinaryService;
+    private CloudService cloudService;
 
     @Mock
     private FileMapper mapper;
@@ -68,12 +68,12 @@ class FileServiceImplTest {
         user.setLicence(licence);
         when(cacheService.getIntegerCacheValue(CacheConstants.ATTACHMENT_LIMIT_IND)).thenReturn(10);
         when(fileLinkRepository.countByUserId(1L)).thenReturn(1L);
-        when(cloudinaryService.uploadUserFiles(any(), any())).thenReturn(Collections.singleton(new FileDetails()));
+        when(cloudService.uploadUserFiles(any(), any())).thenReturn(Collections.singleton(new FileDetails()));
         when(jwtService.getLoggedUser()).thenReturn(user);
         when(mapper.mapModelToEntity(any(), any())).thenReturn(new FileLink());
         fileService.uploadFiles(new ArrayList<>());
         verify(fileLinkRepository, times(1)).saveAll(any());
-        verify(cloudinaryService, times(1)).uploadUserFiles(any(), any());
+        verify(cloudService, times(1)).uploadUserFiles(any(), any());
     }
 
     @Test

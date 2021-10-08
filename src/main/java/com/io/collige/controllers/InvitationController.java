@@ -16,13 +16,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,8 +37,8 @@ public interface InvitationController {
             @ApiResponse(responseCode = "403", description = "Not allowed for given parameters", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})
     })
-    @PostMapping(path = "/meets/invite", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    ResponseEntity<Void> sendMeetingInvite(@RequestPart MeetInvitationRequest request) throws IOException;
+    @PostMapping(path = "/meets/invite")
+    ResponseEntity<Void> sendMeetingInvite(@RequestBody MeetInvitationRequest request) throws IOException;
 
     @Operation(summary = "ReSend meeting request")
     @ApiResponses(value = {
@@ -49,7 +48,7 @@ public interface InvitationController {
             @ApiResponse(responseCode = "403", description = "Not allowed for given parameters", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})
     })
-    @PostMapping(path = "/meets/{meetingId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(path = "/meets/{meetingId}")
     ResponseEntity<Void> resendMeeting(@PathVariable Long meetingId);
 
     @Operation(summary = "Get meetings for event")

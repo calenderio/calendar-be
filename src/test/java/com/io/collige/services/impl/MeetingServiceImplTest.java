@@ -25,7 +25,7 @@ import com.io.collige.models.requests.meet.MeetingRequest;
 import com.io.collige.repositories.InvitationRepository;
 import com.io.collige.repositories.MeetingRepository;
 import com.io.collige.services.CalendarService;
-import com.io.collige.services.CloudinaryService;
+import com.io.collige.services.CloudService;
 import com.io.collige.services.IcsService;
 import com.io.collige.services.MailService;
 import org.junit.jupiter.api.Test;
@@ -75,7 +75,7 @@ class MeetingServiceImplTest {
     private InvitationRepository invitationRepository;
 
     @Mock
-    private CloudinaryService cloudinaryService;
+    private CloudService cloudService;
 
     @InjectMocks
     private MeetingServiceImpl meetingService;

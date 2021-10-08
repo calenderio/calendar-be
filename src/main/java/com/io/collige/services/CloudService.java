@@ -13,7 +13,7 @@ import com.io.collige.models.internals.FileDetails;
 import java.util.List;
 import java.util.Set;
 
-public interface CloudinaryService {
+public interface CloudService {
     String uploadPhoto(String photoUrl, String userMail);
 
     Set<FileDetails> uploadMeetingFiles(List<AttachmentModel> attachments, String invitationId, User user);

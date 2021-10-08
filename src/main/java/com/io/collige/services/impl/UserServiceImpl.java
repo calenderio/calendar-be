@@ -31,7 +31,7 @@ import com.io.collige.models.responses.user.UserResponse;
 import com.io.collige.repositories.LinkedCalendarRepository;
 import com.io.collige.repositories.UserRepository;
 import com.io.collige.repositories.ValidationRepository;
-import com.io.collige.services.CloudinaryService;
+import com.io.collige.services.CloudService;
 import com.io.collige.services.LicenceService;
 import com.io.collige.services.MailService;
 import com.io.collige.services.UserService;
@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
     private LicenceService licenceService;
 
     @Autowired
-    private CloudinaryService cloudinaryService;
+    private CloudService cloudService;
 
     @Autowired
     private ValidationService validationService;
@@ -128,7 +128,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encodePassword(request.getPassword(), request.getEmail().toLowerCase()));
         user.setVerified(true);
         user.setLicence(licenceService.generateFreeTrial());
-        user.setPicture(cloudinaryService.uploadPhoto(request.getPictureUrl(), request.getEmail().toLowerCase()));
+        user.setPicture(cloudService.uploadPhoto(request.getPictureUrl(), request.getEmail().toLowerCase()));
         user.setTimeZone(TimeZone.getDefault().getID());
         addCalendar(request, user);
         userRepository.save(user);

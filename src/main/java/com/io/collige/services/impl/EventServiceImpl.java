@@ -25,7 +25,7 @@ import com.io.collige.models.internals.UpdateEventRequest;
 import com.io.collige.repositories.EventFileLinkRepository;
 import com.io.collige.repositories.EventRepository;
 import com.io.collige.repositories.FileLinkRepository;
-import com.io.collige.services.CloudinaryService;
+import com.io.collige.services.CloudService;
 import com.io.collige.services.EventService;
 import com.io.collige.services.InvitationService;
 import com.io.collige.services.MailService;
@@ -45,6 +45,8 @@ import java.util.List;
 @Service
 public class EventServiceImpl implements EventService {
 
+    private static final String NOT_VALID_EVENT_ID = "Not valid event id";
+    private static final String EVENT_ID = "EVENT_ID";
     @Autowired
     private EventRepository eventRepository;
 
@@ -58,7 +60,7 @@ public class EventServiceImpl implements EventService {
     private SchedulerService schedulerService;
 
     @Autowired
-    private CloudinaryService cloudinaryService;
+    private CloudService cloudService;
 
     @Autowired
     private MailRequestMapper mapper;
@@ -102,7 +104,7 @@ public class EventServiceImpl implements EventService {
     public Event updateEvent(UpdateEventRequest request) {
         User user = jwtService.getLoggedUser();
         Event exOne = eventRepository.findByUserIdAndId(user.getId(), request.getEventId())
-                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, "Not valid event id", "EVENT_ID"));
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, NOT_VALID_EVENT_ID, EVENT_ID));
         Event event = request.getEvent();
         event.setUserId(user.getId());
         event.setId(exOne.getId());
@@ -115,7 +117,7 @@ public class EventServiceImpl implements EventService {
     public void deleteEvent(Long eventId) {
         User user = jwtService.getLoggedUser();
         Event exOne = eventRepository.findByUserIdAndId(user.getId(), eventId)
-                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, "Not valid event id", "EVENT_ID"));
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, NOT_VALID_EVENT_ID, EVENT_ID));
         invitationService.deleteInvitationByEvent(eventId);
         schedulerService.deleteEventScheduler(exOne.getScheduler().getId());
         eventRepository.delete(exOne);
@@ -125,6 +127,13 @@ public class EventServiceImpl implements EventService {
     public List<Event> getEvents() {
         User user = jwtService.getLoggedUser();
         return eventRepository.findByUserId(user.getId());
+    }
+
+    @Override
+    public Event getEvent(Long eventId) {
+        User user = jwtService.getLoggedUser();
+        return eventRepository.findByUserIdAndId(user.getId(), eventId)
+                .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, NOT_VALID_EVENT_ID, EVENT_ID));
     }
 
     @Override
@@ -143,6 +152,7 @@ public class EventServiceImpl implements EventService {
                 attachmentModel.setSize(fileLink.getSize());
                 attachmentModel.setType(fileLink.getType());
                 attachmentModel.setData(IOUtils.toByteArray(new URL(fileLink.getLink())));
+                attachmentModels.add(attachmentModel);
             }
             genericMailRequest.setAttachments(attachmentModels);
         }

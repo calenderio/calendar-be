@@ -35,13 +35,13 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class CloudinaryServiceImplTest {
+class CloudServiceImplTest {
 
     @Mock
     private Cloudinary cloudinary;
 
     @InjectMocks
-    private CloudinaryServiceImpl cloudinaryService;
+    private CloudServiceImpl cloudinaryService;
 
     @Test
     void uploadPhoto() throws IOException {

@@ -11,7 +11,7 @@ import com.cloudinary.utils.ObjectUtils;
 import com.io.collige.entitites.User;
 import com.io.collige.models.internals.AttachmentModel;
 import com.io.collige.models.internals.FileDetails;
-import com.io.collige.services.CloudinaryService;
+import com.io.collige.services.CloudService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ import java.util.Set;
 
 @Service
 @Slf4j
-public class CloudinaryServiceImpl implements CloudinaryService {
+public class CloudServiceImpl implements CloudService {
 
     private static final String INV_LINK = "collige/files/%d/events/%s";
     private static final String UPLOAD_LINK = "collige/files/%d/uploads";

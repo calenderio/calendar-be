@@ -18,7 +18,7 @@ import com.io.collige.models.internals.AttachmentModel;
 import com.io.collige.models.internals.FileDetails;
 import com.io.collige.models.responses.files.FileResponse;
 import com.io.collige.repositories.FileLinkRepository;
-import com.io.collige.services.CloudinaryService;
+import com.io.collige.services.CloudService;
 import com.io.collige.services.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,7 +41,7 @@ public class FileServiceImpl implements FileService {
     private CacheService cacheService;
 
     @Autowired
-    private CloudinaryService cloudinaryService;
+    private CloudService cloudService;
 
     @Autowired
     private FileMapper mapper;
@@ -54,7 +54,7 @@ public class FileServiceImpl implements FileService {
         User user = jwtService.getLoggedUser();
         long size = fileLinkRepository.countByUserId(user.getId());
         limitChecker(size + attachments.size(), user);
-        Set<FileDetails> fileDetails = cloudinaryService.uploadUserFiles(attachments, user);
+        Set<FileDetails> fileDetails = cloudService.uploadUserFiles(attachments, user);
         Set<FileLink> fileLinks = new HashSet<>();
         for (FileDetails file : fileDetails) {
             fileLinks.add(mapper.mapModelToEntity(file, user.getId()));

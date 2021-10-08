@@ -36,7 +36,7 @@ public interface EventController {
                             schema = @Schema(implementation = EventTypeResponse.class))}),
             @ApiResponse(responseCode = "400", description = "Creating event error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
-    @PostMapping(value = "/users/events")
+    @PostMapping(value = "/events")
     ResponseEntity<EventTypeResponse> createEventType(@RequestBody EventTypeCreateRequest request);
 
     @Operation(summary = "Update Event")
@@ -46,7 +46,7 @@ public interface EventController {
                             schema = @Schema(implementation = EventTypeResponse.class))}),
             @ApiResponse(responseCode = "400", description = "Updating event error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
-    @PutMapping(value = "/users/events/{eventId}")
+    @PutMapping(value = "/events/{eventId}")
     ResponseEntity<EventTypeResponse> updateEvent(@RequestBody EventTypeCreateRequest request, @PathVariable Long eventId);
 
     @Operation(summary = "Delete Event")
@@ -54,7 +54,7 @@ public interface EventController {
             @ApiResponse(responseCode = "204", description = "Deleted event"),
             @ApiResponse(responseCode = "400", description = "Deleting event error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
-    @DeleteMapping(value = "/users/events/{eventId}")
+    @DeleteMapping(value = "/events/{eventId}")
     ResponseEntity<Void> deleteEvent(@PathVariable Long eventId);
 
     @Operation(summary = "Get event Types")
@@ -64,7 +64,17 @@ public interface EventController {
                             array = @ArraySchema(schema = @Schema(implementation = EventTypeResponse.class)))}),
             @ApiResponse(responseCode = "400", description = "Getting event types", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
-    @GetMapping(value = "/users/events")
+    @GetMapping(value = "/events")
     ResponseEntity<List<EventTypeResponse>> getEventTypes();
+
+    @Operation(summary = "Get event details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returns event details",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = EventTypeResponse.class))}),
+            @ApiResponse(responseCode = "400", description = "Getting event detail error", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorData.class))})})
+    @GetMapping(value = "/events/{eventId}")
+    ResponseEntity<EventTypeResponse> getEventDetail(@PathVariable Long eventId);
 
 }

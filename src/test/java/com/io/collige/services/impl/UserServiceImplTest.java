@@ -30,7 +30,7 @@ import com.io.collige.models.responses.user.UserResponse;
 import com.io.collige.repositories.LinkedCalendarRepository;
 import com.io.collige.repositories.UserRepository;
 import com.io.collige.repositories.ValidationRepository;
-import com.io.collige.services.CloudinaryService;
+import com.io.collige.services.CloudService;
 import com.io.collige.services.LicenceService;
 import com.io.collige.services.MailService;
 import com.io.collige.services.ValidationService;
@@ -78,7 +78,7 @@ class UserServiceImplTest {
     private MailService mailService;
 
     @Mock
-    private CloudinaryService cloudinaryService;
+    private CloudService cloudService;
 
     @Mock
     private ValidationRepository validationRepository;

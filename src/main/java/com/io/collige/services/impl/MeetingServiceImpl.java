@@ -22,7 +22,7 @@ import com.io.collige.models.requests.meet.MeetingRequest;
 import com.io.collige.repositories.InvitationRepository;
 import com.io.collige.repositories.MeetingRepository;
 import com.io.collige.services.CalendarService;
-import com.io.collige.services.CloudinaryService;
+import com.io.collige.services.CloudService;
 import com.io.collige.services.IcsService;
 import com.io.collige.services.MailService;
 import com.io.collige.services.MeetingService;
@@ -72,7 +72,7 @@ public class MeetingServiceImpl implements MeetingService {
     private CalendarService calendarService;
 
     @Autowired
-    private CloudinaryService cloudinaryService;
+    private CloudService cloudService;
 
     @Autowired
     private MeetingMapper meetingMapper;
@@ -111,7 +111,7 @@ public class MeetingServiceImpl implements MeetingService {
         invitation.setScheduled(true);
         Meeting meeting = meetingMapper.mapToMeeting(meetingRequest);
         meeting.setEvent(invitation.getEvent());
-        meeting.setFileLinks(cloudinaryService.uploadMeetingFiles(meetingRequest.getAttachmentModels(), details.getInvitationId(), invitation.getUser()));
+        meeting.setFileLinks(cloudService.uploadMeetingFiles(meetingRequest.getAttachmentModels(), details.getInvitationId(), invitation.getUser()));
         sendInvitationMailAndSaveMeeting(meetingRequest, invitation, meeting);
     }
 
@@ -135,7 +135,7 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting newOne = meetingMapper.mapToMeeting(meetingRequest);
         newOne.setId(meeting.getId());
         newOne.setEvent(invitation.getEvent());
-        newOne.setFileLinks(cloudinaryService.uploadMeetingFiles(meetingRequest.getAttachmentModels(), details.getInvitationId(), invitation.getUser()));
+        newOne.setFileLinks(cloudService.uploadMeetingFiles(meetingRequest.getAttachmentModels(), details.getInvitationId(), invitation.getUser()));
         sendInvitationMailAndSaveMeeting(meetingRequest, invitation, newOne);
     }
 
@@ -157,7 +157,7 @@ public class MeetingServiceImpl implements MeetingService {
         meetingRequest.setOrganizerName(invitation.getName());
         meetingRequest.setOrganizerMail(invitation.getUserEmail());
         sendInvitationMailAndSaveMeeting(meetingRequest, invitation, meeting);
-        cloudinaryService.deleteInvitationFiles(details.getInvitationId(), invitation.getUser());
+        cloudService.deleteInvitationFiles(details.getInvitationId(), invitation.getUser());
         meetingRepository.deleteMeeting(meeting.getId());
     }
 

@@ -15,6 +15,7 @@ import com.io.collige.models.internals.UpdateEventRequest;
 import com.io.collige.models.requests.calendar.EventTypeCreateRequest;
 import com.io.collige.models.responses.calendar.EventTypeResponse;
 import com.io.collige.services.EventService;
+import com.io.collige.services.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +35,9 @@ public class EventControllerImpl implements EventController {
 
     @Autowired
     private SchedulerMapper schedulerMapper;
+
+    @Autowired
+    private FileService fileService;
 
     @Override
     public ResponseEntity<EventTypeResponse> createEventType(@Valid EventTypeCreateRequest request) {
@@ -71,6 +75,15 @@ public class EventControllerImpl implements EventController {
             responseList.add(response);
         }
         return ResponseEntity.ok(responseList);
+    }
+
+    @Override
+    public ResponseEntity<EventTypeResponse> getEventDetail(Long eventId) {
+        Event event = eventService.getEvent(eventId);
+        EventTypeResponse response = eventMapper.mapEntityToModel(event);
+        response.setSchedule(schedulerMapper.mapEntityToModel(event.getScheduler()));
+        response.setFileList(fileService.getEventFiles(eventId));
+        return ResponseEntity.ok(response);
     }
 
 }

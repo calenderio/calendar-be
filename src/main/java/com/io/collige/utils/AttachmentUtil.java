@@ -8,6 +8,7 @@ package com.io.collige.utils;
 
 import com.io.collige.core.exception.CalendarAppException;
 import com.io.collige.models.internals.AttachmentModel;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -40,7 +41,7 @@ public class AttachmentUtil {
                 if (!allowedFileTypes.contains(type)) {
                     throw new CalendarAppException(HttpStatus.NOT_ACCEPTABLE, "Not allowed file type", "NOT_ALLOWED_FILE");
                 }
-                modelList.add(new AttachmentModel(fileBytes, file.getOriginalFilename(), type, file.getSize()));
+                modelList.add(new AttachmentModel(fileBytes, FilenameUtils.removeExtension(file.getOriginalFilename()), type, file.getSize()));
             }
         }
         return modelList;
