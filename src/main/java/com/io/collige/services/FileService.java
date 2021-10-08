@@ -7,6 +7,7 @@
 package com.io.collige.services;
 
 import com.io.collige.models.internals.AttachmentModel;
+import com.io.collige.models.responses.calendar.EventTypeResponse;
 import com.io.collige.models.responses.files.FileResponse;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface FileService {
     List<FileResponse> getAllFiles();
 
     List<FileResponse> getEventFiles(Long eventId);
+
+    List<EventTypeResponse> getFileEvents(Long fileID);
 }

@@ -12,6 +12,8 @@ import com.io.collige.models.responses.calendar.EventTypeResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface EventMapper {
 
@@ -27,5 +29,7 @@ public interface EventMapper {
     @Mapping(target = "schedule", ignore = true)
     @Mapping(target = "timezone", source = "timeZone")
     EventTypeResponse mapEntityToModel(Event request);
+
+    List<EventTypeResponse> mapListToModel(List<Event> request);
 
 }

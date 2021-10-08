@@ -22,10 +22,10 @@ import com.io.collige.models.internals.CreateEventRequest;
 import com.io.collige.models.internals.GenericMailRequest;
 import com.io.collige.models.internals.MeetInvitationDetailRequest;
 import com.io.collige.models.internals.UpdateEventRequest;
+import com.io.collige.models.requests.meet.InvitationResendRequest;
 import com.io.collige.repositories.EventFileLinkRepository;
 import com.io.collige.repositories.EventRepository;
 import com.io.collige.repositories.FileLinkRepository;
-import com.io.collige.services.CloudService;
 import com.io.collige.services.EventService;
 import com.io.collige.services.InvitationService;
 import com.io.collige.services.MailService;
@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class EventServiceImpl implements EventService {
@@ -58,9 +59,6 @@ public class EventServiceImpl implements EventService {
 
     @Autowired
     private SchedulerService schedulerService;
-
-    @Autowired
-    private CloudService cloudService;
 
     @Autowired
     private MailRequestMapper mapper;
@@ -140,9 +138,33 @@ public class EventServiceImpl implements EventService {
     public void sendEventInvitation(MeetInvitationDetailRequest request) throws IOException {
         User user = jwtService.getLoggedUser();
         GenericMailRequest genericMailRequest = mapper.meetingRequestToMail(request);
-        if (CollectionUtils.isNotEmpty(request.getIdList())) {
-            List<FileLink> fileLinks = fileLinkRepository.findByUserIdAndIdIn(user.getId(), new ArrayList<>(request.getIdList()));
-            if (fileLinks.size() != request.getIdList().size()) {
+        createAttachments(user, genericMailRequest, request.getIdList());
+        String id = invitationService.saveInvitation(request);
+        genericMailRequest.setInviter(user.getName());
+        genericMailRequest.setCode(id);
+        genericMailRequest.setCc(null);
+        genericMailRequest.setBcc(null);
+        genericMailRequest.setHeader(request.getTitle());
+        mailService.sendInvitationMail(genericMailRequest);
+    }
+
+    @Override
+    public void resendInvitation(Long invitationId, InvitationResendRequest request) throws IOException {
+        User user = jwtService.getLoggedUser();
+        Invitation invitation = invitationService.findInvitationByUserIdAndCheckLimit(invitationId);
+        GenericMailRequest genericMailRequest = mapper.invitationToMail(invitation);
+        genericMailRequest.setInviter(user.getName());
+        createAttachments(user, genericMailRequest, request.getFileIdList());
+        genericMailRequest.setCc(null);
+        genericMailRequest.setBcc(null);
+        genericMailRequest.setHeader(invitation.getTitle());
+        mailService.sendInvitationMail(genericMailRequest);
+    }
+
+    private void createAttachments(User user, GenericMailRequest genericMailRequest, Set<Long> fileIdList) throws IOException {
+        if (CollectionUtils.isNotEmpty(fileIdList)) {
+            List<FileLink> fileLinks = fileLinkRepository.findByUserIdAndIdIn(user.getId(), new ArrayList<>(fileIdList));
+            if (fileLinks.size() != fileIdList.size()) {
                 throw new CalendarAppException(HttpStatus.BAD_REQUEST, "No user file found", "NO_USR_FILE");
             }
             List<AttachmentModel> attachmentModels = new ArrayList<>();
@@ -156,26 +178,6 @@ public class EventServiceImpl implements EventService {
             }
             genericMailRequest.setAttachments(attachmentModels);
         }
-        String id = invitationService.saveInvitation(request);
-        genericMailRequest.setInviter(user.getName());
-        genericMailRequest.setCode(id);
-        genericMailRequest.setCc(null);
-        genericMailRequest.setBcc(null);
-        genericMailRequest.setHeader(request.getTitle());
-        mailService.sendInvitationMail(genericMailRequest);
-    }
-
-    @Override
-    public void resendInvitation(Long invitationId) {
-        User user = jwtService.getLoggedUser();
-        Invitation invitation = invitationService.findInvitationByUserIdAndCheckLimit(invitationId);
-        GenericMailRequest genericMailRequest = mapper.invitationToMail(invitation);
-        genericMailRequest.setInviter(user.getName());
-//        genericMailRequest.setAttachments(attachments);
-        genericMailRequest.setCc(null);
-        genericMailRequest.setBcc(null);
-        genericMailRequest.setHeader(invitation.getTitle());
-        mailService.sendInvitationMail(genericMailRequest);
     }
 
     private Event createEventDetails(Event event) {

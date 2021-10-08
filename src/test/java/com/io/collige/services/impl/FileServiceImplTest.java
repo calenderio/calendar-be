@@ -14,9 +14,12 @@ import com.io.collige.entitites.FileLink;
 import com.io.collige.entitites.Licence;
 import com.io.collige.entitites.User;
 import com.io.collige.enums.LicenceTypes;
+import com.io.collige.mappers.EventMapper;
 import com.io.collige.mappers.FileMapper;
 import com.io.collige.models.internals.AttachmentModel;
 import com.io.collige.models.internals.FileDetails;
+import com.io.collige.models.responses.calendar.EventTypeResponse;
+import com.io.collige.models.responses.files.FileResponse;
 import com.io.collige.repositories.FileLinkRepository;
 import com.io.collige.services.CloudService;
 import org.junit.jupiter.api.Test;
@@ -33,6 +36,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -55,6 +59,9 @@ class FileServiceImplTest {
 
     @Mock
     private FileLinkRepository fileLinkRepository;
+
+    @Mock
+    private EventMapper eventMapper;
 
     @InjectMocks
     private FileServiceImpl fileService;
@@ -116,6 +123,7 @@ class FileServiceImplTest {
         when(fileLinkRepository.findByIdAndUserId(1L, 1L)).thenReturn(Optional.of(new FileLink()));
         fileService.deleteFile(1L);
         verify(fileLinkRepository, times(1)).delete(any());
+        verify(fileLinkRepository, times(1)).deleteFileLinks(any(), any());
     }
 
     @Test
@@ -128,4 +136,38 @@ class FileServiceImplTest {
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("FILE_NOT_FOUND", exception.getCause().getMessage());
     }
+
+    @Test
+    void getAllFiles() {
+        User user = new User();
+        user.setId(1L);
+        when(jwtService.getLoggedUser()).thenReturn(user);
+        when(fileLinkRepository.findByUserId(1L)).thenReturn(new ArrayList<>());
+        when(mapper.mapModelListToResponse(any())).thenReturn(new ArrayList<>());
+        List<FileResponse> responses = fileService.getAllFiles();
+        assertTrue(responses.isEmpty());
+    }
+
+    @Test
+    void getEventFiles() {
+        User user = new User();
+        user.setId(1L);
+        when(jwtService.getLoggedUser()).thenReturn(user);
+        when(fileLinkRepository.findByFileLink(1L, 1L)).thenReturn(new ArrayList<>());
+        when(mapper.mapModelListToResponse(any())).thenReturn(new ArrayList<>());
+        List<FileResponse> responses = fileService.getEventFiles(1L);
+        assertTrue(responses.isEmpty());
+    }
+
+    @Test
+    void getFileEvents() {
+        User user = new User();
+        user.setId(1L);
+        when(jwtService.getLoggedUser()).thenReturn(user);
+        when(fileLinkRepository.findEvents(1L, 1L)).thenReturn(new ArrayList<>());
+        when(eventMapper.mapListToModel(any())).thenReturn(new ArrayList<>());
+        List<EventTypeResponse> responses = fileService.getFileEvents(1L);
+        assertTrue(responses.isEmpty());
+    }
+
 }

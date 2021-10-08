@@ -10,6 +10,7 @@ import com.io.collige.controllers.InvitationController;
 import com.io.collige.entitites.Invitation;
 import com.io.collige.mappers.InvitationMapper;
 import com.io.collige.models.internals.MeetInvitationDetailRequest;
+import com.io.collige.models.requests.meet.InvitationResendRequest;
 import com.io.collige.models.requests.meet.MeetInvitationRequest;
 import com.io.collige.models.responses.meeting.InvitationResponse;
 import com.io.collige.services.EventService;
@@ -35,21 +36,21 @@ public class InvitationControllerImpl implements InvitationController {
     private InvitationMapper mapper;
 
     @Override
-    public ResponseEntity<Void> sendMeetingInvite(@Valid MeetInvitationRequest request) throws IOException {
+    public ResponseEntity<Void> sendInvitation(@Valid MeetInvitationRequest request) throws IOException {
         eventService.sendEventInvitation(new MeetInvitationDetailRequest(request.getUserMail(), request.getName(), request.getTitle(), request.getDescription()
                 , request.getEventId(), request.getCcUsers(), request.getBccUsers(), request.getFileIdList()));
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<Void> resendMeeting(Long meetingId) {
-        eventService.resendInvitation(meetingId);
+    public ResponseEntity<Void> resendInvitation(Long invitationId, InvitationResendRequest request) throws IOException {
+        eventService.resendInvitation(invitationId, request);
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<List<InvitationResponse>> getMeetings(Long eventId) {
-        List<Invitation> invitations = invitationService.findInvitations(eventId);
+    public ResponseEntity<List<InvitationResponse>> getInvitations(Long invitationId) {
+        List<Invitation> invitations = invitationService.findInvitations(invitationId);
         return ResponseEntity.ok(mapper.mapEntityListToModelList(invitations));
     }
 

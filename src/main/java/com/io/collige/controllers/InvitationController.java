@@ -7,6 +7,7 @@
 package com.io.collige.controllers;
 
 import com.io.collige.core.exception.ErrorData;
+import com.io.collige.models.requests.meet.InvitationResendRequest;
 import com.io.collige.models.requests.meet.MeetInvitationRequest;
 import com.io.collige.models.responses.meeting.InvitationResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,7 +39,7 @@ public interface InvitationController {
                     schema = @Schema(implementation = ErrorData.class))})
     })
     @PostMapping(path = "/meets/invite")
-    ResponseEntity<Void> sendMeetingInvite(@RequestBody MeetInvitationRequest request) throws IOException;
+    ResponseEntity<Void> sendInvitation(@RequestBody MeetInvitationRequest request) throws IOException;
 
     @Operation(summary = "ReSend meeting request")
     @ApiResponses(value = {
@@ -48,8 +49,8 @@ public interface InvitationController {
             @ApiResponse(responseCode = "403", description = "Not allowed for given parameters", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})
     })
-    @PostMapping(path = "/meets/{meetingId}")
-    ResponseEntity<Void> resendMeeting(@PathVariable Long meetingId);
+    @PostMapping(path = "/meets/{invitationId}")
+    ResponseEntity<Void> resendInvitation(@PathVariable Long invitationId, @RequestBody InvitationResendRequest request) throws IOException;
 
     @Operation(summary = "Get meetings for event")
     @ApiResponses(value = {
@@ -59,8 +60,8 @@ public interface InvitationController {
             @ApiResponse(responseCode = "400", description = "Getting error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})
     })
-    @GetMapping(path = "/meets/{eventId}")
-    ResponseEntity<List<InvitationResponse>> getMeetings(@PathVariable Long eventId);
+    @GetMapping(path = "/meets/{invitationId}")
+    ResponseEntity<List<InvitationResponse>> getInvitations(@PathVariable Long invitationId);
 
     @Operation(summary = "Delete invitation")
     @ApiResponses(value = {

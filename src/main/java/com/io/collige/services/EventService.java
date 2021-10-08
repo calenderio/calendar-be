@@ -10,6 +10,7 @@ import com.io.collige.entitites.Event;
 import com.io.collige.models.internals.CreateEventRequest;
 import com.io.collige.models.internals.MeetInvitationDetailRequest;
 import com.io.collige.models.internals.UpdateEventRequest;
+import com.io.collige.models.requests.meet.InvitationResendRequest;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,6 +29,6 @@ public interface EventService {
 
     void sendEventInvitation(MeetInvitationDetailRequest request) throws IOException;
 
-    void resendInvitation(Long invitationId);
+    void resendInvitation(Long invitationId, InvitationResendRequest request) throws IOException;
 
 }

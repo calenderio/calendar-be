@@ -7,6 +7,7 @@
 package com.io.collige.controllers.impl;
 
 import com.io.collige.mappers.InvitationMapper;
+import com.io.collige.models.requests.meet.InvitationResendRequest;
 import com.io.collige.models.requests.meet.MeetInvitationRequest;
 import com.io.collige.models.responses.meeting.InvitationResponse;
 import com.io.collige.services.EventService;
@@ -47,22 +48,22 @@ class InvitationControllerImplTest {
     @Test
     void sendMeetingInvite() throws IOException {
         MeetInvitationRequest request = new MeetInvitationRequest();
-        ResponseEntity<Void> responseEntity = invitationController.sendMeetingInvite(request);
+        ResponseEntity<Void> responseEntity = invitationController.sendInvitation(request);
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
         verify(eventService, times(1)).sendEventInvitation(any());
     }
 
     @Test
-    void resendMeeting() {
-        ResponseEntity<Void> responseEntity = invitationController.resendMeeting(1L);
+    void resendMeeting() throws IOException {
+        ResponseEntity<Void> responseEntity = invitationController.resendInvitation(1L, new InvitationResendRequest());
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
-        verify(eventService, times(1)).resendInvitation(any());
+        verify(eventService, times(1)).resendInvitation(any(), any());
     }
 
     @Test
     void getMeetings() {
         when(mapper.mapEntityListToModelList(any())).thenReturn(new ArrayList<>());
-        ResponseEntity<List<InvitationResponse>> responseEntity = invitationController.getMeetings(1L);
+        ResponseEntity<List<InvitationResponse>> responseEntity = invitationController.getInvitations(1L);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 

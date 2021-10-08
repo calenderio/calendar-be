@@ -8,6 +8,7 @@ package com.io.collige.controllers.impl;
 
 import com.io.collige.constants.RoleConstants;
 import com.io.collige.controllers.FileController;
+import com.io.collige.models.responses.calendar.EventTypeResponse;
 import com.io.collige.models.responses.files.FileResponse;
 import com.io.collige.services.FileService;
 import com.io.collige.utils.AttachmentUtil;
@@ -46,6 +47,11 @@ public class FileControllerImpl implements FileController {
     @Override
     public ResponseEntity<List<FileResponse>> getAllFiles() {
         return ResponseEntity.ok(fileService.getAllFiles());
+    }
+
+    @Override
+    public ResponseEntity<List<EventTypeResponse>> getEvents(Long fileId) {
+        return ResponseEntity.ok(fileService.getFileEvents(fileId));
     }
 
 }

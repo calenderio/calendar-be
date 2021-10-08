@@ -65,4 +65,17 @@ public interface FileController {
     @GetMapping(value = "/files")
     ResponseEntity<List<FileResponse>> getAllFiles();
 
+    @Operation(summary = "Get related events")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returns file related events",
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = EventTypeResponse.class)))}),
+            @ApiResponse(responseCode = "400", description = "Getting error", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorData.class))}),
+            @ApiResponse(responseCode = "403", description = "Not allowed for given parameters", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorData.class))})
+    })
+    @GetMapping(value = "/files/events")
+    ResponseEntity<List<EventTypeResponse>> getEvents(Long fileId);
+
 }

@@ -18,19 +18,24 @@ import com.io.collige.models.internals.CreateEventRequest;
 import com.io.collige.models.internals.GenericMailRequest;
 import com.io.collige.models.internals.MeetInvitationDetailRequest;
 import com.io.collige.models.internals.UpdateEventRequest;
+import com.io.collige.models.requests.meet.InvitationResendRequest;
 import com.io.collige.repositories.EventFileLinkRepository;
 import com.io.collige.repositories.EventRepository;
 import com.io.collige.repositories.FileLinkRepository;
 import com.io.collige.services.InvitationService;
 import com.io.collige.services.MailService;
 import com.io.collige.services.SchedulerService;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -141,24 +146,36 @@ class EventServiceImplTest {
 
     @Test
     void sendEventInvitation() throws IOException {
+        FileLink fileLink = new FileLink();
+        fileLink.setUserId(0L);
+        fileLink.setName("");
+        fileLink.setLink("http://www.google.com");
+        fileLink.setType("");
+        fileLink.setSize(0L);
+        fileLink.setId(0L);
+        MockedStatic<IOUtils> ioUtilsMockedStatic = Mockito.mockStatic(IOUtils.class);
+        ioUtilsMockedStatic.when(() -> IOUtils.toByteArray(any(URL.class))).thenReturn("".getBytes());
         User user = new User();
         user.setName("Example");
+        user.setId(1L);
         MeetInvitationDetailRequest request = new MeetInvitationDetailRequest("example", "example", "example",
-                "example", 1L, null, null, null);
+                "example", 1L, null, null, Collections.singleton(1L));
         when(jwtService.getLoggedUser()).thenReturn(user);
+        when(fileLinkRepository.findByUserIdAndIdIn(anyLong(), any())).thenReturn(Collections.singletonList(fileLink));
         when(mapper.meetingRequestToMail(request)).thenReturn(new GenericMailRequest());
         eventService.sendEventInvitation(request);
         verify(mailService, times(1)).sendInvitationMail(any());
+        ioUtilsMockedStatic.close();
     }
 
     @Test
-    void resendInvitation() {
+    void resendInvitation() throws IOException {
         User user = new User();
         user.setName("Example");
         when(jwtService.getLoggedUser()).thenReturn(user);
         when(invitationService.findInvitationByUserIdAndCheckLimit(anyLong())).thenReturn(new Invitation());
         when(mapper.invitationToMail(any())).thenReturn(new GenericMailRequest());
-        eventService.resendInvitation(1L);
+        eventService.resendInvitation(1L, new InvitationResendRequest());
         verify(mailService, times(1)).sendInvitationMail(any());
     }
 }

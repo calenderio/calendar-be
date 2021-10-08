@@ -15,6 +15,7 @@ import com.io.collige.models.internals.SchedulerObject;
 import com.io.collige.models.requests.calendar.EventTypeCreateRequest;
 import com.io.collige.models.responses.calendar.EventTypeResponse;
 import com.io.collige.services.EventService;
+import com.io.collige.services.FileService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -43,6 +44,9 @@ class EventControllerImplTest {
 
     @Mock
     private SchedulerMapper schedulerMapper;
+
+    @Mock
+    private FileService fileService;
 
     @InjectMocks
     private EventControllerImpl eventController;
@@ -90,6 +94,17 @@ class EventControllerImplTest {
         when(eventMapper.mapEntityToModel(any())).thenReturn(new EventTypeResponse());
         when(schedulerMapper.mapEntityToModel(any())).thenReturn(new SchedulerObject());
         ResponseEntity<List<EventTypeResponse>> responseEntity = eventController.getEventTypes();
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    void getEventDetail() {
+        Event event = new Event();
+        event.setScheduler(new Scheduler());
+        when(eventService.getEvent(1L)).thenReturn(event);
+        when(eventMapper.mapEntityToModel(any())).thenReturn(new EventTypeResponse());
+        when(schedulerMapper.mapEntityToModel(any())).thenReturn(new SchedulerObject());
+        ResponseEntity<EventTypeResponse> responseEntity = eventController.getEventDetail(1L);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 }
