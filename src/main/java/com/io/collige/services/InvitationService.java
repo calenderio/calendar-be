@@ -7,7 +7,6 @@
 package com.io.collige.services;
 
 import com.io.collige.entitites.Invitation;
-import com.io.collige.models.internals.AttachmentModel;
 import com.io.collige.models.internals.MeetInvitationDetailRequest;
 
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
 public interface InvitationService {
     String saveInvitation(MeetInvitationDetailRequest request);
 
-    Invitation findInvitationByUserIdAndCheckLimit(Long id, List<AttachmentModel> attachments);
+    Invitation findInvitationByUserIdAndCheckLimit(Long id);
 
     List<Invitation> findInvitations(Long eventId);
 

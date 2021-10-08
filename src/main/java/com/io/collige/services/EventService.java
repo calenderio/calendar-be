@@ -7,26 +7,25 @@
 package com.io.collige.services;
 
 import com.io.collige.entitites.Event;
-import com.io.collige.models.internals.AttachmentModel;
+import com.io.collige.models.internals.CreateEventRequest;
 import com.io.collige.models.internals.MeetInvitationDetailRequest;
-import org.springframework.transaction.annotation.Transactional;
+import com.io.collige.models.internals.UpdateEventRequest;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface EventService {
 
-    Event createEvent(Event event);
+    Event createEvent(CreateEventRequest request);
 
-    @Transactional
-    Event updateEvent(Event event, Long eventId);
+    Event updateEvent(UpdateEventRequest request);
 
-    @Transactional
     void deleteEvent(Long eventId);
 
     List<Event> getEvents();
 
-    void sendEventInvitation(MeetInvitationDetailRequest request);
+    void sendEventInvitation(MeetInvitationDetailRequest request) throws IOException;
 
-    void resendInvitation(Long invitationId, List<AttachmentModel> attachments);
+    void resendInvitation(Long invitationId);
 
 }

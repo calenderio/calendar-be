@@ -9,19 +9,17 @@ package com.io.collige.controllers.impl;
 import com.io.collige.controllers.InvitationController;
 import com.io.collige.entitites.Invitation;
 import com.io.collige.mappers.InvitationMapper;
-import com.io.collige.models.internals.AttachmentModel;
 import com.io.collige.models.internals.MeetInvitationDetailRequest;
 import com.io.collige.models.requests.meet.MeetInvitationRequest;
 import com.io.collige.models.responses.meeting.InvitationResponse;
 import com.io.collige.services.EventService;
 import com.io.collige.services.InvitationService;
-import com.io.collige.utils.AttachmentUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -36,21 +34,16 @@ public class InvitationControllerImpl implements InvitationController {
     @Autowired
     private InvitationMapper mapper;
 
-    @Autowired
-    private AttachmentUtil attachmentUtil;
-
     @Override
-    public ResponseEntity<Void> sendMeetingInvite(@Valid MeetInvitationRequest request, List<MultipartFile> files) {
-        List<AttachmentModel> modelList = attachmentUtil.checkAttachments(files);
+    public ResponseEntity<Void> sendMeetingInvite(@Valid MeetInvitationRequest request) throws IOException {
         eventService.sendEventInvitation(new MeetInvitationDetailRequest(request.getUserMail(), request.getName(), request.getTitle(), request.getDescription()
-                , request.getEventId(), modelList, request.getCcUsers(), request.getBccUsers()));
+                , request.getEventId(), request.getCcUsers(), request.getBccUsers(), request.getFileIdList()));
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<Void> resendMeeting(Long meetingId, List<MultipartFile> files) {
-        List<AttachmentModel> modelList = attachmentUtil.checkAttachments(files);
-        eventService.resendInvitation(meetingId, modelList);
+    public ResponseEntity<Void> resendMeeting(Long meetingId) {
+        eventService.resendInvitation(meetingId);
         return ResponseEntity.noContent().build();
     }
 

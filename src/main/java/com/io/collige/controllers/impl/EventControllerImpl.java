@@ -10,6 +10,8 @@ import com.io.collige.controllers.EventController;
 import com.io.collige.entitites.Event;
 import com.io.collige.mappers.EventMapper;
 import com.io.collige.mappers.SchedulerMapper;
+import com.io.collige.models.internals.CreateEventRequest;
+import com.io.collige.models.internals.UpdateEventRequest;
 import com.io.collige.models.requests.calendar.EventTypeCreateRequest;
 import com.io.collige.models.responses.calendar.EventTypeResponse;
 import com.io.collige.services.EventService;
@@ -37,7 +39,7 @@ public class EventControllerImpl implements EventController {
     public ResponseEntity<EventTypeResponse> createEventType(@Valid EventTypeCreateRequest request) {
         Event event = eventMapper.mapRequestToEntity(request);
         event.setScheduler(schedulerMapper.mapDetailsToEntity(request.getSchedule(), request.getTimezone()));
-        Event event1 = eventService.createEvent(event);
+        Event event1 = eventService.createEvent(new CreateEventRequest(event, request.getFileLinks()));
         EventTypeResponse response = eventMapper.mapEntityToModel(event1);
         response.setSchedule(schedulerMapper.mapEntityToModel(event1.getScheduler()));
         return ResponseEntity.ok(response);
@@ -47,7 +49,7 @@ public class EventControllerImpl implements EventController {
     public ResponseEntity<EventTypeResponse> updateEvent(@Valid EventTypeCreateRequest request, Long eventId) {
         Event event = eventMapper.mapRequestToEntity(request);
         event.setScheduler(schedulerMapper.mapDetailsToEntity(request.getSchedule(), request.getTimezone()));
-        Event event1 = eventService.updateEvent(event, eventId);
+        Event event1 = eventService.updateEvent(new UpdateEventRequest(event, request.getFileLinks(), eventId));
         EventTypeResponse response = eventMapper.mapEntityToModel(event1);
         response.setSchedule(schedulerMapper.mapEntityToModel(event1.getScheduler()));
         return ResponseEntity.ok(response);

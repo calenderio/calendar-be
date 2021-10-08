@@ -6,7 +6,6 @@
  **/
 package com.io.collige.services.impl;
 
-import com.io.collige.constants.CacheConstants;
 import com.io.collige.core.exception.CalendarAppException;
 import com.io.collige.core.security.jwt.JWTService;
 import com.io.collige.core.services.CacheService;
@@ -15,7 +14,6 @@ import com.io.collige.entitites.Invitation;
 import com.io.collige.entitites.Licence;
 import com.io.collige.entitites.User;
 import com.io.collige.enums.LicenceTypes;
-import com.io.collige.models.internals.AttachmentModel;
 import com.io.collige.models.internals.MeetInvitationDetailRequest;
 import com.io.collige.repositories.EventRepository;
 import com.io.collige.repositories.InvitationRepository;
@@ -114,85 +112,6 @@ class InvitationServiceImplTest {
     }
 
     @Test
-    void saveInvitation_AttachException() {
-        AttachmentModel model = new AttachmentModel();
-        model.setName("example");
-        model.setType("text");
-        model.setData("text".getBytes());
-        MeetInvitationDetailRequest request = new MeetInvitationDetailRequest();
-        request.setAttachments(Collections.singletonList(model));
-        request.setEventId(1L);
-        Event event = new Event();
-        event.setId(1L);
-        User user = new User();
-        user.setId(1L);
-        Licence licence = new Licence();
-        licence.setLicenceType(LicenceTypes.FREE);
-        user.setLicence(licence);
-        when(jwtService.getLoggedUser()).thenReturn(user);
-        when(eventRepository.findByUserIdAndId(1L, 1L)).thenReturn(Optional.of(event));
-        CalendarAppException exception = assertThrows(CalendarAppException.class, () -> invitationService.saveInvitation(request));
-        assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
-        assertEquals("ATTACHMENT_LIMIT", exception.getCause().getMessage());
-    }
-
-    @Test
-    void saveInvitation_IndiAttachException() {
-        AttachmentModel model = new AttachmentModel();
-        model.setName("example");
-        model.setType("text");
-        model.setData("text".getBytes());
-        List<AttachmentModel> attachmentModelList = new ArrayList<>();
-        for (int i = 0; i < 50; i++) {
-            attachmentModelList.add(model);
-        }
-        MeetInvitationDetailRequest request = new MeetInvitationDetailRequest();
-        request.setAttachments(attachmentModelList);
-        request.setEventId(1L);
-        Event event = new Event();
-        event.setId(1L);
-        User user = new User();
-        user.setId(1L);
-        Licence licence = new Licence();
-        licence.setLicenceType(LicenceTypes.INDIVIDUAL);
-        user.setLicence(licence);
-        when(jwtService.getLoggedUser()).thenReturn(user);
-        when(eventRepository.findByUserIdAndId(1L, 1L)).thenReturn(Optional.of(event));
-        when(cacheService.getIntegerCacheValue(CacheConstants.ATTACHMENT_LIMIT_IND)).thenReturn(2);
-        CalendarAppException exception = assertThrows(CalendarAppException.class, () -> invitationService.saveInvitation(request));
-        assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
-        assertEquals("ATTACHMENT_LIMIT", exception.getCause().getMessage());
-    }
-
-    @Test
-    void saveInvitation_CommAttachException() {
-        AttachmentModel model = new AttachmentModel();
-        model.setName("example");
-        model.setType("text");
-        model.setData("text".getBytes());
-        List<AttachmentModel> attachmentModelList = new ArrayList<>();
-        for (int i = 0; i < 50; i++) {
-            attachmentModelList.add(model);
-        }
-        MeetInvitationDetailRequest request = new MeetInvitationDetailRequest();
-        request.setAttachments(attachmentModelList);
-        request.setEventId(1L);
-        Event event = new Event();
-        event.setId(1L);
-        User user = new User();
-        user.setId(1L);
-        Licence licence = new Licence();
-        licence.setLicenceType(LicenceTypes.COMMERCIAL);
-        user.setLicence(licence);
-        when(jwtService.getLoggedUser()).thenReturn(user);
-        when(eventRepository.findByUserIdAndId(1L, 1L)).thenReturn(Optional.of(event));
-        when(cacheService.getIntegerCacheValue(CacheConstants.ATTACHMENT_LIMIT_COMMERCIAL)).thenReturn(2);
-        CalendarAppException exception = assertThrows(CalendarAppException.class, () -> invitationService.saveInvitation(request));
-        assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
-        assertEquals("ATTACHMENT_LIMIT", exception.getCause().getMessage());
-    }
-
-    @Test
     void findInvitationByUserIdAndCheckLimit() {
         User user = new User();
         user.setId(1L);
@@ -202,7 +121,7 @@ class InvitationServiceImplTest {
         invitation.setId(1L);
         when(jwtService.getLoggedUser()).thenReturn(user);
         when(invitationRepository.findByIdAndUserAndScheduledIsFalse(1L, user)).thenReturn(Optional.of(invitation));
-        Invitation response = invitationService.findInvitationByUserIdAndCheckLimit(1L, null);
+        Invitation response = invitationService.findInvitationByUserIdAndCheckLimit(1L);
         assertEquals(response.getId(), invitation.getId());
     }
 

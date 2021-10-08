@@ -78,4 +78,7 @@ public class EventTypeCreateRequest {
     @Valid
     private SchedulerDetails schedule;
 
+    @ArraySchema(schema = @Schema(description = "User uploaded file links", example = "1L"), uniqueItems = true)
+    private Set<Long> fileLinks;
+
 }

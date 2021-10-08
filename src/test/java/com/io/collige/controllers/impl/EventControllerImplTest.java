@@ -28,7 +28,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -67,7 +66,7 @@ class EventControllerImplTest {
         request.setSchedule(new SchedulerDetails());
         request.setTimezone("UTC");
         when(eventMapper.mapRequestToEntity(any())).thenReturn(new Event());
-        when(eventService.updateEvent(any(), anyLong())).thenReturn(new Event());
+        when(eventService.updateEvent(any())).thenReturn(new Event());
         when(eventMapper.mapEntityToModel(any())).thenReturn(new EventTypeResponse());
         when(schedulerMapper.mapEntityToModel(any())).thenReturn(new SchedulerObject());
         ResponseEntity<EventTypeResponse> responseEntity = eventController.updateEvent(request, 1L);

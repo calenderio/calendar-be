@@ -14,6 +14,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class MeetInvitationRequest {
@@ -44,5 +45,8 @@ public class MeetInvitationRequest {
 
     @ArraySchema(schema = @Schema(description = "Mail request bcc users for meeting", example = "test@test.com"))
     private List<@Email String> bccUsers;
+
+    @ArraySchema(schema = @Schema(description = "Mail request bcc users for meeting", example = "1"))
+    private Set<Long> fileIdList;
 
 }

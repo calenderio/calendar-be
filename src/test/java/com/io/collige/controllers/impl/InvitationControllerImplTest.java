@@ -11,7 +11,6 @@ import com.io.collige.models.requests.meet.MeetInvitationRequest;
 import com.io.collige.models.responses.meeting.InvitationResponse;
 import com.io.collige.services.EventService;
 import com.io.collige.services.InvitationService;
-import com.io.collige.utils.AttachmentUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,10 +18,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,27 +41,22 @@ class InvitationControllerImplTest {
     @Mock
     private InvitationMapper mapper;
 
-    @Mock
-    private AttachmentUtil attachmentUtil;
-
     @InjectMocks
     private InvitationControllerImpl invitationController;
 
     @Test
-    void sendMeetingInvite() {
+    void sendMeetingInvite() throws IOException {
         MeetInvitationRequest request = new MeetInvitationRequest();
-        MockMultipartFile file = new MockMultipartFile("data", "filename.txt",
-                "application/octet-stream", "some xml".getBytes());
-        ResponseEntity<Void> responseEntity = invitationController.sendMeetingInvite(request, Collections.singletonList(file));
+        ResponseEntity<Void> responseEntity = invitationController.sendMeetingInvite(request);
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
         verify(eventService, times(1)).sendEventInvitation(any());
     }
 
     @Test
     void resendMeeting() {
-        ResponseEntity<Void> responseEntity = invitationController.resendMeeting(1L, null);
+        ResponseEntity<Void> responseEntity = invitationController.resendMeeting(1L);
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
-        verify(eventService, times(1)).resendInvitation(any(), any());
+        verify(eventService, times(1)).resendInvitation(any());
     }
 
     @Test

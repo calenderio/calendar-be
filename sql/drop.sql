@@ -13,5 +13,6 @@ drop table IF EXISTS
     meetings,
     todos,
     file_links,
+    event_file_links,
     caches
 ;

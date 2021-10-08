@@ -7,6 +7,7 @@
 package com.io.collige.repositories;
 
 import com.io.collige.entitites.FileLink;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -19,5 +20,11 @@ public interface FileLinkRepository extends CrudRepository<FileLink, Long> {
     long countByUserId(Long userId);
 
     List<FileLink> findByUserId(Long userId);
+
+    List<FileLink> findByUserIdAndIdIn(Long userId, List<Long> ids);
+
+    @Query(value = "select fl from FileLink fl inner join EventFileLink efl on efl.id.eventId = :eventId and  efl.id.fileId = fl.id " +
+            "and efl.id.userId = :userId and fl.userId = :userId")
+    List<FileLink> findByFileLink(Long userId, Long eventId);
 
 }

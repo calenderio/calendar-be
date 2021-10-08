@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -22,8 +23,8 @@ public class MeetInvitationDetailRequest {
     private String title;
     private String description;
     private Long eventId;
-    private List<AttachmentModel> attachments;
     private List<String> cc;
     private List<String> bcc;
+    private Set<Long> idList;
 
 }

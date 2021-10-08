@@ -8,14 +8,19 @@ package com.io.collige.services.impl;
 
 import com.io.collige.core.security.jwt.JWTService;
 import com.io.collige.entitites.Event;
+import com.io.collige.entitites.FileLink;
 import com.io.collige.entitites.Invitation;
 import com.io.collige.entitites.Question;
 import com.io.collige.entitites.Scheduler;
 import com.io.collige.entitites.User;
 import com.io.collige.mappers.MailRequestMapper;
+import com.io.collige.models.internals.CreateEventRequest;
 import com.io.collige.models.internals.GenericMailRequest;
 import com.io.collige.models.internals.MeetInvitationDetailRequest;
+import com.io.collige.models.internals.UpdateEventRequest;
+import com.io.collige.repositories.EventFileLinkRepository;
 import com.io.collige.repositories.EventRepository;
+import com.io.collige.repositories.FileLinkRepository;
 import com.io.collige.services.InvitationService;
 import com.io.collige.services.MailService;
 import com.io.collige.services.SchedulerService;
@@ -25,7 +30,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +38,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -60,6 +64,12 @@ class EventServiceImplTest {
     @Mock
     private MailService mailService;
 
+    @Mock
+    private FileLinkRepository fileLinkRepository;
+
+    @Mock
+    private EventFileLinkRepository eventFileLinkRepository;
+
     @InjectMocks
     private EventServiceImpl eventService;
 
@@ -72,7 +82,8 @@ class EventServiceImplTest {
         user.setId(1L);
         when(jwtService.getLoggedUser()).thenReturn(user);
         when(eventRepository.save(any())).thenReturn(event);
-        Event response = eventService.createEvent(event);
+        when(fileLinkRepository.findByUserIdAndIdIn(anyLong(), any())).thenReturn(Collections.singletonList(new FileLink()));
+        Event response = eventService.createEvent(new CreateEventRequest(event, Collections.singleton(1L)));
         verify(eventRepository, times(1)).save(any());
         assertEquals(1L, response.getUserId());
     }
@@ -87,7 +98,7 @@ class EventServiceImplTest {
         when(jwtService.getLoggedUser()).thenReturn(user);
         when(eventRepository.save(any())).thenReturn(event);
         when(eventRepository.findByUserIdAndId(1L, 1L)).thenReturn(Optional.of(event));
-        Event response = eventService.updateEvent(event, 1L);
+        Event response = eventService.updateEvent(new UpdateEventRequest(event, Collections.singleton(1L), 1L));
         verify(eventRepository, times(1)).save(any());
         assertEquals(1L, response.getPreDefinedSchedulerId());
     }
@@ -129,7 +140,7 @@ class EventServiceImplTest {
     }
 
     @Test
-    void sendEventInvitation() {
+    void sendEventInvitation() throws IOException {
         User user = new User();
         user.setName("Example");
         MeetInvitationDetailRequest request = new MeetInvitationDetailRequest("example", "example", "example",
@@ -145,9 +156,9 @@ class EventServiceImplTest {
         User user = new User();
         user.setName("Example");
         when(jwtService.getLoggedUser()).thenReturn(user);
-        when(invitationService.findInvitationByUserIdAndCheckLimit(anyLong(), anyList())).thenReturn(new Invitation());
+        when(invitationService.findInvitationByUserIdAndCheckLimit(anyLong())).thenReturn(new Invitation());
         when(mapper.invitationToMail(any())).thenReturn(new GenericMailRequest());
-        eventService.resendInvitation(1L, new ArrayList<>());
+        eventService.resendInvitation(1L);
         verify(mailService, times(1)).sendInvitationMail(any());
     }
 }

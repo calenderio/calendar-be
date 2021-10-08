@@ -23,8 +23,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Tag(name = "Invitation Operations", description = "This endpoint performs user invitation and scheduling operations")
@@ -39,8 +39,7 @@ public interface InvitationController {
                     schema = @Schema(implementation = ErrorData.class))})
     })
     @PostMapping(path = "/meets/invite", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    ResponseEntity<Void> sendMeetingInvite(@RequestPart MeetInvitationRequest request,
-                                           @RequestPart(name = "file", required = false) List<MultipartFile> files);
+    ResponseEntity<Void> sendMeetingInvite(@RequestPart MeetInvitationRequest request) throws IOException;
 
     @Operation(summary = "ReSend meeting request")
     @ApiResponses(value = {
@@ -51,8 +50,7 @@ public interface InvitationController {
                     schema = @Schema(implementation = ErrorData.class))})
     })
     @PostMapping(path = "/meets/{meetingId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    ResponseEntity<Void> resendMeeting(@PathVariable Long meetingId,
-                                       @RequestPart(name = "file", required = false) List<MultipartFile> files);
+    ResponseEntity<Void> resendMeeting(@PathVariable Long meetingId);
 
     @Operation(summary = "Get meetings for event")
     @ApiResponses(value = {

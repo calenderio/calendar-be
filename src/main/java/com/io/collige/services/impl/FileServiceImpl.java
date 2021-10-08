@@ -76,6 +76,12 @@ public class FileServiceImpl implements FileService {
         return mapper.mapModelListToResponse(fileLinkRepository.findByUserId(user.getId()));
     }
 
+    @Override
+    public List<FileResponse> getEventFiles(Long eventId) {
+        User user = jwtService.getLoggedUser();
+        return mapper.mapModelListToResponse(fileLinkRepository.findByFileLink(user.getId(), eventId));
+    }
+
     private void limitChecker(long totalSize, User user) {
         if (LicenceTypes.INDIVIDUAL.equals(user.getLicence().getLicenceType()) &&
                 totalSize > cacheService.getIntegerCacheValue(CacheConstants.ATTACHMENT_LIMIT_IND)) {

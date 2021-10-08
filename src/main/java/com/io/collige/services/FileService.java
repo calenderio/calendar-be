@@ -17,4 +17,6 @@ public interface FileService {
     void deleteFile(Long fileId);
 
     List<FileResponse> getAllFiles();
+
+    List<FileResponse> getEventFiles(Long eventId);
 }

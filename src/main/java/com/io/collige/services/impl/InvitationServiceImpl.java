@@ -6,15 +6,12 @@
  **/
 package com.io.collige.services.impl;
 
-import com.io.collige.constants.CacheConstants;
 import com.io.collige.core.exception.CalendarAppException;
 import com.io.collige.core.security.jwt.JWTService;
-import com.io.collige.core.services.CacheService;
 import com.io.collige.entitites.Event;
 import com.io.collige.entitites.Invitation;
 import com.io.collige.entitites.User;
 import com.io.collige.enums.LicenceTypes;
-import com.io.collige.models.internals.AttachmentModel;
 import com.io.collige.models.internals.MeetInvitationDetailRequest;
 import com.io.collige.repositories.EventRepository;
 import com.io.collige.repositories.InvitationRepository;
@@ -34,8 +31,6 @@ import java.util.UUID;
 @Transactional
 public class InvitationServiceImpl implements InvitationService {
 
-    private static final String NOT_ENOUGH_LIMIT_FOR_ATTACHMENT = "Not enough limit for attachment";
-    private static final String ATTACHMENT_LIMIT = "ATTACHMENT_LIMIT";
     private static final String CC_LIMIT = "CC_LIMIT";
     private static final String CC_LIMIT_MESSAGE = "Free users can not send cc and bcc";
     private final RandomStringGenerator pwdGenerator = new RandomStringGenerator.Builder().withinRange('0', 'z')
@@ -49,9 +44,6 @@ public class InvitationServiceImpl implements InvitationService {
     private EventRepository eventRepository;
 
     @Autowired
-    private CacheService cacheService;
-
-    @Autowired
     private InvitationRepository invitationRepository;
 
     @Override
@@ -60,7 +52,6 @@ public class InvitationServiceImpl implements InvitationService {
         Event event = eventRepository.findByUserIdAndId(user.getId(), request.getEventId())
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, "Not valid event id", "EVENT_ID"));
 
-        limitChecker(request.getAttachments(), user);
         ccBccLimit(request, user);
 
         String id = UUID.randomUUID().toString().replace("-", "") + pwdGenerator.generate(18);
@@ -79,9 +70,8 @@ public class InvitationServiceImpl implements InvitationService {
     }
 
     @Override
-    public Invitation findInvitationByUserIdAndCheckLimit(Long id, List<AttachmentModel> attachments) {
+    public Invitation findInvitationByUserIdAndCheckLimit(Long id) {
         User user = jwtService.getLoggedUser();
-        limitChecker(attachments, user);
         return invitationRepository.findByIdAndUserAndScheduledIsFalse(id, user)
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, "Not valid invitation id", "INVITATION_ID"));
     }
@@ -112,23 +102,6 @@ public class InvitationServiceImpl implements InvitationService {
         if (request.getCc() != null && !request.getCc().isEmpty() &&
                 LicenceTypes.FREE.equals(user.getLicence().getLicenceType())) {
             throw new CalendarAppException(HttpStatus.FORBIDDEN, CC_LIMIT_MESSAGE, CC_LIMIT);
-        }
-    }
-
-    private void limitChecker(List<AttachmentModel> attachments, User user) {
-        if (attachments != null && !attachments.isEmpty()) {
-            if (LicenceTypes.FREE.equals(user.getLicence().getLicenceType())) {
-                throw new CalendarAppException(HttpStatus.FORBIDDEN, NOT_ENOUGH_LIMIT_FOR_ATTACHMENT, ATTACHMENT_LIMIT);
-            }
-            if (LicenceTypes.INDIVIDUAL.equals(user.getLicence().getLicenceType()) &&
-                    attachments.size() > cacheService.getIntegerCacheValue(CacheConstants.ATTACHMENT_LIMIT_IND)) {
-                throw new CalendarAppException(HttpStatus.FORBIDDEN, NOT_ENOUGH_LIMIT_FOR_ATTACHMENT, ATTACHMENT_LIMIT);
-            }
-            if (LicenceTypes.COMMERCIAL.equals(user.getLicence().getLicenceType()) &&
-                    attachments.size() > cacheService.getIntegerCacheValue(CacheConstants.ATTACHMENT_LIMIT_COMMERCIAL)) {
-                throw new CalendarAppException(HttpStatus.FORBIDDEN, NOT_ENOUGH_LIMIT_FOR_ATTACHMENT, ATTACHMENT_LIMIT);
-
-            }
         }
     }
 
