@@ -14,7 +14,7 @@
     <name>Collige Java API</name>
     <description>Collige Project REST API Application Deployment</description>
     <properties>
-        <java.version>17</java.version>
+        <java.version>16</java.version>
         <jacoco.version>0.8.7</jacoco.version>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
