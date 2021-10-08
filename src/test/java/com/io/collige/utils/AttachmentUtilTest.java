@@ -42,7 +42,7 @@ class AttachmentUtilTest {
         List<AttachmentModel> attachmentModels = attachmentUtil.checkAttachments(Collections.singletonList(file));
         assertEquals(1, attachmentModels.size());
         assertEquals("text/plain", attachmentModels.get(0).getType());
-        assertEquals("filename.txt", attachmentModels.get(0).getName());
+        assertEquals("filename", attachmentModels.get(0).getName());
     }
 
     @Test
