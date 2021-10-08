@@ -144,6 +144,7 @@ public class EventServiceImpl implements EventService {
                 attachmentModel.setType(fileLink.getType());
                 attachmentModel.setData(IOUtils.toByteArray(new URL(fileLink.getLink())));
             }
+            genericMailRequest.setAttachments(attachmentModels);
         }
         String id = invitationService.saveInvitation(request);
         genericMailRequest.setInviter(user.getName());
