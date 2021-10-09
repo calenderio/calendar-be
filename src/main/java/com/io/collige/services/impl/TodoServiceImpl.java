@@ -48,7 +48,6 @@ public class TodoServiceImpl implements TodoService {
         if (pagedResult.hasContent()) {
             return pagedResult.getContent();
         } else {
-
             return new ArrayList<>();
         }
 
