@@ -44,10 +44,12 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@Transactional
 public class EventServiceImpl implements EventService {
 
     private static final String NOT_VALID_EVENT_ID = "Not valid event id";
     private static final String EVENT_ID = "EVENT_ID";
+
     @Autowired
     private EventRepository eventRepository;
 
@@ -159,6 +161,21 @@ public class EventServiceImpl implements EventService {
         genericMailRequest.setBcc(null);
         genericMailRequest.setHeader(invitation.getTitle());
         mailService.sendInvitationMail(genericMailRequest);
+    }
+
+    @Override
+    public List<Event> findEventsByScheduler(Long schedulerId) {
+        return eventRepository.findBySchedulerId(schedulerId);
+    }
+
+    @Override
+    public void deleteEventsByScheduler(Long schedulerId) {
+        eventRepository.deleteBySchedulerId(schedulerId);
+    }
+
+    @Override
+    public void deleteEventFileLinks(Long eventId) {
+        eventFileLinkRepository.deleteByIdEventId(eventId);
     }
 
     private void createAttachments(User user, GenericMailRequest genericMailRequest, Set<Long> fileIdList) throws IOException {

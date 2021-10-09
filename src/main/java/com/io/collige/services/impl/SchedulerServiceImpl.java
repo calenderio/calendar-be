@@ -99,6 +99,11 @@ public class SchedulerServiceImpl implements SchedulerService {
         schedulerRepository.deleteEventScheduler(schedulerId, user.getId());
     }
 
+    @Override
+    public void deleteScheduler(Long schedulerId) {
+        schedulerRepository.deleteById(schedulerId);
+    }
+
     private Set<SchedulerTime> defaultSchedulerTimeSet() {
         Set<SchedulerTime> times = new HashSet<>();
         times.add(new SchedulerTime("09:00", "12:00"));

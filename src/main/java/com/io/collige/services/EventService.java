@@ -31,4 +31,9 @@ public interface EventService {
 
     void resendInvitation(Long invitationId, InvitationResendRequest request) throws IOException;
 
+    List<Event> findEventsByScheduler(Long schedulerId);
+
+    void deleteEventsByScheduler(Long schedulerId);
+
+    void deleteEventFileLinks(Long eventId);
 }

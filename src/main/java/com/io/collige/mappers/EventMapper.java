@@ -9,6 +9,7 @@ package com.io.collige.mappers;
 import com.io.collige.entitites.Event;
 import com.io.collige.models.requests.calendar.EventTypeCreateRequest;
 import com.io.collige.models.responses.calendar.EventTypeResponse;
+import com.io.collige.models.responses.events.EventInfoResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -31,5 +32,7 @@ public interface EventMapper {
     EventTypeResponse mapEntityToModel(Event request);
 
     List<EventTypeResponse> mapListToModel(List<Event> request);
+
+    List<EventInfoResponse> mapListToInfoResponseModel(List<Event> request);
 
 }

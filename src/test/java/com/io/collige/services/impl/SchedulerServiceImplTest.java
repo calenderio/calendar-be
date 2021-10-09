@@ -115,4 +115,10 @@ class SchedulerServiceImplTest {
         verify(schedulerRepository, times(1)).deleteEventScheduler(1L, 1L);
     }
 
+    @Test
+    void deleteScheduler() {
+        schedulerService.deleteScheduler(1L);
+        verify(schedulerRepository, times(1)).deleteById(1L);
+    }
+
 }

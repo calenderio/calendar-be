@@ -12,4 +12,6 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface EventFileLinkRepository extends CrudRepository<EventFileLink, EventFileLinkId> {
 
+    void deleteByIdEventId(Long eventId);
+
 }

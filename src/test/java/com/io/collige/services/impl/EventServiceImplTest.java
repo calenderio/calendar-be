@@ -178,4 +178,27 @@ class EventServiceImplTest {
         eventService.resendInvitation(1L, new InvitationResendRequest());
         verify(mailService, times(1)).sendInvitationMail(any());
     }
+
+    @Test
+    void findEventsByScheduler() {
+        Event event = new Event();
+        event.setId(1L);
+        when(eventRepository.findBySchedulerId(1L)).thenReturn(Collections.singletonList(event));
+        List<Event> response = eventService.findEventsByScheduler(1L);
+        assertEquals(1, response.size());
+        assertEquals(1L, response.get(0).getId());
+    }
+
+    @Test
+    void deleteEventsByScheduler() {
+        eventService.deleteEventsByScheduler(1L);
+        verify(eventRepository, times(1)).deleteBySchedulerId(any());
+    }
+
+    @Test
+    void deleteEventFileLinks() {
+        eventService.deleteEventFileLinks(1L);
+        verify(eventFileLinkRepository, times(1)).deleteByIdEventId(any());
+    }
+
 }

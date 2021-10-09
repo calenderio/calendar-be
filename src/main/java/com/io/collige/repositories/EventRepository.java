@@ -16,6 +16,10 @@ public interface EventRepository extends CrudRepository<Event, Long> {
 
     List<Event> findByUserId(Long userId);
 
+    List<Event> findBySchedulerId(Long schedulerId);
+
     Optional<Event> findByUserIdAndId(Long userId, Long id);
+
+    void deleteBySchedulerId(Long schedulerId);
 
 }
