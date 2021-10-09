@@ -17,6 +17,6 @@ public interface TodoRepository extends PagingAndSortingRepository<Todo, Long> {
 
     @Query("update Todo t set t.done = true where t.id = :id and t.userId = :userId")
     @Modifying
-    int setDone(Long id, Long userId);
+    long setDone(Long id, Long userId);
 
 }
