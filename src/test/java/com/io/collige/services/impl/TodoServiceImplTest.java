@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,6 +38,9 @@ class TodoServiceImplTest {
     @Mock
     private TodoMapper todoMapper;
 
+    @Mock
+    private Page<Todo> todoPage;
+
     @InjectMocks
     private TodoServiceImpl todoService;
 
@@ -48,6 +52,21 @@ class TodoServiceImplTest {
         when(todoRepository.findTodosByUserId(any(), any())).thenReturn(Page.empty());
         List<Todo> response = todoService.findTodosByUserId(1, 1, "id");
         assertEquals(new ArrayList<>(), response);
+    }
+
+    @Test
+    void findTodosByUserId_filled() {
+        Todo todo = new Todo();
+        todo.setId(1L);
+        User user = new User();
+        user.setId(1L);
+        when(jwtService.getLoggedUser()).thenReturn(user);
+        when(todoRepository.findTodosByUserId(any(), any())).thenReturn(todoPage);
+        when(todoPage.hasContent()).thenReturn(true);
+        when(todoPage.getContent()).thenReturn(Collections.singletonList(todo));
+        List<Todo> response = todoService.findTodosByUserId(1, 1, "id");
+        assertEquals(1, response.size());
+        assertEquals(1L, response.get(0).getId());
     }
 
 }
