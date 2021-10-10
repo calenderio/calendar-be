@@ -221,56 +221,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>sql-maven-plugin</artifactId>
-                <version>1.5</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>42.2.23</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <driver>org.postgresql.Driver</driver>
-                    <url>${db.url}</url>
-                    <username>${db.username}</username>
-                    <password>${db.password}</password>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>default-cli</id>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-                        <configuration>
-                            <delimiter>/</delimiter>
-                            <delimiterType>normal</delimiterType>
-                            <autocommit>true</autocommit>
-                            <srcFiles>
-                                <srcFile>sql/drop.sql</srcFile>
-                                <srcFile>sql/create_companies.sql</srcFile>
-                                <srcFile>sql/create_licences.sql</srcFile>
-                                <srcFile>sql/create_users.sql</srcFile>
-                                <srcFile>sql/craete_linked_calendars.sql</srcFile>
-                                <srcFile>sql/create_user_calendars.sql</srcFile>
-                                <srcFile>sql/create_validations.sql</srcFile>
-                                <srcFile>sql/create_scheduler.sql</srcFile>
-                                <srcFile>sql/create_events.sql</srcFile>
-                                <srcFile>sql/create_java_caches.sql</srcFile>
-                                <srcFile>sql/create_questions.sql</srcFile>
-                                <srcFile>sql/create_answers.sql</srcFile>
-                                <srcFile>sql/create_invitation.sql</srcFile>
-                                <srcFile>sql/create_meetings.sql</srcFile>
-                                <srcFile>sql/create_todo.sql</srcFile>
-                                <srcFile>sql/create_files.sql</srcFile>
-                                <srcFile>sql/create_event_file_link.sql</srcFile>
-                            </srcFiles>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>com.heroku.sdk</groupId>
                 <artifactId>heroku-maven-plugin</artifactId>
                 <version>3.0.4</version>
@@ -284,6 +234,22 @@
                         <web>java -Dserver.port=$PORT -jar $JAVA_OPTS target/${project.build.finalName}.jar</web>
                     </processTypes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <configuration>
+                    <url>${db.url}</url>
+                    <user>${db.username}</user>
+                    <password>${db.password}</password>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>42.2.24</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
