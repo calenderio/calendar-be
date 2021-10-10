@@ -276,6 +276,13 @@
                 <version>3.0.4</version>
                 <configuration>
                     <appName>collige</appName>
+                    <includeTarget>false</includeTarget>
+                    <includes>
+                        <include>${project.build.directory}/${project.build.finalName}.jar</include>
+                    </includes>
+                    <processTypes>
+                        <web>java $JAVA_OPTS -jar target/${project.build.finalName}.jar -Dserver.port=$PORT $JAR_OPTS</web>
+                    </processTypes>
                 </configuration>
             </plugin>
         </plugins>
