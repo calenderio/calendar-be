@@ -32,5 +32,6 @@ public interface MeetingMapper {
     @Mapping(source = "invitation.user.email", target = "email")
     @Mapping(source = "invitation.user.picture", target = "picture")
     @Mapping(source = "invitation.scheduled", target = "scheduled")
+    @Mapping(source = "invitation.event.questions", target = "questions")
     AvailableDateResponse detailsToModel(AvailableDatesDetails details);
 }

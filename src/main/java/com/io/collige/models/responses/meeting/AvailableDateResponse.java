@@ -7,11 +7,14 @@
 package com.io.collige.models.responses.meeting;
 
 import com.io.collige.models.internals.event.CalendarDuration;
+import com.io.collige.models.internals.event.QuestionModel;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,5 +57,8 @@ public class AvailableDateResponse {
 
     @Schema(description = "Meeting duration", implementation = CalendarDuration.class)
     private CalendarDuration duration;
+
+    @ArraySchema(schema = @Schema(description = "User Questions", implementation = CalendarDuration.class))
+    private List<QuestionModel> questions;
 
 }
