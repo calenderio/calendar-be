@@ -4,7 +4,7 @@
  *
  * Copyright - Collige App Java API
  **/
-package com.io.collige.models.internals;
+package com.io.collige.models.internals.event;
 
 import com.io.collige.enums.QuestionType;
 import com.io.collige.validators.QuestionCheck;

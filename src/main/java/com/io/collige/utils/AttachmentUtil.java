@@ -7,7 +7,7 @@
 package com.io.collige.utils;
 
 import com.io.collige.core.exception.CalendarAppException;
-import com.io.collige.models.internals.AttachmentModel;
+import com.io.collige.models.internals.file.AttachmentModel;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;

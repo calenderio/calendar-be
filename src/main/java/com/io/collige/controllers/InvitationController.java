@@ -8,7 +8,7 @@ package com.io.collige.controllers;
 
 import com.io.collige.core.exception.ErrorData;
 import com.io.collige.models.requests.meet.InvitationResendRequest;
-import com.io.collige.models.requests.meet.MeetInvitationRequest;
+import com.io.collige.models.requests.meet.SendInvitationRequest;
 import com.io.collige.models.responses.meeting.InvitationResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -39,7 +39,7 @@ public interface InvitationController {
                     schema = @Schema(implementation = ErrorData.class))})
     })
     @PostMapping(path = "/meets/invite")
-    ResponseEntity<Void> sendInvitation(@RequestBody MeetInvitationRequest request) throws IOException;
+    ResponseEntity<Void> sendInvitation(@RequestBody SendInvitationRequest request) throws IOException;
 
     @Operation(summary = "ReSend meeting request")
     @ApiResponses(value = {

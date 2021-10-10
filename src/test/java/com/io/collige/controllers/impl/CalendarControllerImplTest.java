@@ -6,7 +6,7 @@
  **/
 package com.io.collige.controllers.impl;
 
-import com.io.collige.models.requests.calendar.UserCalendarItemsRequest;
+import com.io.collige.models.requests.calendar.CalendarGetRequest;
 import com.io.collige.models.responses.calendar.CalendarItemResponse;
 import com.io.collige.models.responses.calendar.CalendarResponse;
 import com.io.collige.services.CalendarService;
@@ -39,7 +39,7 @@ class CalendarControllerImplTest {
         CalendarResponse response = new CalendarResponse();
         response.setItems(Collections.singletonList(new CalendarItemResponse()));
         when(calendarService.getAllCalendars(any())).thenReturn(response);
-        ResponseEntity<CalendarResponse> responseEntity = calendarController.getUserCalendars(new UserCalendarItemsRequest());
+        ResponseEntity<CalendarResponse> responseEntity = calendarController.getUserCalendars(new CalendarGetRequest());
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(1, Objects.requireNonNull(responseEntity.getBody()).getItems().size());
     }

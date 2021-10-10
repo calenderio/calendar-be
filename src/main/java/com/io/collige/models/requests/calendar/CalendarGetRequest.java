@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
-public class UserCalendarItemsRequest {
+public class CalendarGetRequest {
 
     @Schema(description = "Filter start time", implementation = LocalDateTime.class, required = true)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

@@ -17,9 +17,9 @@ import com.io.collige.entitites.User;
 import com.io.collige.enums.AppProviderType;
 import com.io.collige.enums.CalendarEventStatus;
 import com.io.collige.enums.DurationType;
-import com.io.collige.models.internals.AdditionalTime;
-import com.io.collige.models.internals.AvailableDatesDetails;
-import com.io.collige.models.internals.SchedulerTime;
+import com.io.collige.models.internals.event.AdditionalTime;
+import com.io.collige.models.internals.event.AvailableDatesDetails;
+import com.io.collige.models.internals.scheduler.SchedulerTime;
 import com.io.collige.models.remotes.google.GoogleCalendarEventItem;
 import com.io.collige.models.remotes.google.GoogleCalendarEventResponse;
 import com.io.collige.models.remotes.google.GoogleCalendarEventsRequest;
@@ -27,7 +27,8 @@ import com.io.collige.models.remotes.google.TokenRefreshResponse;
 import com.io.collige.models.remotes.microsoft.CalendarEventItem;
 import com.io.collige.models.remotes.microsoft.MicrosoftCalendarEventsRequest;
 import com.io.collige.models.remotes.microsoft.MicrosoftCalendarResponse;
-import com.io.collige.models.requests.calendar.UserCalendarItemsRequest;
+import com.io.collige.models.requests.calendar.CalendarGetRequest;
+import com.io.collige.models.requests.meet.GetAvailableDateRequest;
 import com.io.collige.models.responses.calendar.CalendarItemResponse;
 import com.io.collige.models.responses.calendar.CalendarResponse;
 import com.io.collige.repositories.InvitationRepository;
@@ -82,8 +83,10 @@ public class CalendarServiceImpl implements CalendarService {
     private MeetingRepository meetingRepository;
 
     @Override
-    public AvailableDatesDetails getAvailableDates(LocalDate localDate, String invitationId, String timeZone) {
-        Invitation invitation = invitationRepository.findByInvitationId(invitationId).orElseThrow(() ->
+    public AvailableDatesDetails getAvailableDates(GetAvailableDateRequest request) {
+        String timeZone = request.getTimeZone();
+        LocalDate localDate = request.getLocalDate();
+        Invitation invitation = invitationRepository.findByInvitationId(request.getInvitationId()).orElseThrow(() ->
                 new CalendarAppException(HttpStatus.BAD_REQUEST, "No event found", "NO_EVENT"));
         AvailableDatesDetails details = new AvailableDatesDetails();
         Event event = invitation.getEvent();
@@ -117,7 +120,7 @@ public class CalendarServiceImpl implements CalendarService {
     }
 
     @Override
-    public CalendarResponse getAllCalendars(UserCalendarItemsRequest request) {
+    public CalendarResponse getAllCalendars(CalendarGetRequest request) {
         User user = jwtService.getLoggedUser();
         CalendarResponse response = new CalendarResponse();
         Set<LinkedCalendar> linkedCalendarSet = user.getCalendars();
@@ -318,7 +321,7 @@ public class CalendarServiceImpl implements CalendarService {
 
     private LocalDateTime getMaxDate(Integer year, Integer month, Event event, String timeZone) {
         return ZonedDateTime.of(LocalDate.of(year, month, YearMonth.of(year, month).atEndOfMonth().getDayOfMonth()),
-                LocalTime.MAX, ZoneId.of(timeZone))
+                        LocalTime.MAX, ZoneId.of(timeZone))
                 .withZoneSameInstant(ZoneId.of(event.getTimeZone())).toLocalDateTime();
     }
 

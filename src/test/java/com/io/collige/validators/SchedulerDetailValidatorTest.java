@@ -6,9 +6,9 @@
  **/
 package com.io.collige.validators;
 
-import com.io.collige.models.internals.AdditionalTime;
-import com.io.collige.models.internals.SchedulerDetails;
-import com.io.collige.models.internals.SchedulerTime;
+import com.io.collige.models.internals.event.AdditionalTime;
+import com.io.collige.models.internals.scheduler.SchedulerDetails;
+import com.io.collige.models.internals.scheduler.SchedulerTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

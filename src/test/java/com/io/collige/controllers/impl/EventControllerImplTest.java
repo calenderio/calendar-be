@@ -6,16 +6,11 @@
  **/
 package com.io.collige.controllers.impl;
 
-import com.io.collige.entitites.Event;
-import com.io.collige.entitites.Scheduler;
-import com.io.collige.mappers.EventMapper;
-import com.io.collige.mappers.SchedulerMapper;
-import com.io.collige.models.internals.SchedulerDetails;
-import com.io.collige.models.internals.SchedulerObject;
-import com.io.collige.models.requests.calendar.EventTypeCreateRequest;
+import com.io.collige.models.internals.scheduler.SchedulerDetails;
+import com.io.collige.models.internals.scheduler.SchedulerObject;
+import com.io.collige.models.requests.events.EventCreateRequest;
 import com.io.collige.models.responses.calendar.EventTypeResponse;
 import com.io.collige.services.EventService;
-import com.io.collige.services.FileService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,40 +34,25 @@ class EventControllerImplTest {
     @Mock
     private EventService eventService;
 
-    @Mock
-    private EventMapper eventMapper;
-
-    @Mock
-    private SchedulerMapper schedulerMapper;
-
-    @Mock
-    private FileService fileService;
-
     @InjectMocks
     private EventControllerImpl eventController;
 
     @Test
     void createEventType() {
-        EventTypeCreateRequest request = new EventTypeCreateRequest();
+        EventCreateRequest request = new EventCreateRequest();
         request.setSchedule(new SchedulerDetails());
         request.setTimezone("UTC");
-        when(eventMapper.mapRequestToEntity(any())).thenReturn(new Event());
-        when(eventService.createEvent(any())).thenReturn(new Event());
-        when(eventMapper.mapEntityToModel(any())).thenReturn(new EventTypeResponse());
-        when(schedulerMapper.mapEntityToModel(any())).thenReturn(new SchedulerObject());
+        when(eventService.createEvent(any())).thenReturn(new EventTypeResponse());
         ResponseEntity<EventTypeResponse> responseEntity = eventController.createEventType(request);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
     @Test
     void updateEvent() {
-        EventTypeCreateRequest request = new EventTypeCreateRequest();
+        EventCreateRequest request = new EventCreateRequest();
         request.setSchedule(new SchedulerDetails());
         request.setTimezone("UTC");
-        when(eventMapper.mapRequestToEntity(any())).thenReturn(new Event());
-        when(eventService.updateEvent(any())).thenReturn(new Event());
-        when(eventMapper.mapEntityToModel(any())).thenReturn(new EventTypeResponse());
-        when(schedulerMapper.mapEntityToModel(any())).thenReturn(new SchedulerObject());
+        when(eventService.updateEvent(any())).thenReturn(new EventTypeResponse());
         ResponseEntity<EventTypeResponse> responseEntity = eventController.updateEvent(request, 1L);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
@@ -86,24 +66,20 @@ class EventControllerImplTest {
 
     @Test
     void getEventTypes() {
-        List<Event> eventList = new ArrayList<>();
-        Event event = new Event();
-        event.setScheduler(new Scheduler());
+        List<EventTypeResponse> eventList = new ArrayList<>();
+        EventTypeResponse event = new EventTypeResponse();
+        event.setSchedule(new SchedulerObject());
         eventList.add(event);
         when(eventService.getEvents()).thenReturn(eventList);
-        when(eventMapper.mapEntityToModel(any())).thenReturn(new EventTypeResponse());
-        when(schedulerMapper.mapEntityToModel(any())).thenReturn(new SchedulerObject());
         ResponseEntity<List<EventTypeResponse>> responseEntity = eventController.getEventTypes();
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
     @Test
     void getEventDetail() {
-        Event event = new Event();
-        event.setScheduler(new Scheduler());
+        EventTypeResponse event = new EventTypeResponse();
+        event.setSchedule(new SchedulerObject());
         when(eventService.getEvent(1L)).thenReturn(event);
-        when(eventMapper.mapEntityToModel(any())).thenReturn(new EventTypeResponse());
-        when(schedulerMapper.mapEntityToModel(any())).thenReturn(new SchedulerObject());
         ResponseEntity<EventTypeResponse> responseEntity = eventController.getEventDetail(1L);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }

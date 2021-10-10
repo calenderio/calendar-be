@@ -7,7 +7,7 @@
 package com.io.collige.services.impl;
 
 import com.io.collige.core.i18n.Translator;
-import com.io.collige.models.internals.AttachmentModel;
+import com.io.collige.models.internals.file.AttachmentModel;
 import com.io.collige.models.requests.meet.MeetingRequest;
 import net.fortuna.ical4j.model.property.Method;
 import org.junit.jupiter.api.Test;

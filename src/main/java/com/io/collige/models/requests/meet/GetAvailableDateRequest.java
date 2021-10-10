@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
-public class MeetingDateRequest {
+public class GetAvailableDateRequest {
 
     @Schema(description = "Max Event Time", implementation = LocalDate.class)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)

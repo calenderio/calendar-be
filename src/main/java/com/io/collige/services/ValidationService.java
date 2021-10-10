@@ -7,7 +7,7 @@
 package com.io.collige.services;
 
 import com.io.collige.entitites.Validation;
-import com.io.collige.models.internals.ResendValidation;
+import com.io.collige.models.internals.mail.ResendValidationRequest;
 import com.io.collige.models.requests.user.ValidationRequest;
 
 public interface ValidationService {
@@ -15,5 +15,5 @@ public interface ValidationService {
 
     void verify(ValidationRequest request);
 
-    Validation getValidationDetail(ResendValidation request);
+    Validation getValidationDetail(ResendValidationRequest request);
 }

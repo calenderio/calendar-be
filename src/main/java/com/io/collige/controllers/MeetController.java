@@ -8,8 +8,8 @@ package com.io.collige.controllers;
 
 import com.io.collige.core.exception.ErrorData;
 import com.io.collige.models.requests.calendar.ScheduleMeetingRequest;
-import com.io.collige.models.requests.meet.MeetingDateRequest;
-import com.io.collige.models.responses.meeting.ScheduledMeetingResponse;
+import com.io.collige.models.requests.meet.GetAvailableDateRequest;
+import com.io.collige.models.responses.meeting.AvailableDateResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,12 +33,12 @@ public interface MeetController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Returns meeting request",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ScheduledMeetingResponse.class))}),
+                            schema = @Schema(implementation = AvailableDateResponse.class))}),
             @ApiResponse(responseCode = "400", description = "Getting error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})
     })
     @GetMapping(path = "/meets/availability")
-    ResponseEntity<ScheduledMeetingResponse> getAvailableDates(MeetingDateRequest request);
+    ResponseEntity<AvailableDateResponse> getAvailableDates(GetAvailableDateRequest request);
 
     @Operation(summary = "Send new meeting")
     @ApiResponses(value = {

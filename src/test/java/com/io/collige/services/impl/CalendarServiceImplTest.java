@@ -17,9 +17,9 @@ import com.io.collige.entitites.Scheduler;
 import com.io.collige.entitites.User;
 import com.io.collige.enums.AppProviderType;
 import com.io.collige.enums.DurationType;
-import com.io.collige.models.internals.AdditionalTime;
-import com.io.collige.models.internals.AvailableDatesDetails;
-import com.io.collige.models.internals.SchedulerTime;
+import com.io.collige.models.internals.event.AdditionalTime;
+import com.io.collige.models.internals.event.AvailableDatesDetails;
+import com.io.collige.models.internals.scheduler.SchedulerTime;
 import com.io.collige.models.remotes.google.CalendarEventDateType;
 import com.io.collige.models.remotes.google.GoogleCalendarEventItem;
 import com.io.collige.models.remotes.google.GoogleCalendarEventResponse;
@@ -27,7 +27,8 @@ import com.io.collige.models.remotes.google.TokenRefreshResponse;
 import com.io.collige.models.remotes.microsoft.CalendarEventItem;
 import com.io.collige.models.remotes.microsoft.DateType;
 import com.io.collige.models.remotes.microsoft.MicrosoftCalendarResponse;
-import com.io.collige.models.requests.calendar.UserCalendarItemsRequest;
+import com.io.collige.models.requests.calendar.CalendarGetRequest;
+import com.io.collige.models.requests.meet.GetAvailableDateRequest;
 import com.io.collige.models.responses.calendar.CalendarResponse;
 import com.io.collige.repositories.InvitationRepository;
 import com.io.collige.repositories.LinkedCalendarRepository;
@@ -88,6 +89,10 @@ class CalendarServiceImplTest {
 
     @Test
     void getAvailableDates_DateException() {
+        GetAvailableDateRequest request = new GetAvailableDateRequest();
+        request.setInvitationId("1L");
+        request.setTimeZone("UTC");
+        request.setLocalDate(null);
         Invitation invitation = new Invitation();
         Event event = new Event();
         event.setStartDate(LocalDate.now().plusDays(1));
@@ -95,22 +100,30 @@ class CalendarServiceImplTest {
         invitation.setEvent(event);
         when(invitationRepository.findByInvitationId("1L")).thenReturn(Optional.of(invitation));
         CalendarAppException exception = assertThrows(CalendarAppException.class, () ->
-                calendarService.getAvailableDates(null, "1L", "UTC"));
+                calendarService.getAvailableDates(request));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("RANGE_NOT_AVAILABLE", exception.getCause().getMessage());
     }
 
     @Test
     void getAvailableDates_InvitationException() {
+        GetAvailableDateRequest request = new GetAvailableDateRequest();
+        request.setInvitationId("1L");
+        request.setTimeZone("UTC");
+        request.setLocalDate(null);
         when(invitationRepository.findByInvitationId("1L")).thenReturn(Optional.empty());
         CalendarAppException exception = assertThrows(CalendarAppException.class, () ->
-                calendarService.getAvailableDates(null, "1L", "UTC"));
+                calendarService.getAvailableDates(request));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("NO_EVENT", exception.getCause().getMessage());
     }
 
     @Test
     void getAvailableDates() {
+        GetAvailableDateRequest request = new GetAvailableDateRequest();
+        request.setInvitationId("1L");
+        request.setTimeZone("UTC");
+        request.setLocalDate(null);
         Invitation invitation = new Invitation();
         AdditionalTime additionalTime = new AdditionalTime();
         additionalTime.setDate(LocalDate.now());
@@ -131,12 +144,16 @@ class CalendarServiceImplTest {
         invitation.setUser(user);
         when(invitationRepository.findByInvitationId("1L")).thenReturn(Optional.of(invitation));
         when(meetingRepository.findUserEventMeetings(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(getMeeting());
-        AvailableDatesDetails details = calendarService.getAvailableDates(null, "1L", "UTC");
+        AvailableDatesDetails details = calendarService.getAvailableDates(request);
         assertFalse(details.getAvailableDates().isEmpty());
     }
 
     @Test
     void getAvailableDates_WithDate() {
+        GetAvailableDateRequest request = new GetAvailableDateRequest();
+        request.setInvitationId("1L");
+        request.setTimeZone("UTC");
+        request.setLocalDate(LocalDate.now().plusMonths(1));
         TokenRefreshResponse response = new TokenRefreshResponse();
         response.setAccessToken("12313");
         response.setExpiresIn(Integer.MAX_VALUE);
@@ -164,13 +181,13 @@ class CalendarServiceImplTest {
         when(microsoftService.getCalendarEvents(any())).thenReturn(microsoftResponse());
         when(googleService.getCalendarEvents(any())).thenReturn(googleResponse());
         when(microsoftService.getNewAccessToken(anyString())).thenReturn(response);
-        AvailableDatesDetails details = calendarService.getAvailableDates(LocalDate.now().plusMonths(1), "1L", "UTC");
+        AvailableDatesDetails details = calendarService.getAvailableDates(request);
         assertFalse(details.getAvailableDates().isEmpty());
     }
 
     @Test
     void getAllCalendars() {
-        UserCalendarItemsRequest itemsRequest = new UserCalendarItemsRequest();
+        CalendarGetRequest itemsRequest = new CalendarGetRequest();
         itemsRequest.setEndDate(LocalDateTime.now());
         itemsRequest.setStarDate(LocalDateTime.now());
         itemsRequest.setTimeZone("UTC");

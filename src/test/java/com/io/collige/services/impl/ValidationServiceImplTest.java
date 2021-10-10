@@ -8,7 +8,7 @@ package com.io.collige.services.impl;
 
 import com.io.collige.entitites.Validation;
 import com.io.collige.enums.ValidationType;
-import com.io.collige.models.internals.ResendValidation;
+import com.io.collige.models.internals.mail.ResendValidationRequest;
 import com.io.collige.models.requests.user.ValidationRequest;
 import com.io.collige.repositories.UserRepository;
 import com.io.collige.repositories.ValidationRepository;
@@ -65,7 +65,7 @@ class ValidationServiceImplTest {
     void getValidationDetail() {
         Validation validation = new Validation();
         validation.setCode("123");
-        ResendValidation request = new ResendValidation();
+        ResendValidationRequest request = new ResendValidationRequest();
         request.setMail("example");
         request.setType(ValidationType.PASSWORD);
         when(validationRepository.findByMailAndType("example", ValidationType.PASSWORD))

@@ -10,9 +10,9 @@ import com.io.collige.constants.CacheConstants;
 import com.io.collige.constants.RoleConstants;
 import com.io.collige.core.security.jwt.JWTService;
 import com.io.collige.core.services.CacheService;
-import com.io.collige.models.internals.QuestionModel;
-import com.io.collige.models.internals.SchedulerDetails;
-import com.io.collige.models.requests.calendar.EventTypeCreateRequest;
+import com.io.collige.models.internals.event.QuestionModel;
+import com.io.collige.models.internals.scheduler.SchedulerDetails;
+import com.io.collige.models.requests.events.EventCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -42,7 +42,7 @@ class EventValidatorTest {
 
     @Test
     void isValid() {
-        EventTypeCreateRequest request = new EventTypeCreateRequest();
+        EventCreateRequest request = new EventCreateRequest();
         ConstraintValidatorContext context = mock(ConstraintValidatorContext.class);
         ConstraintValidatorContext.ConstraintViolationBuilder builder = mock(ConstraintValidatorContext.ConstraintViolationBuilder.class);
         ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderCustomizableContext node
@@ -55,7 +55,7 @@ class EventValidatorTest {
 
     @Test
     void isValid_allSchedule() {
-        EventTypeCreateRequest request = new EventTypeCreateRequest();
+        EventCreateRequest request = new EventCreateRequest();
         request.setSchedule(new SchedulerDetails());
         request.setPreDefinedSchedulerId(1L);
         ConstraintValidatorContext context = mock(ConstraintValidatorContext.class);
@@ -70,7 +70,7 @@ class EventValidatorTest {
 
     @Test
     void isValid_fileEmpty() {
-        EventTypeCreateRequest request = new EventTypeCreateRequest();
+        EventCreateRequest request = new EventCreateRequest();
         request.setPreDefinedSchedulerId(1L);
         request.setIsFileRequired(true);
         ConstraintValidatorContext context = mock(ConstraintValidatorContext.class);
@@ -85,7 +85,7 @@ class EventValidatorTest {
 
     @Test
     void isValid_questionError() {
-        EventTypeCreateRequest request = new EventTypeCreateRequest();
+        EventCreateRequest request = new EventCreateRequest();
         request.setPreDefinedSchedulerId(1L);
         request.setQuestions(Collections.singletonList(new QuestionModel()));
         when(jwtService.getUserRoles()).thenReturn(Collections.singleton(RoleConstants.COMMERCIAL));
@@ -103,7 +103,7 @@ class EventValidatorTest {
 
     @Test
     void isValid_questionIndiError() {
-        EventTypeCreateRequest request = new EventTypeCreateRequest();
+        EventCreateRequest request = new EventCreateRequest();
         request.setPreDefinedSchedulerId(1L);
         request.setQuestions(Collections.singletonList(new QuestionModel()));
         when(jwtService.getUserRoles()).thenReturn(Collections.singleton(RoleConstants.INDIVIDUAL));
@@ -121,7 +121,7 @@ class EventValidatorTest {
 
     @Test
     void isValid_questionFreeError() {
-        EventTypeCreateRequest request = new EventTypeCreateRequest();
+        EventCreateRequest request = new EventCreateRequest();
         request.setPreDefinedSchedulerId(1L);
         request.setQuestions(Collections.singletonList(new QuestionModel()));
         when(jwtService.getUserRoles()).thenReturn(Collections.singleton(RoleConstants.FREE));
@@ -138,7 +138,7 @@ class EventValidatorTest {
 
     @Test
     void isValid_true() {
-        EventTypeCreateRequest request = new EventTypeCreateRequest();
+        EventCreateRequest request = new EventCreateRequest();
         request.setPreDefinedSchedulerId(1L);
         request.setQuestions(Collections.singletonList(new QuestionModel()));
         when(jwtService.getUserRoles()).thenReturn(Collections.singleton(RoleConstants.INDIVIDUAL));

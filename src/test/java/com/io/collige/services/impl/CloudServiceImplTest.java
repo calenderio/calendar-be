@@ -9,8 +9,10 @@ package com.io.collige.services.impl;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Uploader;
 import com.io.collige.entitites.User;
-import com.io.collige.models.internals.AttachmentModel;
-import com.io.collige.models.internals.FileDetails;
+import com.io.collige.models.internals.file.AttachmentModel;
+import com.io.collige.models.internals.file.FileDetails;
+import com.io.collige.models.internals.file.UploadMeetingFileRequest;
+import com.io.collige.models.internals.file.UploadUserFileRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -72,7 +74,8 @@ class CloudServiceImplTest {
     @Test
     void uploadMeetingFiles() throws IOException {
         defaultSettings();
-        Set<FileDetails> fileDetails = cloudinaryService.uploadMeetingFiles(Collections.singletonList(new AttachmentModel()), "1", new User());
+        Set<FileDetails> fileDetails = cloudinaryService
+                .uploadMeetingFiles(new UploadMeetingFileRequest("1", Collections.singletonList(new AttachmentModel()), 1L));
         assertEquals(1, fileDetails.size());
 
     }
@@ -80,7 +83,8 @@ class CloudServiceImplTest {
     @Test
     void uploadUserFiles() throws IOException {
         defaultSettings();
-        Set<FileDetails> fileDetails = cloudinaryService.uploadUserFiles(Collections.singletonList(new AttachmentModel()), new User());
+        Set<FileDetails> fileDetails = cloudinaryService
+                .uploadUserFiles(new UploadUserFileRequest(Collections.singletonList(new AttachmentModel()), 1L));
         assertEquals(1, fileDetails.size());
     }
 

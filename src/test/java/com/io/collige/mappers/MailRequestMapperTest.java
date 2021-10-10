@@ -7,8 +7,8 @@
 package com.io.collige.mappers;
 
 import com.io.collige.entitites.Invitation;
-import com.io.collige.models.internals.GenericMailRequest;
-import com.io.collige.models.internals.MeetInvitationDetailRequest;
+import com.io.collige.models.internals.mail.GenericMailRequest;
+import com.io.collige.models.requests.meet.SendInvitationRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
@@ -32,7 +32,7 @@ class MailRequestMapperTest {
 
     @Test
     void setEmails() {
-        MeetInvitationDetailRequest request = new MeetInvitationDetailRequest();
+        SendInvitationRequest request = new SendInvitationRequest();
         request.setUserMail("example@example.com");
         GenericMailRequest genericMailRequest = new GenericMailRequest();
         mapper.setEmails(request, genericMailRequest);

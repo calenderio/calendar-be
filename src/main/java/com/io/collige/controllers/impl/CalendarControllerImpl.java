@@ -1,7 +1,7 @@
 package com.io.collige.controllers.impl;
 
 import com.io.collige.controllers.CalendarController;
-import com.io.collige.models.requests.calendar.UserCalendarItemsRequest;
+import com.io.collige.models.requests.calendar.CalendarGetRequest;
 import com.io.collige.models.responses.calendar.CalendarResponse;
 import com.io.collige.services.CalendarService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class CalendarControllerImpl implements CalendarController {
     private CalendarService calendarService;
 
     @Override
-    public ResponseEntity<CalendarResponse> getUserCalendars(@Valid UserCalendarItemsRequest request) {
+    public ResponseEntity<CalendarResponse> getUserCalendars(@Valid CalendarGetRequest request) {
         return ResponseEntity.ok(calendarService.getAllCalendars(request));
     }
 

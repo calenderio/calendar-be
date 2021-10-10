@@ -6,11 +6,11 @@
  **/
 package com.io.collige.models.responses.calendar;
 
-import com.io.collige.models.internals.AlarmDuration;
-import com.io.collige.models.internals.CalendarDuration;
-import com.io.collige.models.internals.QuestionModel;
-import com.io.collige.models.internals.QuestionModelResponse;
-import com.io.collige.models.internals.SchedulerObject;
+import com.io.collige.models.internals.event.AlarmDuration;
+import com.io.collige.models.internals.event.CalendarDuration;
+import com.io.collige.models.internals.event.QuestionModel;
+import com.io.collige.models.internals.event.QuestionModelResponse;
+import com.io.collige.models.internals.scheduler.SchedulerObject;
 import com.io.collige.models.responses.files.FileResponse;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;

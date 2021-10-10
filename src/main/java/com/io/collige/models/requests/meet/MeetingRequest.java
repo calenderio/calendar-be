@@ -1,6 +1,6 @@
 package com.io.collige.models.requests.meet;
 
-import com.io.collige.models.internals.AttachmentModel;
+import com.io.collige.models.internals.file.AttachmentModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

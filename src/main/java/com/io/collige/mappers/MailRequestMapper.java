@@ -7,8 +7,8 @@
 package com.io.collige.mappers;
 
 import com.io.collige.entitites.Invitation;
-import com.io.collige.models.internals.GenericMailRequest;
-import com.io.collige.models.internals.MeetInvitationDetailRequest;
+import com.io.collige.models.internals.mail.GenericMailRequest;
+import com.io.collige.models.requests.meet.SendInvitationRequest;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,7 +20,7 @@ import java.util.Collections;
 public interface MailRequestMapper {
 
     @Mapping(source = "title", target = "header")
-    GenericMailRequest meetingRequestToMail(MeetInvitationDetailRequest request);
+    GenericMailRequest meetingRequestToMail(SendInvitationRequest request);
 
     @Mapping(source = "ccList", target = "cc")
     @Mapping(source = "bccList", target = "bcc")
@@ -29,7 +29,7 @@ public interface MailRequestMapper {
     GenericMailRequest invitationToMail(Invitation request);
 
     @AfterMapping
-    default void setEmails(MeetInvitationDetailRequest from, @MappingTarget GenericMailRequest to) {
+    default void setEmails(SendInvitationRequest from, @MappingTarget GenericMailRequest to) {
         to.setEmails(Collections.singleton(from.getUserMail()));
     }
 

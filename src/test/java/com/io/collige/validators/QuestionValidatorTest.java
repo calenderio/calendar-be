@@ -7,7 +7,7 @@
 package com.io.collige.validators;
 
 import com.io.collige.enums.QuestionType;
-import com.io.collige.models.internals.QuestionModel;
+import com.io.collige.models.internals.event.QuestionModel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

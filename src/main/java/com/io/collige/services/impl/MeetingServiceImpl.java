@@ -10,14 +10,16 @@ import com.io.collige.entitites.Meeting;
 import com.io.collige.entitites.Question;
 import com.io.collige.enums.DurationType;
 import com.io.collige.mappers.MeetingMapper;
-import com.io.collige.models.internals.AlarmDuration;
-import com.io.collige.models.internals.AttachmentModel;
-import com.io.collige.models.internals.AvailableDatesDetails;
-import com.io.collige.models.internals.GenericMailRequest;
-import com.io.collige.models.internals.QuestionAnswerModel;
-import com.io.collige.models.internals.ScheduleMeetingDetails;
+import com.io.collige.models.internals.event.AlarmDuration;
+import com.io.collige.models.internals.event.AvailableDatesDetails;
+import com.io.collige.models.internals.event.QuestionAnswerModel;
+import com.io.collige.models.internals.file.AttachmentModel;
+import com.io.collige.models.internals.file.DeleteInvitationFileRequest;
+import com.io.collige.models.internals.file.UploadMeetingFileRequest;
+import com.io.collige.models.internals.mail.GenericMailRequest;
+import com.io.collige.models.internals.scheduler.ScheduleMeetingRequest;
 import com.io.collige.models.requests.calendar.QuestionData;
-import com.io.collige.models.requests.calendar.ScheduleMeetingRequest;
+import com.io.collige.models.requests.meet.GetAvailableDateRequest;
 import com.io.collige.models.requests.meet.MeetingRequest;
 import com.io.collige.repositories.InvitationRepository;
 import com.io.collige.repositories.MeetingRepository;
@@ -83,11 +85,14 @@ public class MeetingServiceImpl implements MeetingService {
     @Autowired
     private InvitationRepository invitationRepository;
 
-
     @Override
-    public void validateAndScheduleMeeting(ScheduleMeetingDetails details) {
-        ScheduleMeetingRequest request = details.getRequest();
-        AvailableDatesDetails dateDetails = calendarService.getAvailableDates(request.getDate(), details.getInvitationId(), request.getTimeZone());
+    public void validateAndScheduleMeeting(ScheduleMeetingRequest details) {
+        com.io.collige.models.requests.calendar.ScheduleMeetingRequest request = details.getRequest();
+        GetAvailableDateRequest availableDateRequest = new GetAvailableDateRequest();
+        availableDateRequest.setInvitationId(details.getInvitationId());
+        availableDateRequest.setTimeZone(request.getTimeZone());
+        availableDateRequest.setLocalDate(request.getDate());
+        AvailableDatesDetails dateDetails = calendarService.getAvailableDates(availableDateRequest);
         Map<LocalDate, Set<LocalTime>> availableDates = dateDetails.getAvailableDates();
         Invitation invitation = dateDetails.getInvitation();
         checkDates(request, availableDates, invitation.getEvent());
@@ -111,14 +116,18 @@ public class MeetingServiceImpl implements MeetingService {
         invitation.setScheduled(true);
         Meeting meeting = meetingMapper.mapToMeeting(meetingRequest);
         meeting.setEvent(invitation.getEvent());
-        meeting.setFileLinks(cloudService.uploadMeetingFiles(meetingRequest.getAttachmentModels(), details.getInvitationId(), invitation.getUser()));
+        meeting.setFileLinks(cloudService.uploadMeetingFiles(new UploadMeetingFileRequest(details.getInvitationId(),
+                meetingRequest.getAttachmentModels(), invitation.getUser().getId())));
         sendInvitationMailAndSaveMeeting(meetingRequest, invitation, meeting);
     }
 
     @Override
-    public void updateMeetingRequest(ScheduleMeetingDetails details) {
-        AvailableDatesDetails dateDetails = calendarService.getAvailableDates(details.getRequest().getDate(), details.getInvitationId(),
-                details.getRequest().getTimeZone());
+    public void updateMeetingRequest(ScheduleMeetingRequest details) {
+        GetAvailableDateRequest availableDateRequest = new GetAvailableDateRequest();
+        availableDateRequest.setInvitationId(details.getInvitationId());
+        availableDateRequest.setTimeZone(details.getRequest().getTimeZone());
+        availableDateRequest.setLocalDate(details.getRequest().getDate());
+        AvailableDatesDetails dateDetails = calendarService.getAvailableDates(availableDateRequest);
         Map<LocalDate, Set<LocalTime>> availableDates = dateDetails.getAvailableDates();
         Invitation invitation = dateDetails.getInvitation();
         if (Boolean.FALSE.equals(invitation.getScheduled())) {
@@ -135,12 +144,13 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting newOne = meetingMapper.mapToMeeting(meetingRequest);
         newOne.setId(meeting.getId());
         newOne.setEvent(invitation.getEvent());
-        newOne.setFileLinks(cloudService.uploadMeetingFiles(meetingRequest.getAttachmentModels(), details.getInvitationId(), invitation.getUser()));
+        newOne.setFileLinks(cloudService.uploadMeetingFiles(new UploadMeetingFileRequest(details.getInvitationId(),
+                meetingRequest.getAttachmentModels(), invitation.getUser().getId())));
         sendInvitationMailAndSaveMeeting(meetingRequest, invitation, newOne);
     }
 
     @Override
-    public void deleteMeetingRequest(ScheduleMeetingDetails details) {
+    public void deleteMeetingRequest(ScheduleMeetingRequest details) {
         Invitation invitation = invitationRepository.findByInvitationIdAndScheduledIsTrue(details.getInvitationId()).orElseThrow(() ->
                 new CalendarAppException(HttpStatus.BAD_REQUEST, "Invitation couldn't scheduled", "NOT_SCHEDULED"));
 
@@ -157,11 +167,11 @@ public class MeetingServiceImpl implements MeetingService {
         meetingRequest.setOrganizerName(invitation.getName());
         meetingRequest.setOrganizerMail(invitation.getUserEmail());
         sendInvitationMailAndSaveMeeting(meetingRequest, invitation, meeting);
-        cloudService.deleteInvitationFiles(details.getInvitationId(), invitation.getUser());
+        cloudService.deleteInvitationFiles(new DeleteInvitationFileRequest(details.getInvitationId(), invitation.getUser().getId()));
         meetingRepository.deleteMeeting(meeting.getId());
     }
 
-    private List<QuestionAnswerModel> generateQAModel(ScheduleMeetingRequest request, Invitation invitation) {
+    private List<QuestionAnswerModel> generateQAModel(com.io.collige.models.requests.calendar.ScheduleMeetingRequest request, Invitation invitation) {
         List<QuestionAnswerModel> questionAnswerModels = new ArrayList<>();
         if (invitation.getEvent().getQuestions() != null && !invitation.getEvent().getQuestions().isEmpty()) {
             Map<Long, Question> questionMap = invitation.getEvent().getQuestions().stream().collect(Collectors.toMap(Question::getId, Function.identity()));
@@ -173,7 +183,7 @@ public class MeetingServiceImpl implements MeetingService {
         return questionAnswerModels;
     }
 
-    private void checkDates(ScheduleMeetingRequest request, Map<LocalDate, Set<LocalTime>> availableDates, Event event) {
+    private void checkDates(com.io.collige.models.requests.calendar.ScheduleMeetingRequest request, Map<LocalDate, Set<LocalTime>> availableDates, Event event) {
         ZonedDateTime zonedDateTime = ZonedDateTime.of(request.getDate(), request.getTime(), ZoneId.of(request.getTimeZone()))
                 .withZoneSameInstant(ZoneId.of(event.getTimeZone()));
         if (!availableDates.containsKey(zonedDateTime.toLocalDate())) {
@@ -186,8 +196,8 @@ public class MeetingServiceImpl implements MeetingService {
         }
     }
 
-    private void setDates(ScheduleMeetingDetails details, Invitation invitation, MeetingRequest meetingRequest) {
-        ScheduleMeetingRequest request = details.getRequest();
+    private void setDates(ScheduleMeetingRequest details, Invitation invitation, MeetingRequest meetingRequest) {
+        com.io.collige.models.requests.calendar.ScheduleMeetingRequest request = details.getRequest();
         meetingRequest.setOrganizerName(invitation.getName());
         meetingRequest.setOrganizerMail(invitation.getUserEmail());
         meetingRequest.setStartDate(ZonedDateTime.of(request.getDate(), request.getTime(), ZoneId.of(request.getTimeZone()))

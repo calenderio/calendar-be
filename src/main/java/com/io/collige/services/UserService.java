@@ -6,8 +6,8 @@
  **/
 package com.io.collige.services;
 
+import com.io.collige.core.models.SocialUser;
 import com.io.collige.entitites.User;
-import com.io.collige.models.internals.SocialUser;
 import com.io.collige.models.requests.user.AuthRequest;
 import com.io.collige.models.requests.user.ChangePasswordRequest;
 import com.io.collige.models.requests.user.ResendVerificationMailRequest;

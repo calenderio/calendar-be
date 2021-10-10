@@ -8,6 +8,7 @@ import com.io.collige.core.security.jwt.JWTService;
 import com.io.collige.entitites.Todo;
 import com.io.collige.entitites.User;
 import com.io.collige.mappers.TodoMapper;
+import com.io.collige.models.internals.todo.FindToDoRequest;
 import com.io.collige.models.requests.todo.TodoCreateRequest;
 import com.io.collige.models.requests.todo.TodoUpdateRequest;
 import com.io.collige.models.responses.todo.TodoDetails;
@@ -39,9 +40,9 @@ public class TodoServiceImpl implements TodoService {
     private TodoMapper todoMapper;
 
     @Override
-    public List<Todo> findTodosByUserId(Integer pageNo, Integer pageSize, String sortBy) {
+    public List<Todo> findTodosByUserId(FindToDoRequest request) {
         User user = jwtService.getLoggedUser();
-        Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
+        Pageable paging = PageRequest.of(request.getPageNo() - 1, request.getPageSize(), Sort.by(request.getSortBy()));
 
         Page<Todo> pagedResult = todoRepository.findTodosByUserId(user.getId(), paging);
 

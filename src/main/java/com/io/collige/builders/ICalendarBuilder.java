@@ -1,6 +1,6 @@
 package com.io.collige.builders;
 
-import com.io.collige.models.internals.AttachmentModel;
+import com.io.collige.models.internals.file.AttachmentModel;
 import com.io.collige.models.requests.meet.MeetingRequest;
 import com.io.collige.utils.DateUtil;
 import net.fortuna.ical4j.model.Calendar;

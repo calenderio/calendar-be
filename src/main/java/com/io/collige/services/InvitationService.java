@@ -7,12 +7,12 @@
 package com.io.collige.services;
 
 import com.io.collige.entitites.Invitation;
-import com.io.collige.models.internals.MeetInvitationDetailRequest;
+import com.io.collige.models.requests.meet.SendInvitationRequest;
 
 import java.util.List;
 
 public interface InvitationService {
-    String saveInvitation(MeetInvitationDetailRequest request);
+    String saveInvitation(SendInvitationRequest request);
 
     Invitation findInvitationByUserIdAndCheckLimit(Long id);
 

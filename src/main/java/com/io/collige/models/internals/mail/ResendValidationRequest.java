@@ -4,7 +4,7 @@
  *
  * Copyright - Collige App Java API
  **/
-package com.io.collige.models.internals;
+package com.io.collige.models.internals.mail;
 
 import com.io.collige.enums.ValidationType;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResendValidation {
+public class ResendValidationRequest {
 
     private String mail;
     private ValidationType type;

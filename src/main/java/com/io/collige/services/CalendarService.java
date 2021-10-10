@@ -6,14 +6,13 @@
  **/
 package com.io.collige.services;
 
-import com.io.collige.models.internals.AvailableDatesDetails;
-import com.io.collige.models.requests.calendar.UserCalendarItemsRequest;
+import com.io.collige.models.internals.event.AvailableDatesDetails;
+import com.io.collige.models.requests.calendar.CalendarGetRequest;
+import com.io.collige.models.requests.meet.GetAvailableDateRequest;
 import com.io.collige.models.responses.calendar.CalendarResponse;
 
-import java.time.LocalDate;
-
 public interface CalendarService {
-    AvailableDatesDetails getAvailableDates(LocalDate localDate, String invitationId, String timeZone);
+    AvailableDatesDetails getAvailableDates(GetAvailableDateRequest request);
 
-    CalendarResponse getAllCalendars(UserCalendarItemsRequest request);
+    CalendarResponse getAllCalendars(CalendarGetRequest request);
 }

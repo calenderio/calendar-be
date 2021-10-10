@@ -3,6 +3,7 @@ package com.io.collige.controllers.impl;
 import com.io.collige.controllers.TodoController;
 import com.io.collige.entitites.Todo;
 import com.io.collige.mappers.TodoMapper;
+import com.io.collige.models.internals.todo.FindToDoRequest;
 import com.io.collige.models.requests.todo.TodoCreateRequest;
 import com.io.collige.models.requests.todo.TodoUpdateRequest;
 import com.io.collige.models.responses.todo.TodoDetails;
@@ -26,7 +27,7 @@ public class TodoControllerImpl implements TodoController {
 
     @Override
     public ResponseEntity<List<TodoDetails>> getTodos(Integer pageNo, Integer pageSize, String sortBy) {
-        List<Todo> toDoList = todoService.findTodosByUserId(pageNo, pageSize, sortBy);
+        List<Todo> toDoList = todoService.findTodosByUserId(new FindToDoRequest(pageNo, pageSize, sortBy));
         return ResponseEntity.ok(todoMapper.mapEntityListToModelList(toDoList));
     }
 

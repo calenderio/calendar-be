@@ -7,8 +7,7 @@
 package com.io.collige.services;
 
 
-import com.io.collige.models.internals.GenericMailRequest;
-import org.springframework.scheduling.annotation.Async;
+import com.io.collige.models.internals.mail.GenericMailRequest;
 
 public interface MailService {
 
@@ -18,7 +17,7 @@ public interface MailService {
 
     void sendInvitationMail(GenericMailRequest requestDto);
 
-    @Async
     void sendScheduledInvitation(GenericMailRequest requestDto);
+
 }
 

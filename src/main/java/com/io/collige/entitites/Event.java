@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.io.collige.enums.DurationType;
 import com.io.collige.enums.EventLocation;
-import com.io.collige.models.internals.AlarmDuration;
+import com.io.collige.models.internals.event.AlarmDuration;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

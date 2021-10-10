@@ -7,7 +7,7 @@
 package com.io.collige.mappers;
 
 import com.io.collige.entitites.Event;
-import com.io.collige.models.requests.calendar.EventTypeCreateRequest;
+import com.io.collige.models.requests.events.EventCreateRequest;
 import com.io.collige.models.responses.calendar.EventTypeResponse;
 import com.io.collige.models.responses.events.EventInfoResponse;
 import org.mapstruct.Mapper;
@@ -22,7 +22,7 @@ public interface EventMapper {
     @Mapping(source = "type.duration", target = "duration")
     @Mapping(source = "type.durationType", target = "durationType")
     @Mapping(source = "timezone", target = "timeZone")
-    Event mapRequestToEntity(EventTypeCreateRequest request);
+    Event mapRequestToEntity(EventCreateRequest request);
 
     @Mapping(target = "isFileRequired", source = "fileRequired")
     @Mapping(target = "type.duration", source = "duration")

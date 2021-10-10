@@ -6,8 +6,8 @@
  **/
 package com.io.collige.mappers;
 
-import com.io.collige.models.internals.SchedulerDetails;
-import com.io.collige.models.internals.SchedulerObject;
+import com.io.collige.models.internals.scheduler.SchedulerDetails;
+import com.io.collige.models.internals.scheduler.SchedulerObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;

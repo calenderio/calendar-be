@@ -7,8 +7,8 @@
 package com.io.collige.services;
 
 import com.io.collige.entitites.Scheduler;
-import com.io.collige.models.internals.SchedulerDetailsRequest;
-import com.io.collige.models.internals.SchedulerNameUpdateRequest;
+import com.io.collige.models.internals.scheduler.SchedulerDetailsRequest;
+import com.io.collige.models.internals.scheduler.SchedulerNameUpdateRequest;
 
 import java.util.List;
 

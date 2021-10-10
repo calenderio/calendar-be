@@ -7,7 +7,7 @@
 package com.io.collige.mappers;
 
 import com.io.collige.entitites.FileLink;
-import com.io.collige.models.internals.FileDetails;
+import com.io.collige.models.internals.file.FileDetails;
 import com.io.collige.models.responses.files.FileResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

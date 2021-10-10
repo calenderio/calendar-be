@@ -9,8 +9,11 @@ package com.io.collige.services.impl;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.io.collige.entitites.User;
-import com.io.collige.models.internals.AttachmentModel;
-import com.io.collige.models.internals.FileDetails;
+import com.io.collige.models.internals.file.AttachmentModel;
+import com.io.collige.models.internals.file.DeleteInvitationFileRequest;
+import com.io.collige.models.internals.file.FileDetails;
+import com.io.collige.models.internals.file.UploadMeetingFileRequest;
+import com.io.collige.models.internals.file.UploadUserFileRequest;
 import com.io.collige.services.CloudService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -86,45 +89,45 @@ public class CloudServiceImpl implements CloudService {
     }
 
     /**
-     * Uploads attachments cloudinary service by user id and invitaiton id
+     * Uploads attachments cloudinary service by user id and invitation id
      *
-     * @param attachments attachment list
+     * @param request file details
      * @return null url list
      */
     @Override
-    public Set<FileDetails> uploadMeetingFiles(List<AttachmentModel> attachments, String invitationId, User user) {
+    public Set<FileDetails> uploadMeetingFiles(UploadMeetingFileRequest request) {
         Set<FileDetails> fileDetails = new HashSet<>();
         try {
-            cloudinary.api().deleteResourcesByPrefix(String.format(INV_LINK, user.getId(), invitationId), ObjectUtils.emptyMap());
+            cloudinary.api().deleteResourcesByPrefix(String.format(INV_LINK, request.getUserId(), request.getInvitationId()), ObjectUtils.emptyMap());
         } catch (Exception e) {
             log.error(USER_FILE_DELETE_ERROR, e.getMessage());
         }
         Map<String, Object> cloudinaryMap = new HashMap<>();
-        cloudinaryMap.put(FOLDER, String.format(INV_LINK, user.getId(), invitationId));
+        cloudinaryMap.put(FOLDER, String.format(INV_LINK, request.getUserId(), request.getInvitationId()));
         cloudinaryMap.put(OVERWRITE, true);
         cloudinaryMap.put(USE_FILENAME, true);
-        uploadFiles(attachments, fileDetails, cloudinaryMap);
+        uploadFiles(request.getAttachments(), fileDetails, cloudinaryMap);
         return fileDetails;
     }
 
     @Override
-    public void deleteInvitationFiles(String invitationId, User user) {
+    public void deleteInvitationFiles(DeleteInvitationFileRequest request) {
         try {
-            cloudinary.api().deleteResourcesByPrefix(String.format(INV_LINK, user.getId(), invitationId), ObjectUtils.emptyMap());
-            cloudinary.api().deleteFolder(String.format(INV_LINK, user.getId(), invitationId), ObjectUtils.emptyMap());
+            cloudinary.api().deleteResourcesByPrefix(String.format(INV_LINK, request.getUserId(), request.getUserId()), ObjectUtils.emptyMap());
+            cloudinary.api().deleteFolder(String.format(INV_LINK, request.getUserId(), request.getUserId()), ObjectUtils.emptyMap());
         } catch (Exception e) {
             log.error(USER_FILE_DELETE_ERROR, e.getMessage());
         }
     }
 
     @Override
-    public Set<FileDetails> uploadUserFiles(List<AttachmentModel> attachments, User user) {
+    public Set<FileDetails> uploadUserFiles(UploadUserFileRequest request) {
         Set<FileDetails> fileDetails = new HashSet<>();
         Map<String, Object> cloudinaryMap = new HashMap<>();
-        cloudinaryMap.put(FOLDER, String.format(UPLOAD_LINK, user.getId()));
+        cloudinaryMap.put(FOLDER, String.format(UPLOAD_LINK, request.getUserId()));
         cloudinaryMap.put(OVERWRITE, true);
         cloudinaryMap.put(USE_FILENAME, true);
-        uploadFiles(attachments, fileDetails, cloudinaryMap);
+        uploadFiles(request.getAttachments(), fileDetails, cloudinaryMap);
         return fileDetails;
     }
 

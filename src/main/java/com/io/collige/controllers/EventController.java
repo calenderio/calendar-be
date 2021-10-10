@@ -7,7 +7,7 @@
 package com.io.collige.controllers;
 
 import com.io.collige.core.exception.ErrorData;
-import com.io.collige.models.requests.calendar.EventTypeCreateRequest;
+import com.io.collige.models.requests.events.EventCreateRequest;
 import com.io.collige.models.responses.calendar.EventTypeResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -37,7 +37,7 @@ public interface EventController {
             @ApiResponse(responseCode = "400", description = "Creating event error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @PostMapping(value = "/events")
-    ResponseEntity<EventTypeResponse> createEventType(@RequestBody EventTypeCreateRequest request);
+    ResponseEntity<EventTypeResponse> createEventType(@RequestBody EventCreateRequest request);
 
     @Operation(summary = "Update Event")
     @ApiResponses(value = {
@@ -47,7 +47,7 @@ public interface EventController {
             @ApiResponse(responseCode = "400", description = "Updating event error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @PutMapping(value = "/events/{eventId}")
-    ResponseEntity<EventTypeResponse> updateEvent(@RequestBody EventTypeCreateRequest request, @PathVariable Long eventId);
+    ResponseEntity<EventTypeResponse> updateEvent(@RequestBody EventCreateRequest request, @PathVariable Long eventId);
 
     @Operation(summary = "Delete Event")
     @ApiResponses(value = {

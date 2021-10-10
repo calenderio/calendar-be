@@ -1,7 +1,7 @@
 package com.io.collige.controllers;
 
 import com.io.collige.core.exception.ErrorData;
-import com.io.collige.models.requests.calendar.UserCalendarItemsRequest;
+import com.io.collige.models.requests.calendar.CalendarGetRequest;
 import com.io.collige.models.responses.calendar.CalendarResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +23,6 @@ public interface CalendarController {
             @ApiResponse(responseCode = "400", description = "Getting calendars error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @GetMapping(value = "/calendars")
-    ResponseEntity<CalendarResponse> getUserCalendars(UserCalendarItemsRequest request);
+    ResponseEntity<CalendarResponse> getUserCalendars(CalendarGetRequest request);
 
 }

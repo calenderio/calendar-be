@@ -4,7 +4,7 @@
  *
  * Copyright - Collige App Java API
  **/
-package com.io.collige.models.internals;
+package com.io.collige.core.models;
 
 import com.io.collige.enums.AppProviderType;
 import com.io.collige.models.requests.user.UserCreateRequest;

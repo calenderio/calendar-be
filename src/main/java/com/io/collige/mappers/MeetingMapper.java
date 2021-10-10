@@ -2,10 +2,10 @@ package com.io.collige.mappers;
 
 
 import com.io.collige.entitites.Meeting;
-import com.io.collige.models.internals.AvailableDatesDetails;
-import com.io.collige.models.internals.GenericMailRequest;
+import com.io.collige.models.internals.event.AvailableDatesDetails;
+import com.io.collige.models.internals.mail.GenericMailRequest;
 import com.io.collige.models.requests.meet.MeetingRequest;
-import com.io.collige.models.responses.meeting.ScheduledMeetingResponse;
+import com.io.collige.models.responses.meeting.AvailableDateResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -32,5 +32,5 @@ public interface MeetingMapper {
     @Mapping(source = "invitation.user.email", target = "email")
     @Mapping(source = "invitation.user.picture", target = "picture")
     @Mapping(source = "invitation.scheduled", target = "scheduled")
-    ScheduledMeetingResponse detailsToModel(AvailableDatesDetails details);
+    AvailableDateResponse detailsToModel(AvailableDatesDetails details);
 }
