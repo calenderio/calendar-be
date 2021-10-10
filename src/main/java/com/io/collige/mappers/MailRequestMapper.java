@@ -34,7 +34,7 @@ public interface MailRequestMapper {
     }
 
     @AfterMapping
-    default void setEmails(Invitation from, @MappingTarget GenericMailRequest to) {
+    default void setInviteEmails(Invitation from, @MappingTarget GenericMailRequest to) {
         to.setEmails(Collections.singleton(from.getUserEmail()));
     }
 }
