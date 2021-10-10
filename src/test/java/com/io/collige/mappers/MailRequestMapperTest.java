@@ -21,7 +21,6 @@ class MailRequestMapperTest {
 
     private final MailRequestMapper mapper = Mappers.getMapper(MailRequestMapper.class);
 
-
     @Test
     void setInviteEmails() {
         Invitation invitation = new Invitation();
