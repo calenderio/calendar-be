@@ -6,7 +6,7 @@
  **/
 package com.io.collige.models.requests.scheduler;
 
-import com.io.collige.models.internals.SchedulerDetails;
+import com.io.collige.models.internals.scheduler.SchedulerDetails;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

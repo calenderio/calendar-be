@@ -15,8 +15,9 @@ import com.io.collige.entitites.User;
 import com.io.collige.enums.LicenceTypes;
 import com.io.collige.mappers.EventMapper;
 import com.io.collige.mappers.FileMapper;
-import com.io.collige.models.internals.AttachmentModel;
-import com.io.collige.models.internals.FileDetails;
+import com.io.collige.models.internals.file.AttachmentModel;
+import com.io.collige.models.internals.file.FileDetails;
+import com.io.collige.models.internals.file.UploadUserFileRequest;
 import com.io.collige.models.responses.calendar.EventTypeResponse;
 import com.io.collige.models.responses.files.FileResponse;
 import com.io.collige.repositories.FileLinkRepository;
@@ -60,7 +61,7 @@ public class FileServiceImpl implements FileService {
         User user = jwtService.getLoggedUser();
         long size = fileLinkRepository.countByUserId(user.getId());
         limitChecker(size + attachments.size(), user);
-        Set<FileDetails> fileDetails = cloudService.uploadUserFiles(attachments, user);
+        Set<FileDetails> fileDetails = cloudService.uploadUserFiles(new UploadUserFileRequest(attachments, user.getId()));
         Set<FileLink> fileLinks = new HashSet<>();
         for (FileDetails file : fileDetails) {
             fileLinks.add(mapper.mapModelToEntity(file, user.getId()));

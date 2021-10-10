@@ -6,7 +6,7 @@
  **/
 package com.io.collige.models.responses.scheduler;
 
-import com.io.collige.models.internals.SchedulerObject;
+import com.io.collige.models.internals.scheduler.SchedulerObject;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

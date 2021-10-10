@@ -14,7 +14,7 @@ import com.io.collige.entitites.Invitation;
 import com.io.collige.entitites.Licence;
 import com.io.collige.entitites.User;
 import com.io.collige.enums.LicenceTypes;
-import com.io.collige.models.internals.MeetInvitationDetailRequest;
+import com.io.collige.models.requests.meet.SendInvitationRequest;
 import com.io.collige.repositories.EventRepository;
 import com.io.collige.repositories.InvitationRepository;
 import org.junit.jupiter.api.Test;
@@ -56,9 +56,9 @@ class InvitationServiceImplTest {
 
     @Test
     void saveInvitation() {
-        MeetInvitationDetailRequest request = new MeetInvitationDetailRequest();
-        request.setBcc(Collections.singletonList("example"));
-        request.setCc(Collections.singletonList("example"));
+        SendInvitationRequest request = new SendInvitationRequest();
+        request.setBccUsers(Collections.singletonList("example"));
+        request.setCcUsers(Collections.singletonList("example"));
         request.setEventId(1L);
         Event event = new Event();
         event.setId(1L);
@@ -75,8 +75,8 @@ class InvitationServiceImplTest {
 
     @Test
     void saveInvitation_Exception() {
-        MeetInvitationDetailRequest request = new MeetInvitationDetailRequest();
-        request.setBcc(Collections.singletonList("example"));
+        SendInvitationRequest request = new SendInvitationRequest();
+        request.setBccUsers(Collections.singletonList("example"));
         request.setEventId(1L);
         Event event = new Event();
         event.setId(1L);
@@ -94,8 +94,8 @@ class InvitationServiceImplTest {
 
     @Test
     void saveInvitation_CCException() {
-        MeetInvitationDetailRequest request = new MeetInvitationDetailRequest();
-        request.setCc(Collections.singletonList("example"));
+        SendInvitationRequest request = new SendInvitationRequest();
+        request.setCcUsers(Collections.singletonList("example"));
         request.setEventId(1L);
         Event event = new Event();
         event.setId(1L);

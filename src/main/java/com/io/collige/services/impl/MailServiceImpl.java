@@ -7,9 +7,9 @@
 package com.io.collige.services.impl;
 
 import com.io.collige.core.i18n.Translator;
-import com.io.collige.models.internals.AttachmentModel;
-import com.io.collige.models.internals.GenericMailRequest;
-import com.io.collige.models.internals.MailValidation;
+import com.io.collige.models.internals.file.AttachmentModel;
+import com.io.collige.models.internals.mail.GenericMailRequest;
+import com.io.collige.models.internals.mail.MailValidation;
 import com.io.collige.services.MailService;
 import com.io.collige.utils.LinkUtil;
 import lombok.extern.slf4j.Slf4j;

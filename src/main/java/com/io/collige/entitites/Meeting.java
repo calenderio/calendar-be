@@ -1,7 +1,7 @@
 package com.io.collige.entitites;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.io.collige.models.internals.FileDetails;
+import com.io.collige.models.internals.file.FileDetails;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

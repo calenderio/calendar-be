@@ -6,8 +6,8 @@
  **/
 package com.io.collige.entitites;
 
-import com.io.collige.models.internals.AdditionalTime;
-import com.io.collige.models.internals.SchedulerTime;
+import com.io.collige.models.internals.event.AdditionalTime;
+import com.io.collige.models.internals.scheduler.SchedulerTime;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import lombok.Data;

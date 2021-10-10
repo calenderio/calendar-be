@@ -4,7 +4,7 @@
  *
  * Copyright - Collige App Java API
  **/
-package com.io.collige.models.internals;
+package com.io.collige.models.internals.scheduler;
 
 import com.io.collige.entitites.Scheduler;
 import lombok.Data;

@@ -8,7 +8,7 @@ package com.io.collige.controllers.impl;
 
 import com.io.collige.mappers.InvitationMapper;
 import com.io.collige.models.requests.meet.InvitationResendRequest;
-import com.io.collige.models.requests.meet.MeetInvitationRequest;
+import com.io.collige.models.requests.meet.SendInvitationRequest;
 import com.io.collige.models.responses.meeting.InvitationResponse;
 import com.io.collige.services.EventService;
 import com.io.collige.services.InvitationService;
@@ -47,7 +47,7 @@ class InvitationControllerImplTest {
 
     @Test
     void sendMeetingInvite() throws IOException {
-        MeetInvitationRequest request = new MeetInvitationRequest();
+        SendInvitationRequest request = new SendInvitationRequest();
         ResponseEntity<Void> responseEntity = invitationController.sendInvitation(request);
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
         verify(eventService, times(1)).sendEventInvitation(any());
@@ -57,7 +57,7 @@ class InvitationControllerImplTest {
     void resendMeeting() throws IOException {
         ResponseEntity<Void> responseEntity = invitationController.resendInvitation(1L, new InvitationResendRequest());
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
-        verify(eventService, times(1)).resendInvitation(any(), any());
+        verify(eventService, times(1)).resendInvitation(any());
     }
 
     @Test

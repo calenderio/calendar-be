@@ -9,9 +9,9 @@ package com.io.collige.controllers.impl;
 import com.io.collige.controllers.InvitationController;
 import com.io.collige.entitites.Invitation;
 import com.io.collige.mappers.InvitationMapper;
-import com.io.collige.models.internals.MeetInvitationDetailRequest;
+import com.io.collige.models.internals.event.ResendInvitationRequest;
 import com.io.collige.models.requests.meet.InvitationResendRequest;
-import com.io.collige.models.requests.meet.MeetInvitationRequest;
+import com.io.collige.models.requests.meet.SendInvitationRequest;
 import com.io.collige.models.responses.meeting.InvitationResponse;
 import com.io.collige.services.EventService;
 import com.io.collige.services.InvitationService;
@@ -36,15 +36,14 @@ public class InvitationControllerImpl implements InvitationController {
     private InvitationMapper mapper;
 
     @Override
-    public ResponseEntity<Void> sendInvitation(@Valid MeetInvitationRequest request) throws IOException {
-        eventService.sendEventInvitation(new MeetInvitationDetailRequest(request.getUserMail(), request.getName(), request.getTitle(), request.getDescription()
-                , request.getEventId(), request.getCcUsers(), request.getBccUsers(), request.getFileIdList()));
+    public ResponseEntity<Void> sendInvitation(@Valid SendInvitationRequest request) throws IOException {
+        eventService.sendEventInvitation(request);
         return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<Void> resendInvitation(Long invitationId, InvitationResendRequest request) throws IOException {
-        eventService.resendInvitation(invitationId, request);
+        eventService.resendInvitation(new ResendInvitationRequest(invitationId, request));
         return ResponseEntity.noContent().build();
     }
 

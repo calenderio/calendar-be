@@ -14,6 +14,7 @@ import com.io.collige.entitites.Todo;
 import com.io.collige.entitites.User;
 import com.io.collige.enums.Priority;
 import com.io.collige.mappers.TodoMapper;
+import com.io.collige.models.internals.todo.FindToDoRequest;
 import com.io.collige.models.requests.todo.TodoCreateRequest;
 import com.io.collige.models.requests.todo.TodoUpdateRequest;
 import com.io.collige.models.responses.todo.TodoDetails;
@@ -65,7 +66,7 @@ class TodoServiceImplTest {
         user.setId(1L);
         when(jwtService.getLoggedUser()).thenReturn(user);
         when(todoRepository.findTodosByUserId(any(), any())).thenReturn(Page.empty());
-        List<Todo> response = todoService.findTodosByUserId(1, 1, "id");
+        List<Todo> response = todoService.findTodosByUserId(new FindToDoRequest(1, 1, "id"));
         assertEquals(new ArrayList<>(), response);
     }
 
@@ -79,7 +80,7 @@ class TodoServiceImplTest {
         when(todoRepository.findTodosByUserId(any(), any())).thenReturn(todoPage);
         when(todoPage.hasContent()).thenReturn(true);
         when(todoPage.getContent()).thenReturn(Collections.singletonList(todo));
-        List<Todo> response = todoService.findTodosByUserId(1, 1, "id");
+        List<Todo> response = todoService.findTodosByUserId(new FindToDoRequest(1, 1, "id"));
         assertEquals(1, response.size());
         assertEquals(1L, response.get(0).getId());
     }

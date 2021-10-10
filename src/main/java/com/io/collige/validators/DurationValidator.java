@@ -7,7 +7,7 @@
 package com.io.collige.validators;
 
 import com.io.collige.enums.DurationType;
-import com.io.collige.models.internals.CalendarDuration;
+import com.io.collige.models.internals.event.CalendarDuration;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

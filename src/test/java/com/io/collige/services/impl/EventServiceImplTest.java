@@ -13,26 +13,34 @@ import com.io.collige.entitites.Invitation;
 import com.io.collige.entitites.Question;
 import com.io.collige.entitites.Scheduler;
 import com.io.collige.entitites.User;
+import com.io.collige.mappers.EventMapper;
 import com.io.collige.mappers.MailRequestMapper;
-import com.io.collige.models.internals.CreateEventRequest;
-import com.io.collige.models.internals.GenericMailRequest;
-import com.io.collige.models.internals.MeetInvitationDetailRequest;
-import com.io.collige.models.internals.UpdateEventRequest;
+import com.io.collige.mappers.SchedulerMapper;
+import com.io.collige.models.internals.event.ResendInvitationRequest;
+import com.io.collige.models.internals.mail.GenericMailRequest;
+import com.io.collige.models.internals.scheduler.SchedulerDetails;
+import com.io.collige.models.requests.events.EventCreateRequest;
+import com.io.collige.models.requests.events.EventUpdateRequest;
 import com.io.collige.models.requests.meet.InvitationResendRequest;
+import com.io.collige.models.requests.meet.SendInvitationRequest;
+import com.io.collige.models.responses.calendar.EventTypeResponse;
 import com.io.collige.repositories.EventFileLinkRepository;
 import com.io.collige.repositories.EventRepository;
 import com.io.collige.repositories.FileLinkRepository;
+import com.io.collige.services.FileService;
 import com.io.collige.services.InvitationService;
 import com.io.collige.services.MailService;
 import com.io.collige.services.SchedulerService;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 import java.net.URL;
@@ -75,26 +83,47 @@ class EventServiceImplTest {
     @Mock
     private EventFileLinkRepository eventFileLinkRepository;
 
+    private final EventMapper eventMapper = Mappers.getMapper(EventMapper.class);
+
     @InjectMocks
     private EventServiceImpl eventService;
+    private final SchedulerMapper schedulerMapper = Mappers.getMapper(SchedulerMapper.class);
+    @Mock
+    private FileService fileService;
 
     @Test
     void createEvent() {
+        EventCreateRequest eventCreateRequest = new EventCreateRequest();
+        eventCreateRequest.setSchedule(new SchedulerDetails());
+        eventCreateRequest.setFileLinks(Collections.singleton(1L));
+        eventCreateRequest.setName("Example");
+        ReflectionTestUtils.setField(eventService, "eventMapper", eventMapper);
+        ReflectionTestUtils.setField(eventService, "schedulerMapper", schedulerMapper);
         Event event = new Event();
         event.setScheduler(new Scheduler());
         event.setQuestions(Collections.singletonList(new Question()));
+        event.setId(1L);
         User user = new User();
         user.setId(1L);
         when(jwtService.getLoggedUser()).thenReturn(user);
         when(eventRepository.save(any())).thenReturn(event);
         when(fileLinkRepository.findByUserIdAndIdIn(anyLong(), any())).thenReturn(Collections.singletonList(new FileLink()));
-        Event response = eventService.createEvent(new CreateEventRequest(event, Collections.singleton(1L)));
+        EventTypeResponse response = eventService.createEvent(eventCreateRequest);
         verify(eventRepository, times(1)).save(any());
-        assertEquals(1L, response.getUserId());
+        assertEquals("Example", response.getName());
     }
 
     @Test
     void updateEvent() {
+        EventCreateRequest eventCreateRequest = new EventCreateRequest();
+        eventCreateRequest.setSchedule(new SchedulerDetails());
+        eventCreateRequest.setFileLinks(Collections.singleton(1L));
+        eventCreateRequest.setName("Example");
+        EventUpdateRequest updateRequest = new EventUpdateRequest();
+        updateRequest.setDetails(eventCreateRequest);
+        updateRequest.setEventId(1L);
+        ReflectionTestUtils.setField(eventService, "eventMapper", eventMapper);
+        ReflectionTestUtils.setField(eventService, "schedulerMapper", schedulerMapper);
         Event event = new Event();
         event.setPreDefinedSchedulerId(1L);
         event.setQuestions(Collections.singletonList(new Question()));
@@ -103,9 +132,9 @@ class EventServiceImplTest {
         when(jwtService.getLoggedUser()).thenReturn(user);
         when(eventRepository.save(any())).thenReturn(event);
         when(eventRepository.findByUserIdAndId(1L, 1L)).thenReturn(Optional.of(event));
-        Event response = eventService.updateEvent(new UpdateEventRequest(event, Collections.singleton(1L), 1L));
+        EventTypeResponse response = eventService.updateEvent(updateRequest);
         verify(eventRepository, times(1)).save(any());
-        assertEquals(1L, response.getPreDefinedSchedulerId());
+        assertEquals("Example", response.getName());
     }
 
     @Test
@@ -128,6 +157,8 @@ class EventServiceImplTest {
 
     @Test
     void getEvents() {
+        ReflectionTestUtils.setField(eventService, "eventMapper", eventMapper);
+        ReflectionTestUtils.setField(eventService, "schedulerMapper", schedulerMapper);
         Event event = new Event();
         Scheduler scheduler = new Scheduler();
         scheduler.setId(1L);
@@ -137,11 +168,9 @@ class EventServiceImplTest {
         user.setId(1L);
         when(jwtService.getLoggedUser()).thenReturn(user);
         when(eventRepository.findByUserId(1L)).thenReturn(Collections.singletonList(event));
-        List<Event> events = eventService.getEvents();
+        List<EventTypeResponse> events = eventService.getEvents();
         assertFalse(events.isEmpty());
         assertEquals(1L, events.size());
-        assertEquals(1L, events.get(0).getScheduler().getId());
-        assertEquals(1L, events.get(0).getUserId());
     }
 
     @Test
@@ -158,8 +187,8 @@ class EventServiceImplTest {
         User user = new User();
         user.setName("Example");
         user.setId(1L);
-        MeetInvitationDetailRequest request = new MeetInvitationDetailRequest("example", "example", "example",
-                "example", 1L, null, null, Collections.singleton(1L));
+        SendInvitationRequest request = new SendInvitationRequest();
+        request.setFileIdList(Collections.singleton(1L));
         when(jwtService.getLoggedUser()).thenReturn(user);
         when(fileLinkRepository.findByUserIdAndIdIn(anyLong(), any())).thenReturn(Collections.singletonList(fileLink));
         when(mapper.meetingRequestToMail(request)).thenReturn(new GenericMailRequest());
@@ -175,7 +204,7 @@ class EventServiceImplTest {
         when(jwtService.getLoggedUser()).thenReturn(user);
         when(invitationService.findInvitationByUserIdAndCheckLimit(anyLong())).thenReturn(new Invitation());
         when(mapper.invitationToMail(any())).thenReturn(new GenericMailRequest());
-        eventService.resendInvitation(1L, new InvitationResendRequest());
+        eventService.resendInvitation(new ResendInvitationRequest(1L, new InvitationResendRequest()));
         verify(mailService, times(1)).sendInvitationMail(any());
     }
 
@@ -199,6 +228,22 @@ class EventServiceImplTest {
     void deleteEventFileLinks() {
         eventService.deleteEventFileLinks(1L);
         verify(eventFileLinkRepository, times(1)).deleteByIdEventId(any());
+    }
+
+    @Test
+    void getEvent() {
+        ReflectionTestUtils.setField(eventService, "eventMapper", eventMapper);
+        ReflectionTestUtils.setField(eventService, "schedulerMapper", schedulerMapper);
+        User user = new User();
+        user.setId(1L);
+        Event event = new Event();
+        event.setId(1L);
+        event.setName("Example");
+        when(eventRepository.findByUserIdAndId(1L, 1L)).thenReturn(Optional.of(event));
+        when(jwtService.getLoggedUser()).thenReturn(user);
+        EventTypeResponse response = eventService.getEvent(1L);
+        assertEquals(1, response.getId());
+        assertEquals("Example", response.getName());
     }
 
 }

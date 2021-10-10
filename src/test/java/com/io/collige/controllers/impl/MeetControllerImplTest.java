@@ -7,12 +7,11 @@
 package com.io.collige.controllers.impl;
 
 import com.io.collige.mappers.MeetingMapper;
-import com.io.collige.models.internals.AttachmentModel;
-import com.io.collige.models.internals.AvailableDatesDetails;
-import com.io.collige.models.internals.ScheduleMeetingDetails;
-import com.io.collige.models.requests.calendar.ScheduleMeetingRequest;
-import com.io.collige.models.requests.meet.MeetingDateRequest;
-import com.io.collige.models.responses.meeting.ScheduledMeetingResponse;
+import com.io.collige.models.internals.event.AvailableDatesDetails;
+import com.io.collige.models.internals.file.AttachmentModel;
+import com.io.collige.models.internals.scheduler.ScheduleMeetingRequest;
+import com.io.collige.models.requests.meet.GetAvailableDateRequest;
+import com.io.collige.models.responses.meeting.AvailableDateResponse;
 import com.io.collige.services.CalendarService;
 import com.io.collige.services.MeetingService;
 import com.io.collige.utils.AttachmentUtil;
@@ -54,20 +53,20 @@ class MeetControllerImplTest {
 
     @Test
     void getAvailableDates() {
-        MeetingDateRequest request = new MeetingDateRequest();
+        GetAvailableDateRequest request = new GetAvailableDateRequest();
         request.setLocalDate(LocalDate.MAX);
         request.setTimeZone("UTC");
-        ScheduledMeetingResponse scheduledMeetingResponse = new ScheduledMeetingResponse();
-        scheduledMeetingResponse.setEmail("Example");
-        when(meetingMapper.detailsToModel(any())).thenReturn(scheduledMeetingResponse);
-        when(calendarService.getAvailableDates(any(), any(), any())).thenReturn(new AvailableDatesDetails());
-        ResponseEntity<ScheduledMeetingResponse> responseEntity = meetController.getAvailableDates(request);
+        AvailableDateResponse availableDateResponse = new AvailableDateResponse();
+        availableDateResponse.setEmail("Example");
+        when(meetingMapper.detailsToModel(any())).thenReturn(availableDateResponse);
+        when(calendarService.getAvailableDates(any())).thenReturn(new AvailableDatesDetails());
+        ResponseEntity<AvailableDateResponse> responseEntity = meetController.getAvailableDates(request);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
     @Test
     void scheduleMeeting() {
-        ScheduleMeetingRequest request = new ScheduleMeetingRequest();
+        com.io.collige.models.requests.calendar.ScheduleMeetingRequest request = new com.io.collige.models.requests.calendar.ScheduleMeetingRequest();
         MockMultipartFile file = new MockMultipartFile("data", "filename.txt",
                 "application/octet-stream", "some xml".getBytes());
         when(attachmentUtil.checkAttachments(any())).thenReturn(Collections.singletonList(new AttachmentModel()));
@@ -79,7 +78,7 @@ class MeetControllerImplTest {
 
     @Test
     void updateMeeting() {
-        ScheduleMeetingRequest request = new ScheduleMeetingRequest();
+        com.io.collige.models.requests.calendar.ScheduleMeetingRequest request = new com.io.collige.models.requests.calendar.ScheduleMeetingRequest();
         ResponseEntity<Void> responseEntity = meetController.updateMeeting(request, "1L", null);
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
         verify(meetingService, times(1)).updateMeetingRequest(any());
@@ -87,7 +86,7 @@ class MeetControllerImplTest {
 
     @Test
     void deleteMeeting() {
-        ScheduleMeetingDetails details = new ScheduleMeetingDetails();
+        ScheduleMeetingRequest details = new ScheduleMeetingRequest();
         details.setInvitationId("1L");
         ResponseEntity<Void> responseEntity = meetController.deleteMeeting("1L");
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());

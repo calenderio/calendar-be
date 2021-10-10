@@ -6,7 +6,7 @@
  **/
 package com.io.collige.services;
 
-import com.io.collige.models.internals.AttachmentModel;
+import com.io.collige.models.internals.file.AttachmentModel;
 import com.io.collige.models.responses.calendar.EventTypeResponse;
 import com.io.collige.models.responses.files.FileResponse;
 

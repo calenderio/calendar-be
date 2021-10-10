@@ -7,7 +7,7 @@
 package com.io.collige.utils;
 
 import com.io.collige.core.exception.CalendarAppException;
-import com.io.collige.models.internals.AttachmentModel;
+import com.io.collige.models.internals.file.AttachmentModel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -7,20 +7,21 @@
 package com.io.collige.services;
 
 import com.io.collige.entitites.User;
-import com.io.collige.models.internals.AttachmentModel;
-import com.io.collige.models.internals.FileDetails;
+import com.io.collige.models.internals.file.DeleteInvitationFileRequest;
+import com.io.collige.models.internals.file.FileDetails;
+import com.io.collige.models.internals.file.UploadMeetingFileRequest;
+import com.io.collige.models.internals.file.UploadUserFileRequest;
 
-import java.util.List;
 import java.util.Set;
 
 public interface CloudService {
     String uploadPhoto(String photoUrl, String userMail);
 
-    Set<FileDetails> uploadMeetingFiles(List<AttachmentModel> attachments, String invitationId, User user);
+    Set<FileDetails> uploadMeetingFiles(UploadMeetingFileRequest request);
 
-    void deleteInvitationFiles(String invitationId, User user);
+    void deleteInvitationFiles(DeleteInvitationFileRequest request);
 
-    Set<FileDetails> uploadUserFiles(List<AttachmentModel> attachments, User user);
+    Set<FileDetails> uploadUserFiles(UploadUserFileRequest request);
 
     void deleteFile(String name, User user);
 }

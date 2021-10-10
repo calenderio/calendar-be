@@ -8,6 +8,7 @@ package com.io.collige.controllers.impl;
 
 import com.io.collige.enums.Priority;
 import com.io.collige.mappers.TodoMapper;
+import com.io.collige.models.internals.todo.FindToDoRequest;
 import com.io.collige.models.requests.todo.TodoCreateRequest;
 import com.io.collige.models.responses.todo.TodoDetails;
 import com.io.collige.services.TodoService;
@@ -47,7 +48,7 @@ class TodoControllerImplTest {
     void getTodos() {
         TodoDetails todo = new TodoDetails();
         todo.setPriority(Priority.CRITICAL);
-        when(todoService.findTodosByUserId(1, 1, "id")).thenReturn(new ArrayList<>());
+        when(todoService.findTodosByUserId(new FindToDoRequest(1, 1, "id"))).thenReturn(new ArrayList<>());
         when(todoMapper.mapEntityListToModelList(any())).thenReturn(Collections.singletonList(todo));
         ResponseEntity<List<TodoDetails>> listResponseEntity = todoController.getTodos(1, 1, "id");
         assertEquals(HttpStatus.OK, listResponseEntity.getStatusCode());

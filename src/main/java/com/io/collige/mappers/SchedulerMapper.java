@@ -7,8 +7,8 @@
 package com.io.collige.mappers;
 
 import com.io.collige.entitites.Scheduler;
-import com.io.collige.models.internals.SchedulerDetails;
-import com.io.collige.models.internals.SchedulerObject;
+import com.io.collige.models.internals.scheduler.SchedulerDetails;
+import com.io.collige.models.internals.scheduler.SchedulerObject;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

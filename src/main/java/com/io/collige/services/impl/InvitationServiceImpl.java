@@ -12,7 +12,7 @@ import com.io.collige.entitites.Event;
 import com.io.collige.entitites.Invitation;
 import com.io.collige.entitites.User;
 import com.io.collige.enums.LicenceTypes;
-import com.io.collige.models.internals.MeetInvitationDetailRequest;
+import com.io.collige.models.requests.meet.SendInvitationRequest;
 import com.io.collige.repositories.EventRepository;
 import com.io.collige.repositories.InvitationRepository;
 import com.io.collige.services.InvitationService;
@@ -47,7 +47,7 @@ public class InvitationServiceImpl implements InvitationService {
     private InvitationRepository invitationRepository;
 
     @Override
-    public String saveInvitation(MeetInvitationDetailRequest request) {
+    public String saveInvitation(SendInvitationRequest request) {
         User user = jwtService.getLoggedUser();
         Event event = eventRepository.findByUserIdAndId(user.getId(), request.getEventId())
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, "Not valid event id", "EVENT_ID"));
@@ -61,8 +61,8 @@ public class InvitationServiceImpl implements InvitationService {
         invitation.setEvent(event);
         invitation.setName(WordUtils.capitalize(request.getName()));
         invitation.setUserEmail(request.getUserMail());
-        invitation.setCcList(request.getCc());
-        invitation.setBccList(request.getBcc());
+        invitation.setCcList(request.getCcUsers());
+        invitation.setBccList(request.getBccUsers());
         invitation.setTitle(request.getTitle());
         invitation.setDescription(request.getDescription());
         invitationRepository.save(invitation);
@@ -94,12 +94,12 @@ public class InvitationServiceImpl implements InvitationService {
         invitationRepository.deleteInvitationByEvent(user.getId(), eventId);
     }
 
-    private void ccBccLimit(MeetInvitationDetailRequest request, User user) {
-        if (request.getBcc() != null && !request.getBcc().isEmpty() &&
+    private void ccBccLimit(SendInvitationRequest request, User user) {
+        if (request.getBccUsers() != null && !request.getBccUsers().isEmpty() &&
                 LicenceTypes.FREE.equals(user.getLicence().getLicenceType())) {
             throw new CalendarAppException(HttpStatus.FORBIDDEN, CC_LIMIT_MESSAGE, CC_LIMIT);
         }
-        if (request.getCc() != null && !request.getCc().isEmpty() &&
+        if (request.getCcUsers() != null && !request.getCcUsers().isEmpty() &&
                 LicenceTypes.FREE.equals(user.getLicence().getLicenceType())) {
             throw new CalendarAppException(HttpStatus.FORBIDDEN, CC_LIMIT_MESSAGE, CC_LIMIT);
         }

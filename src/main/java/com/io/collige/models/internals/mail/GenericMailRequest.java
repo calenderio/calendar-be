@@ -4,8 +4,9 @@
  *
  * Copyright - Collige App Java API
  **/
-package com.io.collige.models.internals;
+package com.io.collige.models.internals.mail;
 
+import com.io.collige.models.internals.file.AttachmentModel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

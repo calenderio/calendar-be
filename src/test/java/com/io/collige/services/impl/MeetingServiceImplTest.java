@@ -15,12 +15,11 @@ import com.io.collige.entitites.User;
 import com.io.collige.enums.EventLocation;
 import com.io.collige.enums.QuestionType;
 import com.io.collige.mappers.MeetingMapper;
-import com.io.collige.models.internals.AttachmentModel;
-import com.io.collige.models.internals.AvailableDatesDetails;
-import com.io.collige.models.internals.GenericMailRequest;
-import com.io.collige.models.internals.ScheduleMeetingDetails;
+import com.io.collige.models.internals.event.AvailableDatesDetails;
+import com.io.collige.models.internals.file.AttachmentModel;
+import com.io.collige.models.internals.mail.GenericMailRequest;
+import com.io.collige.models.internals.scheduler.ScheduleMeetingRequest;
 import com.io.collige.models.requests.calendar.QuestionData;
-import com.io.collige.models.requests.calendar.ScheduleMeetingRequest;
 import com.io.collige.models.requests.meet.MeetingRequest;
 import com.io.collige.repositories.InvitationRepository;
 import com.io.collige.repositories.MeetingRepository;
@@ -48,7 +47,6 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -82,15 +80,15 @@ class MeetingServiceImplTest {
 
     @Test
     void validateAndScheduleMeeting_witherror() {
-        ScheduleMeetingDetails meetingDetails = new ScheduleMeetingDetails();
-        ScheduleMeetingRequest meetingRequest = new ScheduleMeetingRequest();
+        ScheduleMeetingRequest meetingDetails = new ScheduleMeetingRequest();
+        com.io.collige.models.requests.calendar.ScheduleMeetingRequest meetingRequest = new com.io.collige.models.requests.calendar.ScheduleMeetingRequest();
         meetingRequest.setDate(LocalDate.now());
         meetingRequest.setTime(LocalTime.now());
         meetingRequest.setTimeZone("UTC");
         meetingDetails.setRequest(meetingRequest);
         meetingDetails.setInvitationId("1");
         meetingDetails.setModels(new ArrayList<>());
-        when(calendarService.getAvailableDates(any(), anyString(), anyString())).thenReturn(getDateDetails());
+        when(calendarService.getAvailableDates(any())).thenReturn(getDateDetails());
         CalendarAppException exception = assertThrows(CalendarAppException.class, () -> meetingService.validateAndScheduleMeeting(meetingDetails));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("NOT_VALID_DATE", exception.getCause().getMessage());
@@ -98,15 +96,15 @@ class MeetingServiceImplTest {
 
     @Test
     void validateAndScheduleMeeting() {
-        ScheduleMeetingDetails meetingDetails = new ScheduleMeetingDetails();
-        ScheduleMeetingRequest meetingRequest = new ScheduleMeetingRequest();
+        ScheduleMeetingRequest meetingDetails = new ScheduleMeetingRequest();
+        com.io.collige.models.requests.calendar.ScheduleMeetingRequest meetingRequest = new com.io.collige.models.requests.calendar.ScheduleMeetingRequest();
         meetingRequest.setDate(LocalDate.now());
         meetingRequest.setTime(LocalTime.of(12, 12));
         meetingRequest.setTimeZone("UTC");
         meetingDetails.setRequest(meetingRequest);
         meetingDetails.setInvitationId("1");
         meetingDetails.setModels(new ArrayList<>());
-        when(calendarService.getAvailableDates(any(), anyString(), anyString())).thenReturn(getDateDetails());
+        when(calendarService.getAvailableDates(any())).thenReturn(getDateDetails());
         when(meetingMapper.mapToMeeting(any())).thenReturn(new Meeting());
         when(meetingMapper.request(any())).thenReturn(new GenericMailRequest());
         meetingService.validateAndScheduleMeeting(meetingDetails);
@@ -115,8 +113,8 @@ class MeetingServiceImplTest {
 
     @Test
     void validateAndScheduleMeeting_fileError() {
-        ScheduleMeetingDetails meetingDetails = new ScheduleMeetingDetails();
-        ScheduleMeetingRequest meetingRequest = new ScheduleMeetingRequest();
+        ScheduleMeetingRequest meetingDetails = new ScheduleMeetingRequest();
+        com.io.collige.models.requests.calendar.ScheduleMeetingRequest meetingRequest = new com.io.collige.models.requests.calendar.ScheduleMeetingRequest();
         meetingRequest.setDate(LocalDate.now());
         meetingRequest.setTime(LocalTime.of(12, 12));
         meetingRequest.setTimeZone("UTC");
@@ -125,7 +123,7 @@ class MeetingServiceImplTest {
         meetingDetails.setModels(new ArrayList<>());
         AvailableDatesDetails availableDatesDetails = getDateDetails();
         availableDatesDetails.getInvitation().getEvent().setFileRequired(true);
-        when(calendarService.getAvailableDates(any(), anyString(), anyString())).thenReturn(availableDatesDetails);
+        when(calendarService.getAvailableDates(any())).thenReturn(availableDatesDetails);
         CalendarAppException exception = assertThrows(CalendarAppException.class, () -> meetingService.validateAndScheduleMeeting(meetingDetails));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("NULL_FILE", exception.getCause().getMessage());
@@ -137,8 +135,8 @@ class MeetingServiceImplTest {
         model.setName("example");
         model.setType("text");
         model.setData("text".getBytes());
-        ScheduleMeetingDetails meetingDetails = new ScheduleMeetingDetails();
-        ScheduleMeetingRequest meetingRequest = new ScheduleMeetingRequest();
+        ScheduleMeetingRequest meetingDetails = new ScheduleMeetingRequest();
+        com.io.collige.models.requests.calendar.ScheduleMeetingRequest meetingRequest = new com.io.collige.models.requests.calendar.ScheduleMeetingRequest();
         meetingRequest.setDate(LocalDate.now());
         meetingRequest.setTime(LocalTime.of(12, 12));
         meetingRequest.setTimeZone("UTC");
@@ -149,7 +147,7 @@ class MeetingServiceImplTest {
         AvailableDatesDetails availableDatesDetails = getDateDetails();
         availableDatesDetails.getInvitation().getEvent().setFileRequired(true);
         setQuestions(availableDatesDetails.getInvitation().getEvent());
-        when(calendarService.getAvailableDates(any(), anyString(), anyString())).thenReturn(availableDatesDetails);
+        when(calendarService.getAvailableDates(any())).thenReturn(availableDatesDetails);
         when(meetingMapper.mapToMeeting(any())).thenReturn(new Meeting());
         when(meetingMapper.request(any())).thenReturn(new GenericMailRequest());
         meetingService.validateAndScheduleMeeting(meetingDetails);
@@ -162,8 +160,8 @@ class MeetingServiceImplTest {
         model.setName("example");
         model.setType("text");
         model.setData("text".getBytes());
-        ScheduleMeetingDetails meetingDetails = new ScheduleMeetingDetails();
-        ScheduleMeetingRequest meetingRequest = new ScheduleMeetingRequest();
+        ScheduleMeetingRequest meetingDetails = new ScheduleMeetingRequest();
+        com.io.collige.models.requests.calendar.ScheduleMeetingRequest meetingRequest = new com.io.collige.models.requests.calendar.ScheduleMeetingRequest();
         meetingRequest.setDate(LocalDate.now());
         meetingRequest.setTime(LocalTime.of(12, 12));
         meetingRequest.setTimeZone("UTC");
@@ -177,7 +175,7 @@ class MeetingServiceImplTest {
         setQuestions(availableDatesDetails.getInvitation().getEvent());
         Meeting meeting = new Meeting();
         meeting.setSequence(1);
-        when(calendarService.getAvailableDates(any(), anyString(), anyString())).thenReturn(availableDatesDetails);
+        when(calendarService.getAvailableDates(any())).thenReturn(availableDatesDetails);
         when(meetingMapper.mapToMeeting(any())).thenReturn(new Meeting());
         when(meetingMapper.request(any())).thenReturn(new GenericMailRequest());
         when(meetingRepository.findByInvitationId(1L)).thenReturn(Optional.of(meeting));
@@ -189,8 +187,8 @@ class MeetingServiceImplTest {
 
     @Test
     void deleteMeetingRequest() {
-        ScheduleMeetingDetails meetingDetails = new ScheduleMeetingDetails();
-        ScheduleMeetingRequest meetingRequest = new ScheduleMeetingRequest();
+        ScheduleMeetingRequest meetingDetails = new ScheduleMeetingRequest();
+        com.io.collige.models.requests.calendar.ScheduleMeetingRequest meetingRequest = new com.io.collige.models.requests.calendar.ScheduleMeetingRequest();
         meetingRequest.setDate(LocalDate.now());
         meetingRequest.setTime(LocalTime.of(12, 12));
         meetingRequest.setTimeZone("UTC");

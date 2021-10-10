@@ -1,12 +1,12 @@
 package com.io.collige.services;
 
-import com.io.collige.models.internals.ScheduleMeetingDetails;
+import com.io.collige.models.internals.scheduler.ScheduleMeetingRequest;
 
 public interface MeetingService {
 
-    void validateAndScheduleMeeting(ScheduleMeetingDetails details);
+    void validateAndScheduleMeeting(ScheduleMeetingRequest details);
 
-    void updateMeetingRequest(ScheduleMeetingDetails details);
+    void updateMeetingRequest(ScheduleMeetingRequest details);
 
-    void deleteMeetingRequest(ScheduleMeetingDetails details);
+    void deleteMeetingRequest(ScheduleMeetingRequest details);
 }

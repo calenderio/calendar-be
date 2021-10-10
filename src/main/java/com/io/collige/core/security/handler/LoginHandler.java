@@ -8,12 +8,12 @@ package com.io.collige.core.security.handler;
 
 import com.io.collige.core.exception.CalendarAppException;
 import com.io.collige.core.exception.UnknownException;
+import com.io.collige.core.models.SocialUser;
 import com.io.collige.core.security.encrypt.TokenEncryptor;
 import com.io.collige.core.security.jwt.JWTService;
 import com.io.collige.core.security.jwt.JWTUtil;
 import com.io.collige.entitites.User;
 import com.io.collige.enums.AppProviderType;
-import com.io.collige.models.internals.SocialUser;
 import com.io.collige.models.responses.user.UserResponse;
 import com.io.collige.services.GoogleService;
 import com.io.collige.services.UserService;

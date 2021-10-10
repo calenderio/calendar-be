@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-public class MeetInvitationRequest {
+public class SendInvitationRequest {
 
     @Schema(description = "Mail address of invited user", example = "test@test.com", required = true)
     @NotBlank

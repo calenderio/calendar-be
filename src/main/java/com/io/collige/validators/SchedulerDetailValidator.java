@@ -7,9 +7,9 @@
 package com.io.collige.validators;
 
 import com.io.collige.constants.DayValues;
-import com.io.collige.models.internals.AdditionalTime;
-import com.io.collige.models.internals.SchedulerDetails;
-import com.io.collige.models.internals.SchedulerTime;
+import com.io.collige.models.internals.event.AdditionalTime;
+import com.io.collige.models.internals.scheduler.SchedulerDetails;
+import com.io.collige.models.internals.scheduler.SchedulerTime;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

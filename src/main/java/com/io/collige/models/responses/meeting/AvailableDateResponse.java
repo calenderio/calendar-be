@@ -6,7 +6,7 @@
  **/
 package com.io.collige.models.responses.meeting;
 
-import com.io.collige.models.internals.CalendarDuration;
+import com.io.collige.models.internals.event.CalendarDuration;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Data
-public class ScheduledMeetingResponse {
+public class AvailableDateResponse {
 
     @Schema(implementation = Map.class, example = """
              {

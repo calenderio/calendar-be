@@ -7,7 +7,7 @@
 package com.io.collige.validators;
 
 import com.io.collige.enums.QuestionType;
-import com.io.collige.models.internals.QuestionModel;
+import com.io.collige.models.internals.event.QuestionModel;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.ConstraintValidator;

@@ -4,13 +4,13 @@
  *
  * Copyright - Collige App Java API
  **/
-package com.io.collige.models.requests.calendar;
+package com.io.collige.models.requests.events;
 
 import com.io.collige.enums.EventLocation;
-import com.io.collige.models.internals.AlarmDuration;
-import com.io.collige.models.internals.CalendarDuration;
-import com.io.collige.models.internals.QuestionModel;
-import com.io.collige.models.internals.SchedulerDetails;
+import com.io.collige.models.internals.event.AlarmDuration;
+import com.io.collige.models.internals.event.CalendarDuration;
+import com.io.collige.models.internals.event.QuestionModel;
+import com.io.collige.models.internals.scheduler.SchedulerDetails;
 import com.io.collige.validators.Event;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,7 +26,7 @@ import java.util.Set;
 
 @Data
 @Event
-public class EventTypeCreateRequest {
+public class EventCreateRequest {
 
     @Schema(description = "Calendar Name", example = "Example Calendar", required = true)
     @NotBlank

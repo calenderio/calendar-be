@@ -9,6 +9,7 @@ package com.io.collige.services.impl;
 import com.io.collige.constants.GeneralMessageConstants;
 import com.io.collige.core.exception.CalendarAppException;
 import com.io.collige.core.i18n.Translator;
+import com.io.collige.core.models.SocialUser;
 import com.io.collige.core.security.jwt.JWTService;
 import com.io.collige.entitites.LinkedCalendar;
 import com.io.collige.entitites.User;
@@ -16,9 +17,8 @@ import com.io.collige.entitites.Validation;
 import com.io.collige.enums.AppProviderType;
 import com.io.collige.enums.ValidationType;
 import com.io.collige.mappers.UserMapper;
-import com.io.collige.models.internals.GenericMailRequest;
-import com.io.collige.models.internals.ResendValidation;
-import com.io.collige.models.internals.SocialUser;
+import com.io.collige.models.internals.mail.GenericMailRequest;
+import com.io.collige.models.internals.mail.ResendValidationRequest;
 import com.io.collige.models.requests.user.AuthRequest;
 import com.io.collige.models.requests.user.ChangePasswordRequest;
 import com.io.collige.models.requests.user.ResendVerificationMailRequest;
@@ -327,7 +327,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void resendValidationMail(ResendVerificationMailRequest request) {
-        Validation validation = validationService.getValidationDetail(new ResendValidation(request.getEmail(), request.getType()));
+        Validation validation = validationService.getValidationDetail(new ResendValidationRequest(request.getEmail(), request.getType()));
         User user = userRepository.findByEmail(request.getEmail().toLowerCase())
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.USER_NOT_FOUND),
                         GeneralMessageConstants.USR_NOT_FOUND));

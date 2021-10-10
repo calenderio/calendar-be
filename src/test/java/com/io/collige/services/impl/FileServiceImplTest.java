@@ -16,8 +16,8 @@ import com.io.collige.entitites.User;
 import com.io.collige.enums.LicenceTypes;
 import com.io.collige.mappers.EventMapper;
 import com.io.collige.mappers.FileMapper;
-import com.io.collige.models.internals.AttachmentModel;
-import com.io.collige.models.internals.FileDetails;
+import com.io.collige.models.internals.file.AttachmentModel;
+import com.io.collige.models.internals.file.FileDetails;
 import com.io.collige.models.responses.calendar.EventTypeResponse;
 import com.io.collige.models.responses.files.FileResponse;
 import com.io.collige.repositories.FileLinkRepository;
@@ -75,12 +75,12 @@ class FileServiceImplTest {
         user.setLicence(licence);
         when(cacheService.getIntegerCacheValue(CacheConstants.ATTACHMENT_LIMIT_IND)).thenReturn(10);
         when(fileLinkRepository.countByUserId(1L)).thenReturn(1L);
-        when(cloudService.uploadUserFiles(any(), any())).thenReturn(Collections.singleton(new FileDetails()));
+        when(cloudService.uploadUserFiles(any())).thenReturn(Collections.singleton(new FileDetails()));
         when(jwtService.getLoggedUser()).thenReturn(user);
         when(mapper.mapModelToEntity(any(), any())).thenReturn(new FileLink());
         fileService.uploadFiles(new ArrayList<>());
         verify(fileLinkRepository, times(1)).saveAll(any());
-        verify(cloudService, times(1)).uploadUserFiles(any(), any());
+        verify(cloudService, times(1)).uploadUserFiles(any());
     }
 
     @Test

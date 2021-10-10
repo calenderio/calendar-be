@@ -10,7 +10,7 @@ import com.io.collige.core.exception.CalendarAppException;
 import com.io.collige.core.i18n.Translator;
 import com.io.collige.entitites.Validation;
 import com.io.collige.enums.ValidationType;
-import com.io.collige.models.internals.ResendValidation;
+import com.io.collige.models.internals.mail.ResendValidationRequest;
 import com.io.collige.models.requests.user.ValidationRequest;
 import com.io.collige.repositories.UserRepository;
 import com.io.collige.repositories.ValidationRepository;
@@ -62,7 +62,7 @@ public class ValidationServiceImpl implements ValidationService {
      * @param request verify request detail
      */
     @Override
-    public Validation getValidationDetail(ResendValidation request) {
+    public Validation getValidationDetail(ResendValidationRequest request) {
         return validationRepository.findByMailAndType(request.getMail(), request.getType())
                 .orElseThrow(() -> new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(VALIDATION_NOT_VALID), VAL_ERR));
     }
