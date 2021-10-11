@@ -30,25 +30,20 @@ import com.io.collige.models.requests.user.ValidationRequest;
 import com.io.collige.models.responses.user.UserResponse;
 import com.io.collige.repositories.LinkedCalendarRepository;
 import com.io.collige.repositories.UserRepository;
-import com.io.collige.repositories.ValidationRepository;
 import com.io.collige.services.CloudService;
 import com.io.collige.services.LicenceService;
 import com.io.collige.services.MailService;
 import com.io.collige.services.UserService;
 import com.io.collige.services.ValidationService;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.text.CharacterPredicates;
-import org.apache.commons.text.RandomStringGenerator;
 import org.apache.commons.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -59,15 +54,8 @@ import java.util.stream.Collectors;
 @Transactional
 public class UserServiceImpl implements UserService {
 
-    private final RandomStringGenerator pwdGenerator = new RandomStringGenerator.Builder().withinRange('0', 'z')
-            .filteredBy(CharacterPredicates.DIGITS, CharacterPredicates.LETTERS)
-            .build();
-
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private ValidationRepository validationRepository;
 
     @Autowired
     private LinkedCalendarRepository calendarRepository;
@@ -108,7 +96,7 @@ public class UserServiceImpl implements UserService {
         user.setLicence(licenceService.generateFreeTrial());
         userRepository.save(user);
         mailService.sendMailValidation(new GenericMailRequest(Collections.singleton(user.getEmail()), user.getName(),
-                createValidationInfo(user, ValidationType.EMAIL), Translator.getLanguage()));
+                validationService.createValidationInfo(user, ValidationType.EMAIL), Translator.getLanguage()));
         UserResponse response = userMapper.mapToModel(user);
         response.setToken(jwtService.createToken(user));
         return response;
@@ -215,24 +203,6 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Create new validation information for user
-     *
-     * @param user
-     * @param type validation type
-     */
-    @Async
-    public String createValidationInfo(User user, ValidationType type) {
-        Validation validation = validationRepository.findByMailAndType(user.getEmail(), ValidationType.EMAIL).orElse(new Validation());
-        validation.setUserId(user.getId());
-        validation.setCode(pwdGenerator.generate(50));
-        validation.setMail(user.getEmail());
-        validation.setDate(LocalDateTime.now());
-        validation.setType(type);
-        validationRepository.save(validation);
-        return validation.getCode();
-    }
-
-    /**
      * Get details by user token
      *
      * @return User detail object
@@ -259,7 +229,7 @@ public class UserServiceImpl implements UserService {
         if (!userUpdateRequest.getEmail().equals(user.getEmail())) {
             user.setVerified(false);
             mailService.sendMailValidation(new GenericMailRequest(Collections.singleton(user.getEmail()), user.getName(),
-                    createValidationInfo(user, ValidationType.EMAIL), Translator.getLanguage()));
+                    validationService.createValidationInfo(user, ValidationType.EMAIL), Translator.getLanguage()));
         }
         user.setEmail(userUpdateRequest.getEmail());
         user.setName(userUpdateRequest.getName());
@@ -298,7 +268,7 @@ public class UserServiceImpl implements UserService {
                         GeneralMessageConstants.USR_NOT_FOUND));
         GenericMailRequest mailRequest = new GenericMailRequest();
         mailRequest.setName(user.getName());
-        mailRequest.setCode(createValidationInfo(user, ValidationType.PASSWORD));
+        mailRequest.setCode(validationService.createValidationInfo(user, ValidationType.PASSWORD));
         mailRequest.setEmails(Collections.singleton(request.getEmail()));
         mailService.sendPasswordResetMail(mailRequest);
     }

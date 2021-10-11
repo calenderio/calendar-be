@@ -29,7 +29,6 @@ import com.io.collige.models.responses.license.LicenseResponse;
 import com.io.collige.models.responses.user.UserResponse;
 import com.io.collige.repositories.LinkedCalendarRepository;
 import com.io.collige.repositories.UserRepository;
-import com.io.collige.repositories.ValidationRepository;
 import com.io.collige.services.CloudService;
 import com.io.collige.services.LicenceService;
 import com.io.collige.services.MailService;
@@ -79,9 +78,6 @@ class UserServiceImplTest {
 
     @Mock
     private CloudService cloudService;
-
-    @Mock
-    private ValidationRepository validationRepository;
 
     @Mock
     private LicenceService licenceService;
