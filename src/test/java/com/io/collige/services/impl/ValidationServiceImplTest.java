@@ -6,6 +6,7 @@
  **/
 package com.io.collige.services.impl;
 
+import com.io.collige.entitites.User;
 import com.io.collige.entitites.Validation;
 import com.io.collige.enums.ValidationType;
 import com.io.collige.models.internals.mail.ResendValidationRequest;
@@ -73,4 +74,14 @@ class ValidationServiceImplTest {
         Validation response = validationService.getValidationDetail(request);
         assertEquals(validation.getCode(), response.getCode());
     }
+
+    @Test
+    void createValidationInfo() {
+        User user = new User();
+        user.setEmail("example");
+        when(validationRepository.findByMailAndType("example", ValidationType.EMAIL)).thenReturn(Optional.empty());
+        validationService.createValidationInfo(user, ValidationType.EMAIL);
+        verify(validationRepository, times(1)).save(any());
+    }
+
 }
