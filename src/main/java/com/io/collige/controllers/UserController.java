@@ -2,7 +2,7 @@
  * @author : Oguz Kahraman
  * @since : 12.11.2020
  * <p>
- * Copyright - deityarena
+ * Copyright - Collige App Java API
  **/
 package com.io.collige.controllers;
 

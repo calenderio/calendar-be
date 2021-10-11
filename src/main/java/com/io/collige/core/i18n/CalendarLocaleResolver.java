@@ -2,7 +2,7 @@
  * @author : oguzkahraman
  * @since : 22.05.2021
  *
- * Copyright - Deity Arena Java API
+ * Copyright - Collige Java API
  **/
 package com.io.collige.core.i18n;
 

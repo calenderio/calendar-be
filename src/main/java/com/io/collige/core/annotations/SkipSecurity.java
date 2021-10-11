@@ -2,7 +2,7 @@
  * @author : Oguz Kahraman
  * @since : 20.02.2021
  *
- * Copyright - Deity Arena Java API
+ * Copyright - Collige Java API
  **/
 package com.io.collige.core.annotations;
 
