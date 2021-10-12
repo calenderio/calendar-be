@@ -67,5 +67,15 @@ public interface TodoController {
                     schema = @Schema(implementation = ErrorData.class))})})
     @DeleteMapping(value = "/todos/{todoId}")
     ResponseEntity<Void> setDoneTodo (@Parameter(name = "Todo Id ", example = "1") @RequestParam Long todoId);
+
+    @Operation(summary = "Set Done Todo")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Update Todo",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SchedulerResponse.class))}),
+            @ApiResponse(responseCode = "400", description = "Setting done todo error", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorData.class))})})
+    @DeleteMapping(value = "/todos/{todoId}")
+    ResponseEntity<Void> updateTodo(@Parameter(name = "Todo Id ", example = "1") @RequestParam Long todoId);
 }
 

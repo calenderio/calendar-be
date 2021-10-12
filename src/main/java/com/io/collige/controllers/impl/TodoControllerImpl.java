@@ -23,7 +23,7 @@ public class TodoControllerImpl implements TodoController {
 
     @Override
     public ResponseEntity<List<Todo>> getTodos(Integer pageNo, Integer pageSize, String sortBy) {
-        List<Todo> toDoList = todoService.findTodosByUserId(pageNo, pageSize , sortBy);
+        List<Todo> toDoList = todoService.findTodosByUserId(pageNo, pageSize, sortBy);
         return new ResponseEntity<>(toDoList, new HttpHeaders(), HttpStatus.OK);
     }
 
@@ -38,7 +38,7 @@ public class TodoControllerImpl implements TodoController {
         TodoUpdateRequest todoUpdateRequest = new TodoUpdateRequest();
         todoUpdateRequest.setId(todoId);
         todoService.deleteTodo(todoUpdateRequest);
-        return ResponseEntity.noContent().build() ;
+        return ResponseEntity.noContent().build();
     }
 
     @Override
@@ -46,6 +46,15 @@ public class TodoControllerImpl implements TodoController {
         TodoUpdateRequest todoUpdateRequest = new TodoUpdateRequest();
         todoUpdateRequest.setId(todoId);
         todoService.setDone(todoUpdateRequest);
-        return ResponseEntity.noContent().build() ;
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> updateTodo(Long todoId) {
+        TodoUpdateRequest todoUpdateRequest = new TodoUpdateRequest();
+        todoUpdateRequest.setId(todoId);
+        todoService.todoUpdate(todoUpdateRequest);
+        return ResponseEntity.noContent().build();
+
     }
 }
