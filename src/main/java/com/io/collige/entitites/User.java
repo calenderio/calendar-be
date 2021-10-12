@@ -58,7 +58,7 @@ public class User extends BaseEntity {
     )
     private Set<LinkedCalendar> calendars = new HashSet<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<Todo> todos = new HashSet<>();
 
 }
