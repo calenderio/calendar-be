@@ -1,5 +1,6 @@
 package com.io.collige.models.requests.todo;
 
+import com.io.collige.enums.Priority;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -12,5 +13,7 @@ public class TodoUpdateRequest {
     private LocalDateTime updatedTime;
 
     private String description;
+
+    private Priority priority;
 
 }

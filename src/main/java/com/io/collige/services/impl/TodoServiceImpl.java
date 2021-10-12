@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TodoServiceImpl implements TodoService {
@@ -89,6 +90,22 @@ public class TodoServiceImpl implements TodoService {
             throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.TODO_NOT_FOUND),
                     GeneralMessageConstants.TDO_NOT_FOUND);
         }
+    }
+
+    @Override
+    public void todoUpdate(TodoUpdateRequest request) {
+        User user = jwtService.getLoggedUser();
+        Optional<Todo> todo = todoRepository.findByUserIdAndId(request.getId() , user.getId());
+        if(!todo.isPresent()){
+            throw new CalendarAppException(HttpStatus.BAD_REQUEST, Translator.getMessage(GeneralMessageConstants.TODO_NOT_FOUND),
+                    GeneralMessageConstants.TDO_NOT_FOUND);
+        }else{
+            Todo todo1 = todo.get();
+            todo1.setDescription(request.getDescription());
+            todo1.setCreateDate(request.getUpdatedTime());
+            todo1.setPriority(request.getPriority());
+        }
+
     }
 
 }

@@ -18,4 +18,6 @@ public interface TodoService {
     void deleteTodo(TodoUpdateRequest request);
 
     void setDone(TodoUpdateRequest request);
+
+    void todoUpdate(TodoUpdateRequest request);
 }

@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface TodoRepository extends PagingAndSortingRepository<Todo, Long> {
 
@@ -19,4 +21,5 @@ public interface TodoRepository extends PagingAndSortingRepository<Todo, Long> {
     @Modifying
     int setDone(Long id, Long userId);
 
+    Optional<Todo> findByUserIdAndId(Long id , Long userId);
 }
