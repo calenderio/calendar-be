@@ -46,7 +46,7 @@ public interface TodoController {
             @ApiResponse(responseCode = "400", description = "Creating task error", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorData.class))})})
     @PostMapping(value = "/todos")
-    ResponseEntity<TodoCreateResponse> createScheduler(@Parameter(name = "request", example = "Example") @RequestParam TodoCreateRequest request);
+    ResponseEntity<TodoCreateResponse> createTodo(@Parameter(name = "request", example = "Example") @RequestParam TodoCreateRequest request);
 
     @Operation(summary = "Delete Todo")
     @ApiResponses(value = {

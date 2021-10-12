@@ -28,7 +28,7 @@ public class TodoControllerImpl implements TodoController {
     }
 
     @Override
-    public ResponseEntity<TodoCreateResponse> createScheduler(TodoCreateRequest request) {
+    public ResponseEntity<TodoCreateResponse> createTodo(TodoCreateRequest request) {
         TodoCreateResponse todoCreateResponse = todoService.saveTodo(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(todoCreateResponse);
     }
