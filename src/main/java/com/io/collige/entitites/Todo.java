@@ -19,7 +19,7 @@ import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 
-@Table(name = "Todo", indexes = {
+@Table(name = "Todos", indexes = {
         @Index(name = "idx_todo_user_id", columnList = "user_id")
 })
 @Entity
@@ -30,8 +30,7 @@ import java.time.LocalDateTime;
 public class Todo extends BaseEntity {
 
 
-    @JsonManagedReference
-    @EqualsAndHashCode.Exclude
+
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "user_id", nullable = false)
     private Long userId;
