@@ -48,6 +48,4 @@ public class TodoControllerImpl implements TodoController {
         todoService.setDone(todoUpdateRequest);
         return ResponseEntity.noContent().build() ;
     }
-
-
 }
