@@ -40,6 +40,8 @@ public class Meeting extends BaseEntity {
     private String timeZone;
     private String organizer;
     private String location;
+    private String locationId;
+    private String meetingLink;
     private Integer sequence;
     private Long userId;
 

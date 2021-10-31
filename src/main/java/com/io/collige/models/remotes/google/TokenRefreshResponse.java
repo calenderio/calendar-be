@@ -7,9 +7,13 @@
 package com.io.collige.models.remotes.google;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TokenRefreshResponse {
 
     @SerializedName("access_token")

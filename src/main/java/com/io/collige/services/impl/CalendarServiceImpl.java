@@ -162,7 +162,7 @@ public class CalendarServiceImpl implements CalendarService {
                                           LocalDateTime starDate, LocalDateTime endDate) {
         if (!filteredGoogle.isEmpty()) {
             for (LinkedCalendar selected : filteredGoogle) {
-                GoogleCalendarEventResponse response = getGoogleResponse(timeZone, filteredGoogle, starDate, endDate, selected);
+                GoogleCalendarEventResponse response = getGoogleResponse(timeZone, starDate, endDate, selected);
                 for (GoogleCalendarEventItem item : response.getItems()) {
                     CalendarItemResponse itemResponse = new CalendarItemResponse();
                     LocalDateTime startTime = ZonedDateTime.parse(item.getStart().getDateTime()).toLocalDateTime();
@@ -185,7 +185,7 @@ public class CalendarServiceImpl implements CalendarService {
                                              LocalDateTime starDate, LocalDateTime endDate) {
         if (!filteredMicrosoft.isEmpty()) {
             for (LinkedCalendar selected : filteredMicrosoft) {
-                List<CalendarEventItem> items = getMicrosoftCalendarItems(timeZone, starDate, endDate, filteredMicrosoft, selected);
+                List<CalendarEventItem> items = getMicrosoftCalendarItems(timeZone, starDate, endDate, selected);
                 for (CalendarEventItem item : items) {
                     CalendarItemResponse itemResponse = new CalendarItemResponse();
                     LocalDateTime startTime = LocalDateTime.parse(item.getStart().getDateTime());
@@ -205,8 +205,8 @@ public class CalendarServiceImpl implements CalendarService {
         }
     }
 
-    private GoogleCalendarEventResponse getGoogleResponse(String timeZone, List<LinkedCalendar> filteredGoogle, LocalDateTime starDate, LocalDateTime endDate, LinkedCalendar selected) {
-        checkAndCreateToken(filteredGoogle, selected, AppProviderType.GOOGLE);
+    private GoogleCalendarEventResponse getGoogleResponse(String timeZone, LocalDateTime starDate, LocalDateTime endDate, LinkedCalendar selected) {
+        checkAndCreateToken(selected, AppProviderType.GOOGLE);
         GoogleCalendarEventsRequest eventsRequest = new GoogleCalendarEventsRequest();
         eventsRequest.setAccessToken(tokenEncryptor.getDecryptedString(selected.getAccessToken()));
         eventsRequest.setUserName(selected.getSocialMail());
@@ -219,7 +219,7 @@ public class CalendarServiceImpl implements CalendarService {
     private void googleCalendarMap(String timeZone, Event event, LocalDateTime starDate, LocalDateTime endDate, Map<LocalDate, Set<LocalTime>> availableDates, List<LinkedCalendar> filteredGoogle) {
         if (!filteredGoogle.isEmpty()) {
             for (LinkedCalendar selected : filteredGoogle) {
-                GoogleCalendarEventResponse response = getGoogleResponse(timeZone, filteredGoogle, starDate, endDate, selected);
+                GoogleCalendarEventResponse response = getGoogleResponse(timeZone, starDate, endDate, selected);
                 for (GoogleCalendarEventItem item : response.getItems()) {
                     int multiply = DurationType.HOUR.equals(event.getDurationType()) ? 60 : 1;
                     int minutes = event.getDuration() * multiply;
@@ -249,7 +249,7 @@ public class CalendarServiceImpl implements CalendarService {
     private void microsoftCalendarMap(String timeZone, Event event, LocalDateTime starDate, LocalDateTime endDate, Map<LocalDate, Set<LocalTime>> availableDates, List<LinkedCalendar> filteredMicrosoft) {
         if (!filteredMicrosoft.isEmpty()) {
             for (LinkedCalendar selected : filteredMicrosoft) {
-                List<CalendarEventItem> items = getMicrosoftCalendarItems(timeZone, starDate, endDate, filteredMicrosoft, selected);
+                List<CalendarEventItem> items = getMicrosoftCalendarItems(timeZone, starDate, endDate, selected);
                 for (CalendarEventItem item : items) {
                     int multiply = DurationType.HOUR.equals(event.getDurationType()) ? 60 : 1;
                     ZonedDateTime startTime = LocalDateTime.parse(item.getStart().getDateTime())
@@ -262,8 +262,8 @@ public class CalendarServiceImpl implements CalendarService {
         }
     }
 
-    private List<CalendarEventItem> getMicrosoftCalendarItems(String timeZone, LocalDateTime starDate, LocalDateTime endDate, List<LinkedCalendar> filteredMicrosoft, LinkedCalendar selected) {
-        checkAndCreateToken(filteredMicrosoft, selected, AppProviderType.MICROSOFT);
+    private List<CalendarEventItem> getMicrosoftCalendarItems(String timeZone, LocalDateTime starDate, LocalDateTime endDate, LinkedCalendar selected) {
+        checkAndCreateToken(selected, AppProviderType.MICROSOFT);
         MicrosoftCalendarEventsRequest eventsRequest = new MicrosoftCalendarEventsRequest();
         eventsRequest.setTimeZone(timeZone);
         eventsRequest.setAccessToken(selected.getAccessToken());
@@ -304,8 +304,8 @@ public class CalendarServiceImpl implements CalendarService {
         }
     }
 
-    private void checkAndCreateToken(List<LinkedCalendar> filtered, LinkedCalendar selected, AppProviderType type) {
-        if (!LocalDateTime.now().plusSeconds(10).isBefore(filtered.get(0).getExpireDate())) {
+    private void checkAndCreateToken(LinkedCalendar selected, AppProviderType type) {
+        if (!LocalDateTime.now().plusSeconds(10).isBefore(selected.getExpireDate())) {
             LocalDateTime callTime = LocalDateTime.now();
             TokenRefreshResponse response = new TokenRefreshResponse();
             if (AppProviderType.GOOGLE.equals(type)) {

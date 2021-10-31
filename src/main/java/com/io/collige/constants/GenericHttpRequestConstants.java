@@ -13,5 +13,6 @@ import lombok.NoArgsConstructor;
 public class GenericHttpRequestConstants {
 
     public static final String CONTENT_TYPE = "Content-Type";
+    public static final String AUTHORIZATION = "Authorization";
 
 }

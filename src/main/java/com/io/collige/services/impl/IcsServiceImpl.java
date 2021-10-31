@@ -18,7 +18,7 @@ public class IcsServiceImpl implements IcsService {
     @Override
     public byte[] writeIcsFileToByteArray(MeetingRequest request) throws IOException {
         String message = Translator.getMessage("meet.general.message", WordUtils.capitalize(request.getOrganizerName()),
-                request.getOrganizerMail().toLowerCase(), request.getDescription());
+                request.getOrganizerMail().toLowerCase(), request.getDescription(), request.getMeetingLink());
 
         ICalendarBuilder iCalendarBuilder = new ICalendarBuilder(request, message);
         Calendar calendar = iCalendarBuilder.build();

@@ -1,69 +1,14 @@
-<!doctype html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html class="sg-campaigns" data-editor-version="2" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
+
 	<head>
-		<title>
-		</title>
-		<meta content="IE=edge" http-equiv="X-UA-Compatible">
-		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
-		<meta content="width=device-width, initial-scale=1" name="viewport">
-		<style type="text/css">
-            #outlook a {
-                padding: 0;
-            }
-
-            .ReadMsgBody {
-                width: 100%;
-            }
-
-            .ExternalClass {
-                width: 100%;
-            }
-
-            .ExternalClass * {
-                line-height: 100%;
-            }
-
-            body {
-                margin: 0;
-                padding: 0;
-                -webkit-text-size-adjust: 100%;
-                -ms-text-size-adjust: 100%;
-            }
-
-            table, td {
-                border-collapse: collapse;
-                mso-table-lspace: 0pt;
-                mso-table-rspace: 0pt;
-            }
-
-            img {
-                border: 0;
-                height: auto;
-                line-height: 100%;
-                outline: none;
-                text-decoration: none;
-                -ms-interpolation-mode: bicubic;
-            }
-
-            p {
-                display: block;
-                margin: 13px 0;
-            }
-		</style>
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+		<meta content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" name="viewport">
 		<!--[if !mso]><!-->
-		<style type="text/css">
-            @media only screen and (max-width: 480px) {
-                @-ms-viewport {
-                    width: 320px;
-                }
-                @viewport {
-                    width: 320px;
-                }
-            }
-		</style>
+		<meta content="IE=Edge" http-equiv="X-UA-Compatible">
 		<!--<![endif]-->
-		<!--[if mso]>
+		<!--[if (gte mso 9)|(IE)]>
 		<xml>
 			<o:OfficeDocumentSettings>
 				<o:AllowPNG/>
@@ -71,335 +16,468 @@
 			</o:OfficeDocumentSettings>
 		</xml>
 		<![endif]-->
-		<!--[if lte mso 11]>
+		<!--[if (gte mso 9)|(IE)]>
 		<style type="text/css">
-			.outlook-group-fix {
-				width: 100% !important;
+			body {
+				width: 600px;
+				margin: 0 auto;
+			}
+
+			table {
+				border-collapse: collapse;
+			}
+
+			table, td {
+				mso-table-lspace: 0pt;
+				mso-table-rspace: 0pt;
+			}
+
+			img {
+				-ms-interpolation-mode: bicubic;
 			}
 		</style>
 		<![endif]-->
 		<style type="text/css">
-            @media only screen and (min-width: 480px) {
-                .dys-column-per-100 {
-                    width: 100.000000% !important;
-                    max-width: 100.000000%;
-                }
+            body,
+            p,
+            div {
+                font-family: inherit;
+                font-size: 14px;
             }
 
-            @media only screen and (min-width: 480px) {
-                .dys-column-per-100 {
-                    width: 100.000000% !important;
-                    max-width: 100.000000%;
-                }
+            body {
+                color: #000000;
             }
 
-            @media only screen and (min-width: 480px) {
-                .dys-column-per-100 {
-                    width: 100.000000% !important;
-                    max-width: 100.000000%;
-                }
+            body a {
+                color: #1188E6;
+                text-decoration: none;
             }
 
-            @media only screen and (min-width: 480px) {
-                .dys-column-per-100 {
-                    width: 100.000000% !important;
-                    max-width: 100.000000%;
+            p {
+                margin: 0;
+                padding: 0;
+            }
+
+            table.wrapper {
+                width: 100% !important;
+                table-layout: fixed;
+                -webkit-font-smoothing: antialiased;
+                -webkit-text-size-adjust: 100%;
+                -moz-text-size-adjust: 100%;
+                -ms-text-size-adjust: 100%;
+            }
+
+            img.max-width {
+                max-width: 100% !important;
+            }
+
+            .column.of-2 {
+                width: 50%;
+            }
+
+            .column.of-3 {
+                width: 33.333%;
+            }
+
+            .column.of-4 {
+                width: 25%;
+            }
+
+            @media screen and (max-width: 480px) {
+                .preheader .rightColumnContent,
+                .footer .rightColumnContent {
+                    text-align: left !important;
+                }
+
+                .preheader .rightColumnContent div,
+                .preheader .rightColumnContent span,
+                .footer .rightColumnContent div,
+                .footer .rightColumnContent span {
+                    text-align: left !important;
+                }
+
+                .preheader .rightColumnContent,
+                .preheader .leftColumnContent {
+                    font-size: 80% !important;
+                    padding: 5px 0;
+                }
+
+                table.wrapper-mobile {
+                    width: 100% !important;
+                    table-layout: fixed;
+                }
+
+                img.max-width {
+                    height: auto !important;
+                    max-width: 100% !important;
+                }
+
+                a.bulletproof-button {
+                    display: block !important;
+                    width: auto !important;
+                    font-size: 80%;
+                    padding-left: 0 !important;
+                    padding-right: 0 !important;
+                }
+
+                .columns {
+                    width: 100% !important;
+                }
+
+                .column {
+                    display: block !important;
+                    width: 100% !important;
+                    padding-left: 0 !important;
+                    padding-right: 0 !important;
+                    margin-left: 0 !important;
+                    margin-right: 0 !important;
                 }
             }
 		</style>
+		<link rel="stylesheet" th:href="@{https://fonts.googleapis.com/css?family=Bungee&display=swap}">
+		<style>
+            body {
+                font-family: 'Bungee', sans-serif;
+            }
+		</style>
 	</head>
+
 	<body>
-		<div>
-			<table align='center'
-			       background='https://s3.amazonaws.com/swu-filepicker/4E687TRe69Ld95IDWyEg_bg_top_02.jpg' border='0'
-			       cellpadding='0' cellspacing='0' role='presentation'
-			       style='background:url(https://s3.amazonaws.com/swu-filepicker/4E687TRe69Ld95IDWyEg_bg_top_02.jpg) top center / auto repeat;width:100%;'>
-				<tbody>
-					<tr>
-						<td>
-							<!--[if mso | IE]>
-							<v:rect style="mso-width-percent:1000;" xmlns:v="urn:schemas-microsoft-com:vml" fill="true"
-							        stroke="false">
-								<v:fill src="https://s3.amazonaws.com/swu-filepicker/4E687TRe69Ld95IDWyEg_bg_top_02.jpg"
-								        origin="0.5, 0" position="0.5, 0" type="tile"/>
-								<v:textbox style="mso-fit-shape-to-text:true" inset="0,0,0,0">
-							<![endif]-->
-							<div style='margin:0px auto;max-width:600px;'>
-								<div style='font-size:0;line-height:0;'>
-									<table align='center' border='0' cellpadding='0' cellspacing='0' role='presentation'
-									       style='width:100%;'>
-										<tbody>
-											<tr>
-												<td style='direction:ltr;font-size:0px;padding:10px 0px 10px 0px;text-align:center;vertical-align:top;'>
-													<!--[if mso | IE]>
-													<table role="presentation" border="0" cellpadding="0"
-													       cellspacing="0">
+		<center class="wrapper"
+		        data-body-style="font-size:14px; font-family:Bungee; color:#000000; background-color:#FFFFFF;"
+		        data-link-color="#1188E6">
+			<div class="webkit">
+				<table bgcolor="#FFFFFF" border="0" cellpadding="0" cellspacing="0" class="wrapper" width="100%">
+					<tbody>
+						<tr>
+							<td bgcolor="#FFFFFF" valign="top" width="100%">
+								<table align="center" border="0" cellpadding="0" cellspacing="0"
+								       class="outer" role="content-container" width="100%">
+									<tbody>
+										<tr>
+											<td width="100%">
+												<table border="0" cellpadding="0" cellspacing="0" width="100%">
+													<tbody>
 														<tr>
-															<td style="vertical-align:top;width:600px;">
-													<![endif]-->
-													<div class='dys-column-per-100 outlook-group-fix'
-													     style='direction:ltr;display:inline-block;font-size:13px;text-align:left;vertical-align:top;width:100%;'>
-														<table border='0' cellpadding='0' cellspacing='0'
-														       role='presentation' width='100%'>
-															<tbody>
-																<tr>
-																	<td style='padding:0px 20px;vertical-align:top;'>
-																		<table border='0' cellpadding='0'
-																		       cellspacing='0' role='presentation'
-																		       style='' width='100%'>
-																			<tr>
-																				<td align='left'
-																				    style='font-size:0px;padding:0px;word-break:break-word;'>
-																					<table border='0' cellpadding='0'
-																					       cellspacing='0'
-																					       style='cellpadding:0;cellspacing:0;color:#000000;font-family:Helvetica, Arial, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;'
-																					       width='100%'>
+															<td>
+																<!--[if mso]>
+																<center>
+																	<table>
+																		<tr>
+																			<td width="600">
+																<![endif]-->
+																<table align="center" border="0" cellpadding="0"
+																       cellspacing="0"
+																       style="width:100%; max-width:600px;"
+																       width="100%">
+																	<tbody>
+																		<tr>
+																			<td align="left"
+																			    bgcolor="#FFFFFF"
+																			    role="modules-container"
+																			    style="padding:0px 0px 0px 0px; color:#000000; text-align:left;"
+																			    width="100%">
+																				<table border="0"
+																				       cellpadding="0"
+																				       cellspacing="0"
+																				       class="module preheader preheader-hide"
+																				       data-type="preheader"
+																				       role="module"
+																				       style="display: none !important; mso-hide: all; visibility: hidden; opacity: 0; color: transparent; height: 0; width: 0;"
+																				       width="100%">
+																					<tbody>
 																						<tr>
-																							<td align='left'>
-																								<a href='https://www.collige.io'>
-																									<img align='left'
-																									     alt='Logo'
-																									     padding='5px'
-																									     src='https://res.cloudinary.com/dkz1twyos/image/upload/v1632684083/collige/profile/example2_zeleqg_h6efyb.png'
-																									     width='200'/>
-																								</a>
-																							</td>
-																							<td align='right'
-																							    style='vertical-align:center;'
-																							    width='34px'>
-																								<a href='#'>
-																									<img alt='Twitter'
-																									     height='22'
-																									     src='https://s3.amazonaws.com/swu-cs-assets/OSET/social/Twitter_grey.png'
-																									     width='22'/>
-																								</a>
-																							</td>
-																							<td align='right'
-																							    style='vertical-align:center;'
-																							    width='34px'>
-																								<a href='#'>
-																									<img alt='Facebook'
-																									     height='22'
-																									     src='https://swu-cs-assets.s3.amazonaws.com/OSET/social/f_grey.png'
-																									     width='22'/>
-																								</a>
-																							</td>
-																							<td align='right'
-																							    style='vertical-align:center;'
-																							    width='34px'>
-																								<a href='#'>
-																									<img alt='Instagram'
-																									     height='22'
-																									     src='https://swu-cs-assets.s3.amazonaws.com/OSET/social/instagrey.png'
-																									     width='22'/>
-																								</a>
+																							<td role="module-content">
+																								<p></p>
 																							</td>
 																						</tr>
-																					</table>
-																				</td>
-																			</tr>
-																		</table>
-																	</td>
-																</tr>
-															</tbody>
-														</table>
-													</div>
-													<!--[if mso | IE]>
-													</td></tr></table>
-													<![endif]-->
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-							</div>
-							<!--[if mso | IE]>
-							</v:textbox></v:rect>
-							<![endif]-->
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<table align='center' border='0' cellpadding='0' cellspacing='0' role='presentation'
-			       style='background:#f7f7f7;background-color:#f7f7f7;width:100%;'>
-				<tbody>
-					<tr>
-						<td>
-							<div style='margin:0px auto;max-width:600px;'>
-								<table align='center' border='0' cellpadding='0' cellspacing='0' role='presentation'
-								       style='width:100%;'>
-									<tbody>
-										<tr>
-											<td style='direction:ltr;font-size:0px;text-align:center;vertical-align:top;'>
-												<!--[if mso | IE]>
-												<table role="presentation" border="0" cellpadding="0" cellspacing="0">
-													<tr>
-														<td style="vertical-align:top;width:600px;">
-												<![endif]-->
-												<div class='dys-column-per-100 outlook-group-fix'
-												     style='direction:ltr;display:inline-block;font-size:13px;text-align:left;vertical-align:top;width:100%;'>
-													<table border='0' cellpadding='0' cellspacing='0'
-													       role='presentation' style='vertical-align:top;' width='100%'>
-														<tr>
-															<td align='center'
-															    style='font-size:0px;padding:10px 25px;word-break:break-word;'>
-																<div style='color:#4d4d4d;font-family:Oxygen, Helvetica neue, sans-serif;font-size:32px;font-weight:700;line-height:37px;text-align:center;'
-																     th:text="#{app.general.dear(${name})}">
-																</div>
-															</td>
-														</tr>
-														<tr>
-															<td align='center'
-															    style='font-size:0px;padding:10px 25px;word-break:break-word;'>
-																<div style='color:#777777;font-family:Oxygen, Helvetica neue, sans-serif;font-size:14px;line-height:21px;text-align:center;'
-																     th:utext="#{mail.event.request(${inviter})}">
-																</div>
-															</td>
-														</tr>
-														<tr>
-															<td align='center'
-															    style='font-size:0px;padding:10px 25px;word-break:break-word;'>
-																<div style='color:#777777;font-family:Oxygen, Helvetica neue, sans-serif;font-size:14px;line-height:21px;text-align:center;'
-																     th:text="#{mail.validation.code(${code})}">
-																</div>
-															</td>
-														</tr>
-														<tr>
-															<td align='center'
-															    style='font-size:0px;padding:10px 25px;word-break:break-word;'>
-																<div style='color:#777777;font-family:Oxygen, Helvetica neue, sans-serif;font-size:14px;line-height:21px;text-align:center;'
-																     th:utext="#{mail.description(${description})}">
-																</div>
-															</td>
-														</tr>
-													</table>
-												</div>
-												<!--[if mso | IE]>
-												</td></tr></table>
-												<![endif]-->
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<table align='center' border='0' cellpadding='0' cellspacing='0' role='presentation'
-			       style='background:#f7f7f7;background-color:#f7f7f7;width:100%;'>
-				<tbody>
-					<tr>
-						<td>
-							<div style='margin:0px auto;max-width:600px;'>
-								<table align='center' border='0' cellpadding='0' cellspacing='0' role='presentation'
-								       style='width:100%;'>
-									<tbody>
-										<tr>
-											<td style='direction:ltr;font-size:0px;text-align:center;vertical-align:top;'>
-												<!--[if mso | IE]>
-												<table role="presentation" border="0" cellpadding="0" cellspacing="0">
-													<tr>
-														<td style="vertical-align:top;width:600px;">
-												<![endif]-->
-												<div class='dys-column-per-100 outlook-group-fix'
-												     style='direction:ltr;display:inline-block;font-size:13px;text-align:left;vertical-align:top;width:100%;'>
-													<table border='0' cellpadding='0' cellspacing='0'
-													       role='presentation' style='vertical-align:top;' width='100%'>
-														<tr>
-															<td align='center'
-															    style='font-size:0px;padding:10px 25px;word-break:break-word;'
-															    vertical-align='middle'>
-																<table border='0' cellpadding='0' cellspacing='0'
-																       role='presentation'
-																       style='border-collapse:separate;line-height:100%;'>
-																	<tr>
-																		<td align='center' bgcolor='#ff6f6f'
-																		    role='presentation'
-																		    style='background-color:#1c5c96;border:none;border-radius:5px;cursor:auto;padding:10px 25px;'
-																		    valign='middle'>
-																			<a href='#'
-																			   style='color:#7db0de;font-family:Oxygen, Helvetica neue, sans-serif;font-size:14px;font-weight:400;line-height:21px;margin:0;text-decoration:none;text-transform:none;'
-																			   target='_blank'
-																			   th:text="#{mail.pls.click}">
-																				tikla
-																			</a>
-																		</td>
-																	</tr>
-																	<tr>
-																		<td align='center'
-																		    style='font-size:0px;word-break:break-word;'>
-																			<div style='color:#777777;font-family:Oxygen, Helvetica neue, sans-serif;font-size:14px;line-height:21px;text-align:center;'>
-																				<p th:text="#{mail.thanks}"></p>
-																				<p>Collige Team</p>
-																			</div>
-																		</td>
-																	</tr>
+																					</tbody>
+																				</table>
+																				<table align="center" bgcolor="#f6f6f6"
+																				       border="0" cellpadding="0"
+																				       cellspacing="0"
+																				       data-type="columns"
+																				       role="module"
+																				       style="padding:0px 20px 20px 20px;"
+																				       width="100%">
+																					<tbody>
+																						<tr role="module-content">
+																							<td height="100%"
+																							    valign="top">
+																								<table align="left"
+																								       bgcolor=""
+																								       border="0"
+																								       cellpadding="0"
+																								       cellspacing="0"
+																								       class="column"
+																								       style="width:540px; border-spacing:0; border-collapse:collapse; margin:0px 10px 0px 10px;"
+																								       width="540">
+																									<tbody>
+																										<tr>
+																											<td style="padding:0px;margin:0px;border-spacing:0;">
+																												<table border="0"
+																												       cellpadding="0"
+																												       cellspacing="0"
+																												       class="wrapper"
+																												       data-muid="72aac1ba-9036-4a77-b9d5-9a60d9b05cba"
+																												       data-type="image"
+																												       role="module"
+																												       style="table-layout: fixed;"
+																												       width="100%">
+																													<tbody>
+																														<tr>
+																															<td style="font-size:6px; line-height:10px; padding:10px 0px 10px 10px;"
+																															    valign="center">
+																																<a href='https://www.collige.io'
+																																   title="Logo">
+																																	<img alt="Collige"
+																																	     border="0"
+																																	     data-proportionally-constrained="true"
+																																	     data-responsive="false"
+																																	     src="https://res.cloudinary.com/dkz1twyos/image/upload/c_scale,h_59/v1634151140/collige/app/LogoName_mxyjlt.png"
+																																	     style="display:block; color:#000000; text-decoration:none; font-family:Helvetica, arial, sans-serif; font-size:16px;">
+																																</a>
+																															</td>
+																															<td align="right"
+																															    style="font-size:0px; line-height:10px; padding:10px 10px 10px 0px;"
+																															    valign="center">
+																																<a href='https://www.collige.io'
+																																   title="Facebook">
+																																	<img src="https://res.cloudinary.com/dkz1twyos/image/upload/c_scale,w_32/v1634152947/collige/app/facebook_fb9e5c.png"
+																																	     style="padding-right: 10px;"
+																																	>
+
+																																</a>
+																																<a href='https://www.collige.io'
+																																   title="Instagram">
+																																	<img src="https://res.cloudinary.com/dkz1twyos/image/upload/c_scale,w_32/v1634152947/collige/app/instagram_mwg8yf.png"
+
+																																	     style="padding-right: 10px;">
+																																</a>
+																																<a href='https://www.collige.io'
+																																   title="Twitter">
+																																	<img src="https://res.cloudinary.com/dkz1twyos/image/upload/c_scale,w_32/v1634152947/collige/app/twitter_ptpgup.png"
+
+																																	     style="padding-right: 10px;">
+																																</a>
+																															</td>
+																														</tr>
+																													</tbody>
+																												</table>
+																												<table border="0"
+																												       cellpadding="0"
+																												       cellspacing="0"
+																												       class="module"
+																												       data-mc-module-version="2019-10-22"
+																												       data-muid="948e3f3f-5214-4721-a90e-625a47b1c957"
+																												       data-type="text"
+																												       role="module"
+																												       style="table-layout: fixed;"
+																												       width="100%">
+																													<tbody>
+																														<tr>
+																															<td bgcolor="#ffffff"
+																															    height="100%"
+																															    role="module-content"
+																															    style="padding:50px 30px 18px 30px; line-height:36px; text-align:inherit; background-color:#ffffff;"
+																															    valign="top">
+																																<div>
+																																	<div style="font-family: inherit; text-align: center">
+																																		<span style="font-size: 25px"
+																																		      th:utext="#{app.general.dear(${name})}">&nbsp;</span>
+																																	</div>
+																																	<div></div>
+																																</div>
+																															</td>
+																														</tr>
+																													</tbody>
+																												</table>
+																												<table border="0"
+																												       cellpadding="0"
+																												       cellspacing="0"
+																												       class="module"
+																												       data-mc-module-version="2019-10-22"
+																												       data-muid="a10dcb57-ad22-4f4d-b765-1d427dfddb4e"
+																												       data-type="text"
+																												       role="module"
+																												       style="table-layout: fixed;"
+																												       width="100%">
+																													<tbody>
+																														<tr>
+																															<td bgcolor="#ffffff"
+																															    height="100%"
+																															    role="module-content"
+																															    style="padding:18px 30px 18px 30px; line-height:22px; text-align:inherit; background-color:#ffffff;"
+																															    valign="top">
+																																<div>
+																																	<div style="font-family: inherit; text-align: center">
+																																		<span style="color: #1C5C96; font-size: 18px"><strong
+																																				th:utext="#{mail.event.request(${inviter})}">&nbsp;</strong></span>
+																																	</div>
+																																	<div style="font-family: inherit; text-align: center">
+																																		<span style="font-size: 18px"
+																																		      th:utext="#{mail.description(${description})}">&nbsp;</span>
+																																	</div>
+																																	<div style="font-family: inherit; text-align: center">
+																																		<span style="font-size: 18px"
+																																		      th:text="#{mail.validation.code(${code})}"></span>
+																																	</div>
+																																</div>
+																															</td>
+																														</tr>
+																													</tbody>
+																												</table>
+																												<table border="0"
+																												       cellpadding="0"
+																												       cellspacing="0"
+																												       class="module"
+																												       data-muid="7770fdab-634a-4f62-a277-1c66b2646d8d"
+																												       data-type="spacer"
+																												       role="module"
+																												       style="table-layout: fixed;"
+																												       width="100%">
+																													<tbody>
+																														<tr>
+																															<td bgcolor="#ffffff"
+																															    role="module-content"
+																															    style="padding:0px 0px 20px 0px;">
+																															</td>
+																														</tr>
+																													</tbody>
+																												</table>
+																												<table border="0"
+																												       cellpadding="0"
+																												       cellspacing="0"
+																												       class="module"
+																												       data-muid="d050540f-4672-4f31-80d9-b395dc08abe1"
+																												       data-role="module-button"
+																												       data-type="button"
+																												       role="module"
+																												       style="table-layout:fixed;"
+																												       width="100%">
+																													<tbody>
+																														<tr>
+																															<td align="center"
+																															    bgcolor="#ffffff"
+																															    class="outer-td"
+																															    style="padding:0px 0px 10px 0px;">
+																																<table border="0"
+																																       cellpadding="0"
+																																       cellspacing="0"
+																																       class="wrapper-mobile"
+																																       style="text-align:center;">
+																																	<tbody>
+																																		<tr>
+																																			<td align="center"
+																																			    bgcolor="#7DB0DE"
+																																			    class="inner-td"
+																																			    style="border-radius:12px; font-size:16px; text-align:center; background-color:inherit;">
+																																				<a style="background-color:#7DB0DE; border:1px solid #7DB0DE; border-color:#7DB0DE; border-radius:12px; border-width:1px; color:#1C5C96; display:inline-block; font-size:14px; font-weight:normal; letter-spacing:0px; line-height:normal; padding:12px 40px 12px 40px; text-align:center; text-decoration:none; border-style:solid; font-family:Bungee; font-weight: 700;"
+																																				   th:href="@{${linkUtil.getInvitation()}(code=${code},email=${mail})}"
+																																				   th:text="#{app.general.plsclick}"></a>
+																																			</td>
+																																		</tr>
+																																	</tbody>
+																																</table>
+																															</td>
+																														</tr>
+																													</tbody>
+																												</table>
+																												<table border="0"
+																												       cellpadding="0"
+																												       cellspacing="0"
+																												       class="module"
+																												       data-muid="d050540f-4672-4f31-80d9-b395dc08abe1.1"
+																												       data-role="module-button"
+																												       data-type="button"
+																												       role="module"
+																												       style="table-layout:fixed;"
+																												       width="100%">
+																													<tbody>
+																														<tr>
+																															<td align="center"
+																															    bgcolor="#6e6e6e"
+																															    class="outer-td"
+																															    style="padding:10px 0px 10px 0px;">
+																																<table border="0"
+																																       cellpadding="0"
+																																       cellspacing="0"
+																																       class="wrapper-mobile"
+																																       style="text-align:center;">
+																																	<tbody>
+																																		<tr>
+																																			<td align="center"
+																																			    bgcolor="#7DB0DE"
+																																			    class="inner-td"
+																																			    style="border-radius:12px; font-size:16px; text-align:center; background-color:inherit;">
+																																				<a href="mail:info@collige.io"
+																																				   style="background-color:#7DB0DE; border:1px solid #7DB0DE; border-color:#7DB0DE; border-radius:12px; border-width:1px; color:#1C5C96; display:inline-block; font-size:14px; font-weight:normal; letter-spacing:0px; line-height:normal; padding:12px 40px 12px 40px; text-align:center; text-decoration:none; border-style:solid; font-family:Bungee; font-weight: 700;"
+																																				   th:text="#{mail.contact.us}"></a>
+																																			</td>
+																																		</tr>
+																																	</tbody>
+																																</table>
+																															</td>
+																														</tr>
+																													</tbody>
+																												</table>
+																												<table border="0"
+																												       cellpadding="0"
+																												       cellspacing="0"
+																												       class="module"
+																												       data-role="module-button"
+																												       data-type="button"
+																												       role="module"
+																												       style="table-layout:fixed;"
+																												       width="100%">
+																													<tbody>
+																														<tr bgcolor="#6e6e6e">
+																															<td style="text-align: left; padding-left: 10px;">
+																																<div style="font-family: inherit;">
+																																	<span style="color:#f6f6f6; font-size: 10px">Copyright &copy; 2021 Collige.io </span>
+																																</div>
+																															</td>
+																															<td style="text-align: right; padding-right: 10px;">
+																																<div style="font-family: inherit;">
+																																	<span style="color:#f6f6f6; font-size: 10px">Istanbul</span>
+																																</div>
+																															</td>
+																														</tr>
+																													</tbody>
+																												</table>
+																											</td>
+																										</tr>
+																									</tbody>
+																								</table>
+																							</td>
+																						</tr>
+																					</tbody>
+																				</table>
+
+																			</td>
+																		</tr>
+																	</tbody>
 																</table>
+																<!--[if mso]>
+																</td>
+																</tr>
+																</table>
+																</center>
+																<![endif]-->
 															</td>
 														</tr>
-													</table>
-												</div>
-												<!--[if mso | IE]>
-												</td></tr></table>
-												<![endif]-->
+													</tbody>
+												</table>
 											</td>
 										</tr>
 									</tbody>
 								</table>
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<table align='center' border='0' cellpadding='0' cellspacing='0' role='presentation'
-			       style='background:#f7f7f7;background-color:#f7f7f7;width:100%;'>
-				<tbody>
-					<tr>
-						<td>
-							<div style='margin:0px auto;max-width:600px;'>
-								<table align='center' border='0' cellpadding='0' cellspacing='0' role='presentation'
-								       style='width:100%;'>
-									<tbody>
-										<tr>
-											<td style='direction:ltr;font-size:0px;text-align:center;vertical-align:top;'>
-												<!--[if mso | IE]>
-												<table role="presentation" border="0" cellpadding="0" cellspacing="0">
-													<tr>
-														<td style="vertical-align:top;width:600px;">
-												<![endif]-->
-												<div class='dys-column-per-100 outlook-group-fix'
-												     style='direction:ltr;display:inline-block;font-size:13px;text-align:left;vertical-align:top;width:100%;'>
-													<table border='0' cellpadding='0' cellspacing='0'
-													       role='presentation' style='vertical-align:top;' width='100%'>
-														<tr>
-															<td align='center'
-															    style='font-size:0px;padding:5px 25px;word-break:break-word;'>
-																<hr class="solid">
-															</td>
-														</tr>
-														<tr>
-															<td align='center'
-															    style='font-size:0px;padding:5px 25px;word-break:break-word;'>
-																<div style='color:#777777;font-family:Oxygen, Helvetica neue, sans-serif;font-size:14px;font-style:bold;font-weight:700;line-height:21px;text-align:center;'>
-																	<a href="#"><b th:text="#{mail.contact.us}"></b></a>
-																</div>
-															</td>
-														</tr>
-													</table>
-												</div>
-												<!--[if mso | IE]>
-												</td></tr></table>
-												<![endif]-->
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</center>
 	</body>
 </html>

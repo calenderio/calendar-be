@@ -27,6 +27,7 @@ import com.io.collige.services.CalendarService;
 import com.io.collige.services.CloudService;
 import com.io.collige.services.IcsService;
 import com.io.collige.services.MailService;
+import com.io.collige.services.MeetingLocationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -74,6 +75,9 @@ class MeetingServiceImplTest {
 
     @Mock
     private CloudService cloudService;
+
+    @Mock
+    private MeetingLocationService meetingLocationService;
 
     @InjectMocks
     private MeetingServiceImpl meetingService;

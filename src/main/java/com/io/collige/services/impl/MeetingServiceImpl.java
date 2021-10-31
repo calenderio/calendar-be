@@ -27,6 +27,7 @@ import com.io.collige.services.CalendarService;
 import com.io.collige.services.CloudService;
 import com.io.collige.services.IcsService;
 import com.io.collige.services.MailService;
+import com.io.collige.services.MeetingLocationService;
 import com.io.collige.services.MeetingService;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFont;
@@ -85,6 +86,9 @@ public class MeetingServiceImpl implements MeetingService {
     @Autowired
     private InvitationRepository invitationRepository;
 
+    @Autowired
+    private MeetingLocationService meetingLocationService;
+
     @Override
     public void validateAndScheduleMeeting(ScheduleMeetingRequest details) {
         com.io.collige.models.requests.calendar.ScheduleMeetingRequest request = details.getRequest();
@@ -99,7 +103,7 @@ public class MeetingServiceImpl implements MeetingService {
         List<QuestionAnswerModel> questionAnswerModels = generateQAModel(request, invitation);
 
         MeetingRequest meetingRequest = new MeetingRequest();
-        meetingRequest.setTitle(invitation.getName() + " " + invitation.getTitle());
+        meetingRequest.setTitle(invitation.getName() + " - " + invitation.getTitle());
         meetingRequest.setLocation(invitation.getEvent().getLocation().name());
         meetingRequest.setUuid(UUID.randomUUID());
         meetingRequest.setDescription(invitation.getDescription());
@@ -228,6 +232,14 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     private void sendInvitationMailAndSaveMeeting(MeetingRequest request, Invitation invitation, Meeting meeting) {
+        meeting.setInvitation(invitation);
+        if (Method.REQUEST.equals(request.getMethod())) {
+            if (request.getSequence() == 1) {
+                meetingLocationService.getLocationLink(meeting);
+                request.setLocationId(meeting.getLocationId());
+                request.setMeetingLink(meeting.getMeetingLink());
+            }
+        }
         GenericMailRequest toInvitationMail = meetingMapper.request(request);
         try {
             toInvitationMail.setMeetingDetails(icsService.writeIcsFileToByteArray(request));
@@ -237,7 +249,6 @@ public class MeetingServiceImpl implements MeetingService {
             toInvitationMail.getAttachments().addAll(request.getAttachmentModels());
             toInvitationMail.setLanguage(Translator.getLanguage());
             toInvitationMail.setName(invitation.getName());
-            meeting.setInvitation(invitation);
             meeting.setDescription(invitation.getDescription());
             meeting.setTitle(invitation.getTitle());
             meeting.setUserId(invitation.getUser().getId());

@@ -26,7 +26,7 @@ public class ScheduleMeetingRequest {
     @NotNull
     private LocalDate date;
 
-    @Schema(description = "Selected Time", implementation = LocalTime.class, required = true)
+    @Schema(description = "Selected Time", example = "09:00", required = true)
     @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     @NotNull
     private LocalTime time;
