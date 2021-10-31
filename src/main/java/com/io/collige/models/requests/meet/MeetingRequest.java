@@ -19,6 +19,8 @@ public class MeetingRequest {
     private Method method;
     private String title;
     private String location;
+    private String locationId;
+    private String meetingLink;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private UUID uuid;
