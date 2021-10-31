@@ -39,7 +39,7 @@ public class MeetingLocationServiceImpl implements MeetingLocationService {
     private ZoomService zoomService;
 
     @Override
-    public String getLocationLink(Meeting meeting) {
+    public void getLocationLink(Meeting meeting) {
         switch (meeting.getEvent().getLocation()) {
             case ZOOM -> {
                 LinkedCalendar zoom = meeting.getInvitation().getUser().getCalendars().stream()
@@ -55,7 +55,6 @@ public class MeetingLocationServiceImpl implements MeetingLocationService {
                 meeting.setMeetingLink(response.getJoin_url());
             }
         }
-        return null;
     }
 
     private void checkAndCreateToken(LinkedCalendar selected) {

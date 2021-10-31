@@ -9,5 +9,5 @@ package com.io.collige.services;
 import com.io.collige.entitites.Meeting;
 
 public interface MeetingLocationService {
-    String getLocationLink(Meeting meeting);
+    void getLocationLink(Meeting meeting);
 }
