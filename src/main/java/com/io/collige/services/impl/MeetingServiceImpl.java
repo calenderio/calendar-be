@@ -177,12 +177,11 @@ public class MeetingServiceImpl implements MeetingService {
 
     private List<QuestionAnswerModel> generateQAModel(com.io.collige.models.requests.calendar.ScheduleMeetingRequest request, Invitation invitation) {
         List<QuestionAnswerModel> questionAnswerModels = new ArrayList<>();
+        invitation.getAnswers().clear();
         if (invitation.getEvent().getQuestions() != null && !invitation.getEvent().getQuestions().isEmpty()) {
             Map<Long, Question> questionMap = invitation.getEvent().getQuestions().stream().collect(Collectors.toMap(Question::getId, Function.identity()));
             List<Answer> answers = validateAnswers(questionMap, request.getAnswers(), invitation, questionAnswerModels);
             invitation.setAnswers(answers);
-        } else if (CollectionUtils.isNotEmpty(invitation.getAnswers())) {
-            invitation.getAnswers().clear();
         }
         return questionAnswerModels;
     }
